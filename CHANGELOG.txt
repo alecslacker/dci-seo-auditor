@@ -1,0 +1,120 @@
+CHANGELOG - Content Ops AI Puffer
+=================================
+Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
+
+Isi file ini: perubahan pada SISTEM kerja project (AGENT.md, command, panduan).
+Bukan laporan artikel klien. Laporan artikel ada di <Klien>/artikel/<YYYY Bulan>/LAPORAN.md.
+Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
+
+
+[0.4.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- Mode audit draft pada cek-artikel.py (--draft): mengeluarkan daftar TEMUAN bernomor sebagai bahan
+  humanize - komponen wajib, ejaan, kata asing, angka tanpa label, plus analisis pola khas AI
+  (ritme paragraf seragam, variasi kalimat, dua paragraf berawalan kata sama, marker percakapan
+  berlebih, rule-of-three). Mode ini selalu exit 0 karena sifatnya laporan, bukan penghalang.
+- Cek "angka tanpa label" kini aktif di kedua mode (draft dan gerbang final).
+- .zcode/uji-tools.py: uji otomatis 13 skenario untuk cek-status.py dan cek-artikel.py (folder uji
+  dibuat di temporer; tidak menyentuh data klien). Jalankan setiap kali skrip gerbang diubah.
+
+Diubah
+- Deteksi fokus keyword otomatis tidak lagi mensyaratkan <p> pembungkus anchor permalink, sehingga
+  draft mentah polos pun terdeteksi.
+- Pipeline AGENT.md Tahap 2 dan command /artikel kini memakai mode --draft untuk audit.
+
+Belum teruji
+- Mode --draft baru diuji pada satu draft nyata (Salimah Blitar) dan skenario sintetis.
+
+
+[0.3.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- FAKTA-SEO.md: fakta Google Search Central dan Rank Math yang diambil langsung dari halaman resmi,
+  lengkap tanggal "Last updated" tiap halaman dan tanggal akses. Menjadi satu-satunya tempat klaim
+  "aturan Google/SEO" di project ini.
+- Gerbang Kualitas .zcode/cek-artikel.py + kamus .zcode/kamus-kata.txt: pemeriksaan seragam untuk
+  semua klien (jumlah kata, paragraf pertama, keyword dan density, heading, format WordPress,
+  Anti-Typo Gate ejaan tidak baku, kata asing, em dash, "Anda" kapital, tag HTML, kontak klien).
+  Opsi --kbbi memverifikasi kata ke KBBI Daring dan menyimpannya ke kamus.
+
+Diubah
+- Artikel Salimah "Jasa Catering Instansi Blitar": kata asing ditulis ulang ke padanan KBBI
+  (nasi box -> nasi kotak, snack box -> kotak kudapan, dessert -> pencuci mulut, coffee break ->
+  rehat kopi, partner -> mitra, capcay -> capcai; fokus keyword dan nama brand dipertahankan).
+- Dua heading h2 diubah supaya tidak semua diawali fokus keyword (3 dari 7 h2 kini memuat keyword,
+  masih di atas minimal 2). Keyword total 31x, density ±1,5% (band skor penuh Rank Math 1-1,5%).
+- Alt text gambar terpasang menjadi deskriptif sesuai panduan Google Images, tanpa menghapus
+  komponen gambar dan shortcode.
+- Klaim tanpa sumber ditarik: kisaran harga rupiah, "sambal korek" (khas Surakarta, bukan Blitar),
+  jumlah kantor/sekolah di Blitar, dan ambang "lima puluh orang" / "peserta ratusan".
+- CLIENT.md: baris baru "Istilah dipertahankan" (brand/produk yang boleh tetap mengikuti klien).
+
+Belum teruji
+- Skrip cek-artikel.py baru diuji pada artikel Salimah. Verifikasi KBBI massal perlu dijalankan
+  penuh satu kali untuk memastikan deteksi kata tidak ditemukan bekerja pada semua pola halaman.
+
+
+[0.2.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- Gerbang Status (AGENT.md Section 4) dan skrip .zcode/cek-status.py. Draft yang sudah diaudit tidak
+  diaudit dua kali, dan pekerjaan bertahap bisa dilanjutkan. Enam status: BARU, MENUNGGU, LANJUTKAN,
+  SELESAI, BERUBAH, TANPA-CATATAN.
+- Ledger di LAPORAN.md (tabel Draft, Hash, Audit, Humanize, ZeroGPT) sebagai sumber status.
+  Sidik jari draft mengabaikan perbedaan CRLF/LF dan spasi akhir baris.
+
+Diubah
+- Mode Pintasan (Section 10) memanggil Gerbang Status, bukan lagi sekadar mencari draft tanpa
+  pasangan Humanized.
+- Command /artikel dan PROMPT PINTASAN.md disesuaikan.
+
+Belum teruji
+- Gerbang Status baru diuji dengan skenario palsu di folder sementara dan satu draft nyata
+  (Salimah, terbaca SELESAI). Belum diuji dengan penulis sungguhan yang mengedit bertahap.
+- Status MENUNGGU bergantung pada shortcode WA di CLIENT.md sebagai tanda draft lengkap. Draft
+  lengkap yang tidak berakhir dengan shortcode akan tertahan sampai operator memintanya diproses.
+- Skrip membaca hash dengan normalisasi sendiri. Menghitung hash manual dengan sha256sum
+  menghasilkan nilai lain dan membuat draft tampak BERUBAH. Hash ledger harus disalin dari skrip.
+
+
+[0.1.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- AGENT.md: pipeline 5 tahap (draft, audit, humanize, verifikasi SEO, crosscheck), checklist
+  RankMath/human-like/PUEBI, protokol crosscheck ZeroGPT, format laporan per klien, pemetaan skill
+  (termasuk antislop-copywriting), Mode Pintasan (Section 10), dan template prompt AI Puffer (Section 11).
+- Format CLIENT.md generik (AGENT.md Section 3). Satu klien = satu folder = satu CLIENT.md.
+- Command /artikel <perusahaan> <bulan> [tahun] di .zcode/commands/artikel.md.
+- PROMPT PINTASAN.md: panduan memanggil Mode Pintasan beserta prompt cadangan.
+- CLAUDE.md: satu baris impor (@AGENT.md) agar Claude Code membaca aturan yang sama.
+- CHANGELOG.txt (file ini).
+
+Diubah
+- AGENT.md dibuat netral klien: tanpa data klien dan tanpa laporan hasil kerja. Data klien pindah
+  ke CLIENT.md, laporan pindah ke LAPORAN.md di folder bulan klien.
+- Sumber aturan konten pindah dari file terpisah ke AGENT.md Section 11. Isinya identik dengan
+  file lama, kecuali satu baris: sumber data klien kini menunjuk CLIENT.md.
+- Detector eksternal disederhanakan menjadi ZeroGPT saja. Ditambah aturan memecah teks bila
+  melewati batas 15.000 karakter.
+
+Dihapus
+- content core ai-puffer.txt (isinya sudah ada di AGENT.md Section 11).
+- JustDone AI Detector dan JustDone Plagiarism dari protokol crosscheck, karena hasilnya dikunci
+  di balik akun berlangganan.
+
+Belum teruji
+- Command /artikel belum pernah dipanggil dari menu "/". Pencarian folder klien dan pencocokan
+  nama bulan belum teruji dari awal sampai akhir.
+- Plagiarisme belum punya alat cek. Klaim "lolos plagiarism" hanya boleh ditulis bila operator
+  menjalankan cek manual dan melaporkan hasilnya.
+
+Catatan
+- ZCode hanya membaca AGENTS.md (pakai S) secara otomatis. File kanonik project ini bernama
+  AGENT.md, jadi dimuat lewat command /artikel atau awalan @AGENT.md pada prompt. Claude Code
+  memuatnya lewat CLAUDE.md.

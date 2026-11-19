@@ -1,0 +1,13 @@
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Artefak alat
+graphify-out/
+__pycache__/
+*.pyc
+*.tmp
+
+# Catatan lokal jangan ikut repo
+.trae/
