@@ -13,6 +13,8 @@ import sys
 from pathlib import Path
 
 SUFFIX = " - Humanized"
+# Berkas pendamping, bukan draft: hasil akhir dan berkas meta (judul SEO, deskripsi meta, slug).
+ABAIKAN = (SUFFIX, " - Meta")
 
 
 def sidik(path):
@@ -53,7 +55,7 @@ def main(argv):
     ledger = baca_ledger(folder / "LAPORAN.md")
 
     for f in sorted(folder.glob("*.txt")):
-        if f.stem.endswith(SUFFIX):
+        if f.stem.endswith(ABAIKAN):
             continue
         h, isi = sidik(f)
         ada_humanized = (folder / f"{f.stem}{SUFFIX}.txt").exists()

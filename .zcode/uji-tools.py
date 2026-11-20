@@ -133,7 +133,7 @@ def kalimat(n, mulai=0):
 
 def artikel_lulus():
     """Artikel sintetis yang harus lolos gerbang final dengan 0 FAIL."""
-    p1 = ('<p><a href="https://klienuji.example/artikel/lulus"><b><i>%s</i></b></a> - %s '
+    p1 = ('<p><a href="https://klienuji.example/artikel/kata-kunci-uji"><b><i>%s</i></b></a> - %s '
           '<a href="https://klienuji.example" target="_blank" rel="noopener"><b>Klien Uji</b></a> '
           'melayani wilayah <a href="https://id.wikipedia.org/wiki/Blitar" target="_blank" '
           'rel="noopener noreferrer">Blitar</a>.</p>' % (KW, kalimat(17)))
@@ -184,6 +184,91 @@ def uji_artikel_lulus(base):
         cek("lulus: mutasi '%s' ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
 
 
+META_BAIK = ("Judul SEO: Kata Kunci Uji | Klien Uji\n"
+             "Deskripsi meta: Kata Kunci Uji untuk kebutuhan rapat dan acara kantor di Blitar.\n"
+             "Slug: kata-kunci-uji\n")
+
+
+def uji_meta(base):
+    _, bulan = bikin_skenario(base)
+    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    art = bulan / "lulus - Humanized.txt"
+    art.write_text(artikel_lulus(), encoding="utf8")
+    meta = bulan / "lulus - Meta.txt"                       # nama dasar = nama artikel tanpa " - Humanized"
+
+    kode, out = jalankan(skrip, art)
+    cek("meta: tanpa berkas meta hanya WARN, bukan FAIL", kode == 0 and "berkas meta" in out, "exit=%d" % kode)
+
+    meta.write_text(META_BAIK, encoding="utf8")
+    kode, out = jalankan(skrip, art)
+    cek("meta: berkas meta benar lolos 0 FAIL", kode == 0 and "0 FAIL" in out, out[-120:].replace("\n", " | "))
+
+    kasus = {
+        "judul SEO tanpa keyword": (META_BAIK.replace("Judul SEO: Kata Kunci Uji", "Judul SEO: Judul Lain"), "judul SEO tidak memuat keyword"),
+        "deskripsi tanpa keyword": (META_BAIK.replace("Deskripsi meta: Kata Kunci Uji untuk", "Deskripsi meta: Layanan untuk"), "deskripsi meta tidak memuat keyword"),
+        "slug tanpa keyword": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: nama-lain"), "tidak memuat keyword"),
+        "slug berbeda dari anchor": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: kata-kunci-uji-lengkap"), "berbeda dari slug di anchor"),
+        "slug berhuruf besar": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: Kata-Kunci-Uji"), "bukan huruf kecil"),
+        "field kosong": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug:"), "field 'slug' kosong"),
+    }
+    for nama, (teks, pesan) in kasus.items():
+        meta.write_text(teks, encoding="utf8")
+        kode, out = jalankan(skrip, art)
+        cek("meta: %s ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
+
+    meta.write_text(META_BAIK.replace("Kata Kunci Uji | Klien Uji", "Kata Kunci Uji | Termurah"), encoding="utf8")
+    kode, out = jalankan(skrip, art)
+    cek("meta: klaim 'termurah' hanya WARN", kode == 0 and "superlatif 'termurah'" in out, "exit=%d" % kode)
+
+
+def uji_lintas(base):
+    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    awal = artikel_lulus()
+    # klien A: dua artikel; klien B: satu artikel. CLIENT.md hanya perlu ada untuk klien A.
+    klien_a, bulan_a = bikin_skenario(base)
+    (bulan_a / "satu - Humanized.txt").write_text(awal, encoding="utf8")
+    kode, out = jalankan(skrip, bulan_a / "satu - Humanized.txt")
+    cek("lintas: artikel tunggal tidak bentrok dengan dirinya", kode == 0 and "kanibalisasi" not in out and "disalin" not in out, "exit=%d" % kode)
+
+    # keyword sama di klien yang sama -> FAIL kanibalisasi
+    kedua = awal.replace("kata-kunci-uji", "kata-kunci-uji-dua")
+    (bulan_a / "dua - Humanized.txt").write_text(kedua, encoding="utf8")
+    kode, out = jalankan(skrip, bulan_a / "dua - Humanized.txt")
+    cek("lintas: keyword sama di klien sama ditolak (kanibalisasi)", kode == 1 and "kanibalisasi" in out, "exit=%d" % kode)
+
+    # kalimat identik di klien lain -> FAIL kalimat disalin, tetapi BUKAN kanibalisasi (beda situs)
+    klien_b = base / "Klien Lain"
+    bulan_b = klien_b / "artikel" / "2026 April"
+    bulan_b.mkdir(parents=True)
+    (klien_b / "CLIENT.md").write_text(
+        "| `{client_name}` | Klien Lain |\n| `{client_url}` | https://lain.example |\n"
+        "| `{client_wa_shortcode}` | `[wa id=\"9\"]` |\n| `{client_phone}` | +62 000 |\n"
+        "| `{client_email}` | a@b.example |\n", encoding="utf8")
+    salinan = awal.replace("klienuji.example", "lain.example").replace("Klien Uji", "Klien Lain")
+    (bulan_b / "tiga - Humanized.txt").write_text(salinan, encoding="utf8")
+    kode, out = jalankan(skrip, bulan_b / "tiga - Humanized.txt")
+    cek("lintas: kalimat disalin dari klien lain ditolak", kode == 1 and "kalimat disalin" in out, "exit=%d" % kode)
+    cek("lintas: keyword sama beda klien BUKAN kanibalisasi", "kanibalisasi" not in out)
+
+    # artikel yang benar-benar berbeda lolos
+    beda = awal
+    for i, k in enumerate(KALIMAT):
+        beda = beda.replace(k, "Kalimat pengganti nomor %d dengan susunan lain sama sekali agar tidak identik." % i)
+    beda = beda.replace("Kata Kunci Uji", "Topik Berbeda Sekali").replace("kata-kunci-uji", "topik-berbeda-sekali")
+    (bulan_b / "empat - Humanized.txt").write_text(beda, encoding="utf8")
+    (bulan_b / "tiga - Humanized.txt").unlink()
+    kode, out = jalankan(skrip, bulan_b / "empat - Humanized.txt", "--kw", "Topik Berbeda Sekali")
+    cek("lintas: artikel berbeda tidak ditandai salin/kanibalisasi", "disalin" not in out and "kanibalisasi" not in out, "exit=%d" % kode)
+
+    # folder berawalan _ (cetakan) diabaikan
+    tmpl = base / "_TEMPLATE" / "artikel" / "YYYY Bulan"
+    tmpl.mkdir(parents=True)
+    (tmpl / "cetakan - Humanized.txt").write_text(awal, encoding="utf8")
+    (bulan_a / "dua - Humanized.txt").unlink()
+    kode, out = jalankan(skrip, bulan_a / "satu - Humanized.txt")
+    cek("lintas: folder _TEMPLATE diabaikan", "_TEMPLATE" not in out, "exit=%d" % kode)
+
+
 class HalamanPalsu:
     def __init__(self, html_teks):
         self.html_teks = html_teks
@@ -221,6 +306,10 @@ def main():
         uji_status(base)
         uji_artikel(base)
         uji_artikel_lulus(base)
+    with tempfile.TemporaryDirectory(prefix="uji-dci-meta-") as d:
+        uji_meta(Path(d))
+    with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
+        uji_lintas(Path(d))
     uji_kbbi()
     print("-" * 60)
     if GAGAL_UJI:
