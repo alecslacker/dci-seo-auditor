@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Gerbang kualitas artikel AI Puffer: Rank Math + format WordPress + Anti-Typo Gate.
+"""DCI SEO Auditor - gerbang kualitas artikel: Rank Math + format WordPress + Anti-Typo Gate.
 
 Pakai (dari ROOT project):
-  python3 -I -X utf8 .zcode/cek-artikel.py "<Klien>/artikel/<YYYY Bulan>/<Slug> - Humanized.txt"
+  python3 -I -X utf8 .zcode/cek-artikel.py "klien/<Klien>/artikel/<YYYY Bulan>/<Slug> - Humanized.txt"
   Opsi:
     --kw "Fokus Keyword"   batalin deteksi otomatis (default: anchor permalink pertama)
     --kbbi                 cek kata yang belum ada di kamus ke KBBI Daring (online)
@@ -59,7 +59,7 @@ def simpan_kamus(kata_baru):
     ada = baca_kamus()
     gab = sorted(ada | {k.lower() for k in kata_baru})
     KAMUS.write_text(
-        "# Kamus kata sah artikel AI Puffer (huruf kecil, satu kata/frasa per baris).\n"
+        "# Kamus kata sah DCI SEO Auditor (huruf kecil, satu kata/frasa per baris).\n"
         "# Kata lolos KBBI Daring via --kbbi --simpan-kata. Kata bentuk tidak baku tidak disimpan.\n"
         + "\n".join(gab) + "\n", encoding="utf8")
 
@@ -116,6 +116,8 @@ def kbbi_cek(kata):
         t = ureq.urlopen(req, timeout=20).read().decode("utf8", "replace")
     except Exception as e:
         return "ERROR", str(e)[:80]
+    if "batas maksimum dalam sehari" in t:
+        return "KUOTA", "pencarian harian KBBI Daring habis"   # halaman kuota punya <h2> sendiri: jangan dibaca sebagai kata
     if "Entri tidak ditemukan" in t:
         return "TIDAK_ADA", ""
     h2 = re.search(r"(?is)<h2[^>]*>(.*?)</h2>", t)
@@ -124,7 +126,6 @@ def kbbi_cek(kata):
     lemma = re.sub(r"(?s)<[^>]+>", " ", h2.group(1))
     lemma = html.unescape(lemma).split("⇢")[0].strip()
     lemma = lemma.split("bentuk tidak baku")[0].strip()
-    m = re.search(r"bentuk tidak baku:\s*([a-zà-ÿ .]+)", lemma + " ", re.I)
     if "bentuk tidak baku" in lemma:
         baku = lemma.split("bentuk tidak baku")[0].strip().replace(".", "")
         return "NON_BAKU", baku
@@ -142,11 +143,13 @@ def cek_bahasa(teks, izin):
         bagian = kata.split("-")
         if kata not in kamus and not all(b in kamus for b in bagian):
             peringatan.append(kata)
+    # Tanpa peka kapital: kata di awal kalimat ("Silahkan ...") tetap tertangkap.
+    # Kata dari "Istilah dipertahankan"/nama klien/fokus keyword (izin) dikecualikan.
     for kata, baku in sorted(NON_BAKU.items()):
-        if re.search(r"\b" + kata + r"\b", teks):
+        if kata not in izin and re.search(r"\b" + kata + r"\b", teks, re.I):
             gagal.append("ejaan tidak baku: '%s' -> '%s'" % (kata, baku))
     for kata in sorted(KATA_ASING):
-        if re.search(r"\b" + kata + r"\b", teks):
+        if kata not in izin and re.search(r"\b" + kata + r"\b", teks, re.I):
             gagal.append("kata asing: '%s' (ganti padanan Indonesia baku)" % kata)
     for frasa in KLICHE:
         if frasa in teks.lower():
@@ -155,7 +158,12 @@ def cek_bahasa(teks, izin):
         gagal.append("em/en dash di posisi %d" % m.start())
     for m in re.finditer(r"[“”‘’]", teks):
         gagal.append("tanda kutip miring di posisi %d" % m.start())
-    for m in re.finditer(r"(?<![.!?>\n])\bAnda\b", teks):
+    for m in re.finditer(r"\bAnda\b", teks):
+        sebelum = teks[:m.start()]
+        isi = sebelum.rstrip()
+        jeda = sebelum[len(isi):]
+        if not isi or "\n" in jeda or isi[-1] in ".!?":
+            continue                                      # awal kalimat/paragraf: kapital sah
         gagal.append("'Anda' kapital di tengah kalimat: ...%s" % teks[max(0, m.start() - 25):m.start() + 8])
     for m in re.finditer(r"\b([a-zà-ÿ]{3,}) \1\b", teks):
         gagal.append("kata kembar: '%s %s'" % (m.group(1), m.group(1)))
@@ -245,6 +253,21 @@ def main():
     if not kw:
         m = re.search(r"<a href=\"[^\"]*\"><b><i>([^<]+)</i></b></a>", raw)
         kw = m.group(1).strip() if m else ""
+    if not kw and a.draft:
+        # Draft tanpa anchor permalink adalah temuan audit, bukan alasan berhenti (kontrak: exit 0).
+        teks = teks_tampak(raw)
+        g_bahasa, _, _ = cek_bahasa(teks, izin)
+        temuan = (["anchor permalink paragraf pertama tidak ada, fokus keyword tidak terdeteksi "
+                   "(analisis keyword dilewati; jalankan ulang dengan --kw)"]
+                  + g_bahasa + cek_angka(raw) + analisis_ritme(raw))
+        print("=" * 60)
+        print("AUDIT DRAFT : %s (tanpa keyword)" % p.name)
+        print("=" * 60)
+        for i, x in enumerate(temuan, 1):
+            print("TEMUAN %2d: %s" % (i, x))
+        print("-" * 60)
+        print("Total %d temuan: bahan Tahap 3 (humanize), bukan penghalang." % len(temuan))
+        sys.exit(0)
     if not kw:
         print("GAGAL: fokus keyword tidak terdeteksi (pakai --kw)")
         sys.exit(2)
@@ -353,6 +376,11 @@ def main():
         for n, w in enumerate(belum, 1):
             status, saran = kbbi_cek(w)
             time.sleep(0.25)
+            if status == "KUOTA":
+                peringatan.append("KBBI: kuota harian habis setelah %d dari %d kata; sisa kata belum dicek, "
+                                  "ulangi besok (hasil yang lolos tetap tersimpan)" % (n - 1, len(belum)))
+                print("  KUOTA     pencarian harian habis, lookup dihentikan")
+                break
             if status == "OK":
                 lolos.append(w)
                 print("  OK        %s" % w)
@@ -408,4 +436,5 @@ def main():
     sys.exit(1 if gagal else 0)
 
 
-main()
+if __name__ == "__main__":
+    main()
