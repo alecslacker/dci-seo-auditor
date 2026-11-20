@@ -1,4 +1,4 @@
-# AGENT.md — Content Ops AI Puffer (Artikel Berbasis Agent)
+# AGENT.md — DCI SEO Auditor (Agentic SEO Auditor by Duta Corpora Indonesia)
 
 > Author: Mas Wondho — Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
@@ -7,6 +7,8 @@
 > File ini bersifat STATIS: tidak menyimpan data klien maupun laporan kerja. Keduanya hidup di folder masing-masing klien.
 
 ## 1. Tujuan Project
+
+Tool ini dibuat untuk karyawan Duta Corpora Indonesia. Kata "operator" di dokumen ini berarti karyawan yang sedang menjalankan tool. Cara agent menyapa operator mengikuti `AGENTS.md` atau persona di komputer masing-masing, bukan file ini.
 
 Menghasilkan artikel SEO WordPress siap publish untuk klien yang menggunakan plugin **AI Puffer**. Alur lengkap: draft mentah dari AI model → audit terhadap rules → parafrase/humanize (goal: lolos AI detector, human score 90%+) → verifikasi RankMath 80–100 → crosscheck ZeroGPT → final.
 
@@ -24,20 +26,28 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── .zcode/cek-artikel.py         ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
 ├── .zcode/kamus-kata.txt         ← kamus kata sah hasil verifikasi KBBI
 ├── .zcode/uji-tools.py           ← uji otomatis kedua gerbang (jalankan setelah mengubah skrip)
-└── <Nama Klien>/
-    ├── CLIENT.md                 ← registry data klien tersebut (template di Section 3)
-    └── artikel/
-        └── <YYYY Month>/         ← contoh: "2026 November"
-            ├── <Slug>.txt        ← draft mentah dari AI model (arsip, jangan ditimpa)
-            ├── <Slug> - Humanized.txt ← hasil parafrase final siap paste ke WordPress
-            └── LAPORAN.md        ← laporan audit + crosscheck bulan itu (Section 7)
+└── klien/                        ← SEMUA data klien hidup di sini, tidak ada di ROOT
+    ├── _TEMPLATE/                ← cetakan klien baru (salin utuh, jangan dikerjakan langsung)
+    │   ├── CLIENT.md
+    │   └── artikel/YYYY Bulan/LAPORAN.md
+    └── <Nama Klien>/
+        ├── CLIENT.md             ← registry data klien tersebut (template di Section 3)
+        └── artikel/
+            └── <YYYY Month>/     ← contoh: "2026 November"
+                ├── <Slug>.txt        ← draft mentah dari AI model (arsip, jangan ditimpa)
+                ├── <Slug> - Humanized.txt ← hasil parafrase final siap paste ke WordPress
+                └── LAPORAN.md    ← laporan audit + crosscheck bulan itu (Section 7)
 ```
+
+Folder berawalan `_` (mis. `_TEMPLATE`) bukan klien: jangan pernah dikerjakan atau dicocokkan sebagai klien.
 
 ## 3. Client Registry (Format Generik)
 
 File ini **tidak menyimpan data klien manapun** — klien bisa banyak, jadi satu klien = satu folder = satu `CLIENT.md` di dalam folder itu. Semua placeholder `{client_*}` di Section 11 diisi dari `CLIENT.md` milik folder klien yang sedang dikerjakan.
 
-**Template `CLIENT.md` (salin ke folder klien baru, lalu isi):**
+**Klien baru:** salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` sesuai bulan kerja, lalu isi `CLIENT.md`. Isi template ada di bawah (sumber salinan: `klien/_TEMPLATE/CLIENT.md`).
+
+**Template `CLIENT.md`:**
 
 | Field Placeholder | Isi |
 |---|---|
@@ -66,7 +76,7 @@ AI model menghasilkan draft mentah sesuai Section 11. Simpan apa adanya sebagai 
 Penulis sering mengerjakan artikel bertahap: draft bisa belum selesai, atau diedit lagi setelah diaudit. Karena itu setiap draft melewati Gerbang Status di bawah sebelum disentuh.
 
 ### Gerbang Status — WAJIB sebelum Tahap 2
-Jalankan: `python3 -I .zcode/cek-status.py "<Klien>/artikel/<YYYY Bulan>"` (hanya membaca). Skrip membandingkan sidik jari isi draft dengan tabel ledger di `LAPORAN.md` (Section 7), lalu memberi satu status per draft:
+Jalankan: `python3 -I .zcode/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"` (hanya membaca). Skrip membandingkan sidik jari isi draft dengan tabel ledger di `LAPORAN.md` (Section 7), lalu memberi satu status per draft:
 
 | Status | Arti | Tindakan |
 |---|---|---|
@@ -151,7 +161,7 @@ Uji ke ZeroGPT (protokol di Section 6), isi kolom ZeroGPT di ledger (mis. `3,72%
 
 ## 6. Protokol Crosscheck — ZeroGPT (Tahap 5)
 
-ZeroGPT adalah **satu-satunya** gate detector eksternal. JustDone (AI Detector & Plagiarism) dihapus dari protokol pada 2026-11-20 atas keputusan Mas Ulum — hasilnya dikunci di balik akun berlangganan sehingga tidak bisa diaudit otomatis.
+ZeroGPT adalah **satu-satunya** gate detector eksternal. JustDone (AI Detector & Plagiarism) dihapus dari protokol pada 2026-11-20 atas keputusan pemilik project — hasilnya dikunci di balik akun berlangganan sehingga tidak bisa diaudit otomatis.
 
 | Tool | URL | Yang dicek | Target |
 |---|---|---|---|
@@ -166,7 +176,7 @@ Prosedur:
 
 ## 7. Laporan Per Klien (BUKAN di file ini)
 
-Setiap pekerjaan dilaporkan di `<Klien>/artikel/<YYYY Month>/LAPORAN.md`. AGENT.md tidak pernah diubah untuk mencatat hasil kerja.
+Setiap pekerjaan dilaporkan di `klien/<Klien>/artikel/<YYYY Month>/LAPORAN.md`. AGENT.md tidak pernah diubah untuk mencatat hasil kerja.
 
 `LAPORAN.md` berisi dua bagian. Bagian atas adalah **ledger**, tabel yang dibaca oleh `cek-status.py`. Bagian bawah adalah blok laporan per artikel.
 
@@ -220,9 +230,9 @@ Aturan pemakaian:
 Operator hanya menyebut **nama perusahaan** dan **nama bulan**. Pemakaian mode ini = izin eksekusi penuh (setara `SKIP PLAN`): kerjakan semua tahap tanpa checkpoint per file, lapor sekali di akhir.
 
 Langkah:
-1. **Cari folder klien**: cocokkan nama perusahaan dengan folder di ROOT (abaikan kapital/spasi). Tidak ada atau lebih dari satu kandidat → tanya operator, jangan menebak.
+1. **Cari folder klien**: cocokkan nama perusahaan dengan folder di `klien/` (abaikan kapital/spasi; folder berawalan `_` dilewati). Tidak ada atau lebih dari satu kandidat → tanya operator, jangan menebak.
 2. **Baca `CLIENT.md`** folder itu untuk mengisi semua `{client_*}`. Tidak ada atau ada field kosong → berhenti dan minta operator melengkapi (jangan mengarang data klien).
-3. **Cari folder bulan**: di `<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
+3. **Cari folder bulan**: di `klien/<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, dan `TANPA-CATATAN` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
 5. **Muat skill** sesuai Section 9, lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
@@ -289,7 +299,7 @@ for example the code used should be look like this,
 - Structure headings clearly for Rank Math TOC auto-generation.
 - Readability: short paragraphs (max 150 words, except the first paragraph), avg sentence ≤20-25 words, active voice preferred, frequent transition words ("selain itu,", "di sisi lain,", "menariknya,", "oleh sebab itu,", etc.), include at least 1 list (<ul> or <ol>).
 
-===== HUMAN-LIKE WRITING (MUST pass ZeroGPT, GPTZero, Originality.ai, Turnitin/Copyscape — human score 90%+) =====
+===== HUMAN-LIKE WRITING (MUST pass AI detectors such as ZeroGPT, human score 90%+) =====
 
 - Vary sentence length: short (5-8 words), medium (12-18), occasional long (20-30). NO uniform-length patterns.
 - Conversational tone: use "nah,", "jujur saja,", "sebenarnya,", "kalau menurut pengalaman,", "percaya atau tidak,". Address reader directly: "anda pasti pernah...", "coba bayangkan...", "mungkin anda bertanya-tanya...". Each of these openers max 1-2x per article so they do not become a pattern.

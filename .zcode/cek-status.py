@@ -1,6 +1,6 @@
 """Gerbang sebelum audit: klasifikasi tiap draft di folder bulan klien.
 
-Pakai: python3 -I .zcode/cek-status.py "<Klien>/artikel/<YYYY Bulan>"
+Pakai: python3 -I .zcode/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"
 Sumber status: tabel ledger di LAPORAN.md folder bulan (lihat AGENT.md Section 7).
 Hanya membaca, tidak pernah menulis.
 

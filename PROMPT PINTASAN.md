@@ -1,4 +1,4 @@
-# PINTASAN — Artikel AI Puffer
+# PINTASAN — DCI SEO Auditor
 
 > Author: Mas Wondho — Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
@@ -54,15 +54,15 @@ Aman dijalankan berulang kali. Gerbang Status membandingkan isi draft dengan led
 | `MENUNGGU` | Draft belum lengkap (belum berakhir dengan shortcode WA klien) | Dilewati |
 | `LANJUTKAN` | Pernah dikerjakan sebagian | Hanya tahap yang masih kosong |
 | `SELESAI` | Semua tahap sudah tercatat | Dilewati, tidak diaudit ulang |
-| `BERUBAH` | Penulis mengedit draft setelah diaudit | Berhenti dan bertanya ke Mas Ulum |
+| `BERUBAH` | Penulis mengedit draft setelah diaudit | Berhenti dan bertanya ke operator |
 | `TANPA-CATATAN` | Versi Humanized ada tetapi tidak tercatat di ledger | Dilewati dan dilaporkan |
 
 Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], alasannya: ...`.
 
 ## Syarat sebelum dipakai untuk klien baru
 
-- Folder klien ada di ROOT dan berisi `CLIENT.md` yang terisi lengkap (template di `AGENT.md` Section 3).
-- Draft mentah `.txt` ada di `<Klien>/artikel/<tahun bulan>/`.
+- Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3).
+- Draft mentah `.txt` ada di `klien/<Klien>/artikel/<tahun bulan>/`.
 - Browser dalam aplikasi ZCode bisa dibuka (untuk ZeroGPT). Bila gagal, agent menandai `MANUAL CHECK NEEDED`.
 
 ## Variasi opsional (tambahkan di akhir perintah)

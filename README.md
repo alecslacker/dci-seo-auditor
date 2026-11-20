@@ -1,87 +1,88 @@
-# Content Ops AI Puffer — Artikel SEO Multi-Klien via ZCode
+# DCI SEO Auditor: Agentic SEO Auditor by Duta Corpora Indonesia
 
-> Pipeline otomatis untuk mengubah draft artikel mentah hasil AI menjadi artikel WordPress yang lolos
-> Rank Math (80–100), lolos detektor AI, berbahasa Indonesia baku, dan tercatat rapi per klien.
-> Dibangun dan dijalankan dengan [ZCode](https://zcode.ai) — satu perintah, banyak perusahaan.
+DCI SEO Auditor mengubah draft artikel mentah dari plugin AI Puffer menjadi artikel WordPress yang siap tayang. Agent mengerjakan audit, penulisan ulang, dan pemeriksaan. Tiga skrip Python menjadi gerbang yang memutuskan lulus atau tidaknya, jadi hasilnya tidak bergantung pada penilaian agent sendiri.
+
+Tool ini dibuat untuk karyawan Duta Corpora Indonesia. Cara agent menyapa operator mengikuti `AGENTS.md` atau persona di komputer masing-masing.
+
+Target tiap artikel: skor Rank Math 80 sampai 100, bahasa Indonesia baku, lolos ZeroGPT, dan tercatat per klien.
 
 ```text
-draft mentah (AI Puffer) ──► AUDIT ──► HUMANIZE ──► GERBANG KUALITAS ──► ZeroGPT ──► LAPORAN
-                              ^                                    │
-                              └──── perbaiki hanya bagian FAIL ─────┘
+draft mentah ──► GERBANG STATUS ──► AUDIT ──► HUMANIZE ──► GERBANG KUALITAS ──► ZeroGPT ──► LAPORAN
+                                                                  │
+                                       perbaiki hanya bagian FAIL ◄┘
 ```
 
-## Fitur
+## Cara kerja
 
-- **Satu perintah untuk semua klien** — `/artikel <nama perusahaan> <bulan>` (command ZCode di `.zcode/commands/artikel.md`).
-- **Gerbang status** — draft yang sudah diaudit tidak pernah diaudit dua kali; penulis yang bekerja bertahap aman (status: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA-CATATAN`).
-- **Audit otomatis draft mentah** — daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas AI (ritme seragam, rule-of-three, marker percakapan berlebih).
-- **Gerbang kualitas final** — Rank Math (kata, paragraf pertama, keyword 31–34× bold, density 1–1,5%, heading), format WordPress (`<!--more-->`, `<p>&nbsp;</p>`, list, alt text, shortcode), dan Anti-Typo Gate; lulus = `0 FAIL`.
-- **Verifikasi bahasa ke KBBI Daring** — kata asing ditulis ulang ke padanan baku (nasi box → nasi kotak, snack box → kotak kudapan, dessert → pencuci mulut, dst); kamus tersimpan dan dipakai ulang antar klien.
-- **Satu sumber fakta SEO** — `FAKTA-SEO.md` berisi kutipan Google Search Central & Rank Math beserta tanggal resminya, bukan ingatan model.
-- **Laporan per klien per bulan** — ledger sidik jari + blok laporan di `LAPORAN.md`; `AGENT.md` tetap netral tanpa data klien.
+1. **Gerbang status.** `cek-status.py` membandingkan sidik jari isi draft dengan ledger di `LAPORAN.md`. Draft yang sudah diaudit tidak diaudit dua kali, dan draft yang masih ditulis penulis dilewati.
+2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI.
+3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan. Statistik, testimoni, dan nama tidak boleh dikarang.
+4. **Gerbang kualitas.** `cek-artikel.py` memeriksa kata, paragraf pertama, keyword, heading, format WordPress, dan ejaan. Artikel lulus bila hasilnya `0 FAIL`.
+5. **ZeroGPT dan laporan.** Hasil dipindai di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
+
+Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA-CATATAN`. Artinya ada di `AGENT.md` Section 4.
 
 ## Struktur
 
 ```text
 .
-├── AGENT.md                 # otak project: pipeline, checklist, protokol, mode pintasan
-├── FAKTA-SEO.md             # fakta Google/Rank Math bersumber + tanggal
-├── PROMPT PINTASAN.md       # panduan /artikel + prompt cadangan
+├── AGENT.md                 # aturan kerja: pipeline, checklist, protokol, template prompt
+├── FAKTA-SEO.md             # fakta Google dan Rank Math, lengkap sumber dan tanggal
+├── PROMPT PINTASAN.md       # panduan /artikel dan prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
-├── CLAUDE.md                # satu baris: @AGENT.md (impor untuk Claude Code)
+├── CLAUDE.md                # impor AGENT.md untuk Claude Code
 ├── .zcode/
 │   ├── commands/artikel.md  # command /artikel
-│   ├── cek-status.py        # gerbang status draft (anti audit dobel)
-│   ├── cek-artikel.py       # audit (--draft) & gerbang kualitas final
-│   ├── kamus-kata.txt       # kamus kata sah hasil verifikasi KBBI
-│   └── uji-tools.py         # uji otomatis 13 skenario kedua gerbang
-└── <Nama Klien>/
-    ├── CLIENT.md            # data klien (template di AGENT.md Section 3)
-    └── artikel/<YYYY Bulan>/
-        ├── <slug>.txt               # draft mentah (arsip, tidak ditimpa)
-        ├── <slug> - Humanized.txt   # hasil final siap paste ke WordPress
-        └── LAPORAN.md               # ledger + laporan audit & crosscheck
+│   ├── cek-status.py        # gerbang status draft
+│   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
+│   ├── kamus-kata.txt       # kamus kata hasil verifikasi KBBI
+│   └── uji-tools.py         # uji otomatis kedua gerbang
+└── klien/                   # semua data klien ada di sini
+    ├── _TEMPLATE/           # cetakan klien baru
+    └── <Nama Klien>/
+        ├── CLIENT.md        # data klien
+        └── artikel/<YYYY Bulan>/
+            ├── <slug>.txt              # draft mentah (arsip, tidak ditimpa)
+            ├── <slug> - Humanized.txt  # hasil akhir, siap tempel ke WordPress
+            └── LAPORAN.md              # ledger dan laporan bulan itu
 ```
+
+Folder berawalan `_` bukan klien dan tidak pernah diproses.
 
 ## Memulai
 
-Prasyarat: ZCode (atau agent lain yang membaca `AGENT.md`) + Python 3.8+ di PATH.
+Butuh ZCode (atau agent lain yang membaca `AGENT.md`) dan Python 3.8 ke atas. Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
 
-1. **Daftarkan klien**: buat folder `<Nama Klien>/`, salin template `CLIENT.md` dari `AGENT.md` Section 3, isi data (URL, kontak, shortcode WA, istilah brand yang dipertahankan).
-2. **Taruh draft**: `<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt` (hasil mentah plugin AI Puffer).
-3. **Jalankan** di ZCode dengan ROOT project sebagai workspace:
+1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`.
+2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.
+3. **Jalankan** di ZCode dengan root project sebagai workspace:
 
    ```text
    /artikel Salimah Catering November
    ```
 
    Tanpa command, pakai prompt cadangan: `@AGENT.md Kerjakan Salimah Catering bulan November.`
-
-4. **Ambil hasil**: `<judul> - Humanized.txt` siap ditempel ke editor WordPress; `LAPORAN.md` memuat metrik, skor ZeroGPT, dan catatan risiko.
+4. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko.
 
 ## Alat bawaan
 
 | Perintah | Fungsi |
 |---|---|
-| `python3 -I -X utf8 .zcode/cek-status.py "<klien>/artikel/<bulan>"` | Klasifikasi draft sebelum dikerjakan |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<draft>" --draft` | Audit draft mentah → daftar temuan |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>"` | Gerbang kualitas final (exit 1 bila ada FAIL) |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Verifikasi kata ke KBBI Daring + simpan kamus |
-| `python3 -I -X utf8 .zcode/uji-tools.py` | Uji otomatis kedua gerbang (jalankan setelah mengubah skrip) |
+| `python3 -I .zcode/cek-status.py "klien/<klien>/artikel/<bulan>"` | Klasifikasi draft sebelum dikerjakan |
+| `python3 -I -X utf8 .zcode/cek-artikel.py "<draft>" --draft` | Audit draft mentah, keluar daftar temuan |
+| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
+| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
+| `python3 -I -X utf8 .zcode/uji-tools.py` | Uji otomatis kedua gerbang. Jalankan setelah mengubah skrip |
 
-Catatan kuota: pencarian KBBI Daring tanpa akun dibatasi harian — jika lookup massal terhenti, lanjutkan di hari berikutnya; kamus tersimpan sehingga tidak mengulang dari nol.
+Pencarian KBBI Daring tanpa akun dibatasi harian. Bila pencarian massal terhenti, lanjutkan keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang.
 
-## Crosscheck ZeroGPT
+## ZeroGPT
 
-Versi final dipindai di <https://www.zerogpt.com/> (target: verdict *Human written*, AI < 10%).
-Batas gratis 15.000 karakter — payload prosa otomatis dibersihkan dari blok editor sebelum ditempel.
-Hasil direkam ke `LAPORAN.md` klien.
+Versi final dipindai di <https://www.zerogpt.com/>. Targetnya verdict *Human written* dengan AI di bawah 10%. Batas gratis 15.000 karakter, jadi blok editor dibuang dulu sebelum teks ditempel. Bila lebih panjang, teks dipecah di batas paragraf dan kedua angkanya dilaporkan. Plagiarisme belum punya alat cek otomatis.
 
-## Status
+## Contoh terverifikasi
 
-Contoh terverifikasi: artikel *Jasa Catering Instansi Blitar* (Salimah Catering) — 2.073 kata,
-keyword 31× (density 1,50%), gerbang `0 FAIL 0 WARN`, ZeroGPT **AI 3,7% (Human written)**.
-Rincian di `Salimah Catering/artikel/2026 November/LAPORAN.md`.
+Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyword 31 kali (density 1,50%), gerbang `0 FAIL 0 WARN`, ZeroGPT AI 3,7% (*Human written*). Rinciannya ada di `klien/Salimah Catering/artikel/2026 November/LAPORAN.md`.
 
 ---
 

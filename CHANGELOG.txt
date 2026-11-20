@@ -1,11 +1,109 @@
-CHANGELOG - Content Ops AI Puffer
-=================================
+CHANGELOG - DCI SEO Auditor
+===========================
 Author: Mas Wondho - Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 
 Isi file ini: perubahan pada SISTEM kerja project (AGENT.md, command, panduan).
-Bukan laporan artikel klien. Laporan artikel ada di <Klien>/artikel/<YYYY Bulan>/LAPORAN.md.
+Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY Bulan>/LAPORAN.md.
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
+
+
+[0.5.3] - 2026-11-20
+--------------------
+
+Diubah
+- Repo GitHub diganti nama dari ai-puffer-content-ops menjadi dci-seo-auditor (privat). Remote origin
+  lokal sudah menunjuk ke alamat baru, dan HEAD remote sama dengan HEAD lokal. Salinan repo di
+  komputer lain perlu: git remote set-url origin https://github.com/alecslacker/dci-seo-auditor
+  (alamat lama diarahkan otomatis oleh GitHub, tetapi sebaiknya diperbarui).
+
+
+[0.5.2] - 2026-11-20
+--------------------
+
+Diperbaiki
+- cek-artikel.py --kbbi: saat kuota harian KBBI Daring habis, halaman kuota (punya <h2> sendiri)
+  dibaca sebagai entri kata, sehingga SEMUA kata dilaporkan FAIL "tidak baku -> pencarian anda telah
+  mencapai batas maksimum" (terbukti di uji nyata). Kini status KUOTA: lookup berhenti, satu WARN
+  dengan jumlah kata yang sempat dicek, hasil lolos tetap bisa disimpan. Dibuktikan pada kuota nyata.
+- cek-artikel.py: daftar ejaan tidak baku dan kata asing peka huruf kapital, jadi "Silahkan hubungi
+  kami" di awal kalimat lolos (terbukti: Silahkan, Snack Box, Resiko, Capcay lolos). Kini tidak peka
+  kapital, dan kata di nama klien, "Istilah dipertahankan", serta fokus keyword dikecualikan.
+- cek-artikel.py: cabang mati (variabel m tak terpakai) dibuang. main() dibungkus __main__ agar
+  modul bisa diimpor untuk uji.
+
+Diubah
+- AGENT.md dan README: ditambah catatan bahwa tool untuk karyawan Duta Corpora Indonesia, dan sapaan
+  operator mengikuti AGENTS.md atau persona di komputer masing-masing. "Mas Ulum" diganti "operator" /
+  "pemilik project" di AGENT.md, PROMPT PINTASAN.md, dan LAPORAN Salimah.
+- AGENT.md Section 11: judul HUMAN-LIKE tidak lagi menyebut GPTZero, Originality, Turnitin, Copyscape
+  (tidak pernah dijalankan; Section 6 hanya memakai ZeroGPT). Isi aturan tidak diubah.
+- LAPORAN Salimah: metrik putaran 1 ditandai sudah diganti, angka final dicantumkan; penomoran
+  daftar keputusan dirapikan.
+
+Ditambahkan
+- uji-tools.py: artikel sintetis yang LULUS 0 FAIL, 5 uji mutasi (ejaan, kata asing, more-tag,
+  shortcode, bold keyword), dan 4 uji kbbi_cek dengan halaman palsu tanpa jaringan. Total 27 uji.
+  Pada kode lama 6 dari uji baru gagal, pada kode baru semua lulus.
+
+Belum teruji
+- Verifikasi KBBI massal penuh belum bisa dijalankan: kuota harian tanpa akun habis saat uji.
+- Plagiarisme tetap belum punya alat cek.
+- Daftar NON_BAKU/KATA_ASING hanya 17 dan 13 kata; kata lain mengandalkan kamus dan KBBI.
+
+
+[0.5.1] - 2026-11-20
+--------------------
+
+Diperbaiki
+- cek-artikel.py --draft: draft tanpa anchor permalink sebelumnya keluar dengan exit 2 dan pesan GAGAL,
+  melanggar kontrak "mode audit selalu exit 0". Kini dilaporkan sebagai TEMUAN, sisa audit (ejaan, angka,
+  ritme) tetap jalan, exit 0. Gerbang final tanpa keyword tetap exit 2.
+- cek-artikel.py: cek "Anda" kapital salah menandai kemunculan di awal kalimat yang didahului spasi atau
+  tag HTML (dibuktikan dengan uji: 4 dari 5 kemunculan sah ikut ditandai). Kini hanya kemunculan di
+  tengah kalimat yang ditandai.
+
+Ditambahkan
+- uji-tools.py: 5 uji regresi untuk dua perbaikan di atas (total 18 uji).
+
+Belum teruji
+- Perbaikan "Anda" diuji pada skenario sintetis dan artikel Salimah (15 "Anda" kapital, semua awal
+  kalimat, tetap 0 FAIL). Kalimat yang diawali kutipan atau tanda baca lain belum dicakup.
+
+
+[0.5.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- Folder klien/ sebagai induk semua data klien. klien/_TEMPLATE/ berisi CLIENT.md kosong dan
+  artikel/YYYY Bulan/LAPORAN.md kosong sebagai cetakan klien baru. Folder berawalan "_" bukan klien.
+
+Diubah
+- Salimah Catering dipindah dari ROOT ke klien/Salimah Catering/ (git mv, riwayat file terjaga).
+- README.md ditulis ulang: positioning Agentic SEO Auditor, alur 5 langkah, struktur baru.
+- Semua path "<Klien>/..." di AGENT.md, command /artikel, PROMPT PINTASAN.md, docstring skrip, dan
+  CHANGELOG menjadi "klien/<Klien>/...". Mode Pintasan melewati folder berawalan "_".
+
+Dihapus
+- "Contoh Perusahaan/" (berisi satu file kosong), digantikan klien/_TEMPLATE/.
+
+Belum teruji
+- /artikel belum dipanggil dari menu "/" dengan struktur baru. Skrip tidak diubah logikanya
+  (CLIENT.md dibaca relatif dari folder bulan), diuji lewat uji-tools.py dan gerbang artikel Salimah.
+
+
+[0.4.1] - 2026-11-20
+--------------------
+
+Diubah
+- Rebrand project: "Content Ops AI Puffer" menjadi "DCI SEO Auditor - Agentic SEO Auditor by Duta
+  Corpora Indonesia". Diganti pada judul README, AGENT.md, PROMPT PINTASAN.md, deskripsi command
+  /artikel, header skrip dan kamus, serta prefix folder uji.
+- Nama "AI Puffer" DIPERTAHANKAN di tempat ia merujuk plugin klien (template Section 11, sumber
+  draft, shortcode) dan pada entri riwayat di bawah.
+
+Belum teruji
+- Nama repo GitHub dan remote git masih ai-puffer-content-ops.
 
 
 [0.4.0] - 2026-11-20
