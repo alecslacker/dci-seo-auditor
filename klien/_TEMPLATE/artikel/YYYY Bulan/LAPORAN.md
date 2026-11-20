@@ -3,7 +3,7 @@
 > Format mengikuti `AGENT.md` Section 7. Ganti nama folder `YYYY Bulan` menjadi bulan kerja, mis. `2026 November`.
 > Laporan klien ini hanya ditulis di sini, bukan di AGENT.md.
 
-## Ledger (dibaca oleh `.zcode/cek-status.py`, jangan ubah urutan kolom)
+## Ledger (dibaca oleh `alat/cek-status.py`, jangan ubah urutan kolom)
 
 | Draft | Hash | Audit | Humanize | ZeroGPT |
 |---|---|---|---|---|

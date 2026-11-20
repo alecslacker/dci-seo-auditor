@@ -23,11 +23,12 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── FAKTA-SEO.md                  ← fakta Google/Rank Math bersumber + tanggal (wajib rujuk)
 ├── AGENTS.md                     ← penunjuk pendek ke berkas ini, dimuat agent otomatis (jaga tetap pendek)
 ├── aturan/kerja-tanpa-skill.md   ← aturan kerja mandiri, tanpa skill apa pun (Section 9)
-├── .trae/commands/artikel.md     ← command /artikel untuk TRAE (Section 10)
-├── .zcode/cek-status.py          ← gerbang status: klasifikasi draft sebelum audit (Section 4)
-├── .zcode/cek-artikel.py         ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
-├── .zcode/kamus-kata.txt         ← kamus kata sah hasil verifikasi KBBI
-├── .zcode/uji-tools.py           ← uji otomatis kedua gerbang (jalankan setelah mengubah skrip)
+├── perintah/artikel.md           ← sumber NETRAL command /artikel, tanpa format khusus agent (Section 10)
+├── alat/pasang-perintah.py       ← memasang /artikel ke TRAE, ZCode, atau Claude Code di komputer ini
+├── alat/cek-status.py            ← gerbang status: klasifikasi draft sebelum audit (Section 4)
+├── alat/cek-artikel.py           ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
+├── alat/kamus-kata.txt           ← kamus kata sah hasil verifikasi KBBI
+├── alat/uji-tools.py             ← uji otomatis semua skrip (jalankan setelah mengubah skrip)
 └── klien/                        ← SEMUA data klien hidup di sini, tidak ada di ROOT
     ├── _TEMPLATE/                ← cetakan klien baru (salin utuh, jangan dikerjakan langsung)
     │   ├── CLIENT.md
@@ -42,6 +43,8 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ```
 
 Folder berawalan `_` (mis. `_TEMPLATE`) bukan klien: jangan pernah dikerjakan atau dicocokkan sebagai klien.
+
+Folder milik agent (`.trae/`, `.zcode/`, `.claude/`, `.agents/`, dan sejenisnya) ada di `.gitignore` dan tidak ikut repo. Semua yang dibutuhkan pipeline ada di `alat/`, `aturan/`, `perintah/`, dan `klien/`. Jangan menaruh skrip atau aturan di folder agent.
 
 ## 3. Client Registry (Format Generik)
 
@@ -78,7 +81,7 @@ AI model menghasilkan draft mentah sesuai Section 11. Simpan apa adanya sebagai 
 Penulis sering mengerjakan artikel bertahap: draft bisa belum selesai, atau diedit lagi setelah diaudit. Karena itu setiap draft melewati Gerbang Status di bawah sebelum disentuh.
 
 ### Gerbang Status — WAJIB sebelum Tahap 2
-Jalankan: `python3 -I .zcode/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"` (hanya membaca). Skrip membandingkan sidik jari isi draft dengan tabel ledger di `LAPORAN.md` (Section 7), lalu memberi satu status per draft:
+Jalankan: `python3 -I alat/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"` (hanya membaca). Skrip membandingkan sidik jari isi draft dengan tabel ledger di `LAPORAN.md` (Section 7), lalu memberi satu status per draft:
 
 | Status | Arti | Tindakan |
 |---|---|---|
@@ -99,7 +102,7 @@ Aturan gerbang:
 4. Status `BARU` bergantung pada shortcode WA di `CLIENT.md`. Draft yang memang lengkap tetapi tidak berakhir dengan shortcode akan terbaca `MENUNGGU`: itu kesalahan arah yang aman (menahan), dan operator bisa memintanya diproses.
 
 ### Tahap 2 — Audit (checklist terhadap draft mentah)
-Jalankan: `python3 -I -X utf8 .zcode/cek-artikel.py "<draft mentah>" --draft`
+Jalankan: `python3 -I -X utf8 alat/cek-artikel.py "<draft mentah>" --draft`
 Output = daftar TEMUAN bernomor (kompomen wajib, ejaan, kata asing, pola khas AI: ritme paragraf seragam,
 variasi kalimat, marker percakapan berlebih, rule-of-three, angka tanpa label, kata di luar kamus).
 Daftar itu = bahan kerja Tahap 3. Mode audit selalu exit 0 (laporan, bukan penghalang).
@@ -125,7 +128,7 @@ Selesai humanize: isi kolom Humanize di ledger dengan tanggal.
 
 ### Tahap 4 — Verifikasi SEO (Rank Math 80–100)
 Tulis dulu berkas pendamping `<artikel> - Meta.txt` (judul SEO, deskripsi meta, slug; format di `aturan/kerja-tanpa-skill.md` bagian 5).
-Jalankan gerbang kualitas: `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel Humanized>"`.
+Jalankan gerbang kualitas: `python3 -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"`.
 Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, heading, format WordPress
 (more-tag, nbsp, list, alt, shortcode, kontak), judul SEO/deskripsi meta/slug, kanibalisasi dan kalimat
 yang disalin dari artikel lain di `klien/`, Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
@@ -163,7 +166,7 @@ Uji ke ZeroGPT (protokol di Section 6), isi kolom ZeroGPT di ledger (mis. `3,72%
 ### 5c. WordPress + PUEBI + Bahasa Baku
 - [ ] Format H2/H3, nbsp, more-tag, shortcode sesuai Section 11.
 - [ ] EYD: "silakan", kapital hari/bulan, "di" pisah sebagai kata depan.
-- [ ] Semua kata prosa lolos kamus `.zcode/kamus-kata.txt` (KBBI); kata asing ditulis ulang sesuai Tahap 3.
+- [ ] Semua kata prosa lolos kamus `alat/kamus-kata.txt` (KBBI); kata asing ditulis ulang sesuai Tahap 3.
 - [ ] Format kode aman WordPress: paragraf dipisah baris kosong (wpautop membungkus `<p>`), baris tunggal
   dalam blok kontak menjadi `<br />` (dilakukan WordPress), tanpa komentar blok Gutenberg `<!-- wp:… -->`
   agar wpautop tidak dimatikan (lihat FAKTA-SEO.md bagian WordPress).
@@ -247,10 +250,10 @@ Langkah:
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
 5. **Baca `aturan/kerja-tanpa-skill.md`** (skill di Section 9 hanya bila tersedia), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
-7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` (pertama kali untuk klien baru). Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
+7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --kbbi --simpan-kata` (pertama kali untuk klien baru). Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).
 
-Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]` (file `.trae/commands/artikel.md`). Panduan dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
+Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]`, atau prompt biasa untuk agent apa pun. Sumber command ada di `perintah/artikel.md` dan dipasang per komputer dengan `alat/pasang-perintah.py` (TRAE, ZCode, Claude Code). Panduan lengkap, penjelasan isi perintah, dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
 
 ## 11. Template Prompt AI Puffer (aturan konten, GLOBAL)
 

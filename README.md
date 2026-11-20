@@ -55,16 +55,17 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 ├── FAKTA-SEO.md             # fakta Google dan Rank Math, lengkap sumber dan tanggal
 ├── aturan/
 │   └── kerja-tanpa-skill.md # aturan kerja mandiri, tanpa skill apa pun
-├── PROMPT PINTASAN.md       # panduan /artikel dan prompt cadangan
+├── PROMPT PINTASAN.md       # panduan /artikel, isi perintah, cara memasang, prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
 ├── CLAUDE.md                # impor AGENTS.md untuk Claude Code
-├── .trae/
-│   └── commands/artikel.md  # command /artikel untuk TRAE
-├── .zcode/
+├── perintah/
+│   └── artikel.md           # sumber netral command /artikel (tanpa format khusus agent)
+├── alat/
 │   ├── cek-status.py        # gerbang status draft
 │   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
+│   ├── pasang-perintah.py   # memasang /artikel ke TRAE, ZCode, atau Claude Code
 │   ├── kamus-kata.txt       # kamus kata hasil verifikasi KBBI
-│   └── uji-tools.py         # uji otomatis kedua gerbang
+│   └── uji-tools.py         # uji otomatis semua skrip
 └── klien/                   # semua data klien ada di sini
     ├── _TEMPLATE/           # cetakan klien baru
     └── <Nama Klien>/
@@ -76,7 +77,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
             └── LAPORAN.md              # ledger dan laporan bulan itu
 ```
 
-Folder berawalan `_` bukan klien dan tidak pernah diproses. Nama folder `.zcode/` berasal dari platform lama. Isinya skrip biasa yang jalan di agent mana pun.
+Folder berawalan `_` bukan klien dan tidak pernah diproses. Folder milik agent (`.trae/`, `.zcode/`, `.claude/`, `.agents/`, dan sejenisnya) ada di `.gitignore` dan tidak ikut repo. Semua yang dibutuhkan pipeline ada di `alat/`, `aturan/`, `perintah/`, dan `klien/`, sehingga bekerja di agent mana pun.
 
 ## Memulai
 
@@ -84,20 +85,22 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 
 1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`. Isian bawaan template yang belum diganti ditolak skrip.
 2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.
-3. **Jalankan** dengan root project sebagai workspace.
-   - TRAE: ketik `/artikel Salimah Catering November`. Pastikan opsi *Include AGENTS.md in the context* aktif di Settings > Rules & Memories.
-   - Agent lain: `Baca AGENT.md, lalu kerjakan Salimah Catering bulan November sesuai Section 10.`
-4. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko. Isi `- Meta.txt` dimasukkan ke kolom judul SEO, deskripsi meta, dan permalink di Rank Math.
+3. **Pasang perintah** (sekali per komputer, hanya bila ingin memakai `/artikel`): `python -I -X utf8 alat/pasang-perintah.py trae` (atau `zcode`, `claude`, `semua`). Berkas command tidak ikut repo karena tiap agent punya format sendiri. Rinciannya di `PROMPT PINTASAN.md`.
+4. **Jalankan** dengan root project sebagai workspace.
+   - Dengan command: `/artikel Salimah Catering November`. Untuk TRAE, pastikan opsi *Include AGENTS.md in the context* aktif di Settings > Rules & Memories.
+   - Agent mana pun, tanpa command: `Baca AGENT.md, lalu kerjakan Salimah Catering bulan November sesuai Section 10.`
+5. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko. Isi `- Meta.txt` dimasukkan ke kolom judul SEO, deskripsi meta, dan permalink di Rank Math.
 
 ## Alat bawaan
 
 | Perintah | Fungsi |
 |---|---|
-| `python3 -I .zcode/cek-status.py "klien/<klien>/artikel/<bulan>"` | Klasifikasi draft sebelum dikerjakan |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<draft>" --draft` | Audit draft mentah, keluar daftar temuan |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
-| `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
-| `python3 -I -X utf8 .zcode/uji-tools.py` | Uji otomatis kedua gerbang (49 uji). Jalankan setelah mengubah skrip |
+| `python3 -I alat/cek-status.py "klien/<klien>/artikel/<bulan>"` | Klasifikasi draft sebelum dikerjakan |
+| `python3 -I -X utf8 alat/cek-artikel.py "<draft>" --draft` | Audit draft mentah, keluar daftar temuan |
+| `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
+| `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
+| `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (71 uji). Jalankan setelah mengubah skrip |
 
 Pencarian KBBI Daring tanpa akun dibatasi harian. Bila kuota habis, skrip berhenti dengan satu peringatan, kata yang sudah lolos tetap tersimpan, dan sisanya diulang keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang. Jangan membuat banyak akun untuk menembus batas ini: KBBI Daring mengenali pola pencarian beruntun dan bisa memasukkannya ke daftar hitam. Untuk pemakaian rutin, ajukan izin ke `adminkbbi@kemdikbud.go.id`.
 

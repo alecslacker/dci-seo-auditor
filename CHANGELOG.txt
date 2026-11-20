@@ -8,6 +8,48 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.8.0] - 2026-11-20
+--------------------
+
+Perubahan struktur: folder agent keluar dari repo, perintah /artikel menjadi global.
+
+Dipindah
+- .zcode/cek-status.py, cek-artikel.py, uji-tools.py, kamus-kata.txt menjadi alat/ (git mv, riwayat
+  terjaga). Semua rujukan path di skrip, uji, AGENT.md, AGENTS.md, README, PROMPT PINTASAN, dan
+  LAPORAN klien diperbarui. Folder .zcode/ dihapus dari repo.
+
+Ditambahkan
+- perintah/artikel.md: sumber NETRAL perintah /artikel, tanpa kepala (frontmatter) khusus agent.
+  Memuat dua penanda, {{ARGUMEN}} dan {{PYTHON}}, yang diganti saat pemasangan.
+- alat/pasang-perintah.py: membuat salinan perintah dengan format tiap agent. Didukung: TRAE
+  (Name/Description, folder .trae/commands), ZCode (.zcode/commands), Claude Code (.claude/commands,
+  argumen $ARGUMENTS). Opsi: --daftar, --global, --cek. Tidak menyentuh command lain di folder itu.
+  Format diambil dari dokumentasi tiap agent (tautan ada di keluaran --daftar).
+- uji-tools.py: 22 uji baru untuk perintah dan pemasang, total 71.
+- PROMPT PINTASAN.md ditulis ulang: dua cara memanggil (command dan prompt biasa), penjelasan tiap
+  bagian isi perintah, cara memasang per agent, dan pemecahan masalah bila perintah tidak muncul.
+
+Diubah
+- .gitignore: .trae/, .zcode/, .claude/, .agents/, .codex/, .cursor/, .gemini/, .opencode/ diabaikan.
+  Sebelumnya hanya .trae/commands/ yang dibagikan. .trae/commands/artikel.md dilepas dari index
+  (git rm --cached); berkas di disk tetap ada dan dipasang ulang oleh pemasang.
+- AGENT.md, AGENTS.md, README: struktur folder, cara memanggil, dan Section 10 disesuaikan. AGENTS.md
+  kini menyebut perintah yang agent-netral.
+
+Terverifikasi
+- Simulasi karyawan baru: tree yang akan di-commit disalin ke folder bersih tanpa folder agent,
+  pemasang dijalankan, lalu uji (71 lulus), cek-status, dan gerbang Salimah berjalan normal.
+
+Belum teruji
+- /artikel belum dipanggil dari menu ZCode atau Claude Code. Format diambil dari dokumentasi dan dari
+  command nyata di komputer ini (Claude Code dan ZCode memakai kepala description/argument-hint,
+  TRAE memakai Name/Description), bukan dari uji langsung.
+- Codex menghapus custom prompts (Maret 2026) dan memakai skills. Codex, Cursor, Gemini, dan agent
+  lain tidak didukung pemasang; mereka memakai prompt biasa. Agent baru bisa ditambah dengan satu
+  entri di AGEN pada pasang-perintah.py.
+- Pemasang --global menulis ke folder rumah. Belum diuji pada komputer selain ini.
+
+
 [0.7.1] - 2026-11-20
 --------------------
 

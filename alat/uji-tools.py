@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Uji otomatis kedua gerbang (cek-status.py dan cek-artikel.py).
 
-Pakai: python3 -I -X utf8 .zcode/uji-tools.py
+Pakai: python3 -I -X utf8 alat/uji-tools.py
 Semua skenario dibuat di folder sementara; tidak menyentuh data klien.
 
 Author: Mas Wondho - Duta Corpora Indonesia (DCI)
@@ -54,7 +54,7 @@ def uji_status(base):
     (bulan / "lanjut.txt").write_text("sebagian\n[wa id=\"9\"]\n", encoding="utf8")
     (bulan / "menunggu.txt").write_text("belum selesai\n", encoding="utf8")
     # hash diambil dari output skrip supaya sama cara hitungnya
-    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("status: skrip jalan", kode == 0, out[:80])
     h = {nama: hh for hh, nama in re.findall(r"\t([0-9a-f]{16})\t[^\t]*\t(\S+\.txt)", out)}
     (bulan / "LAPORAN.md").write_text(
@@ -62,12 +62,12 @@ def uji_status(base):
         "| selesai.txt | %s | 2026-03-01 | 2026-03-01 | 3%% AI |\n"
         "| lanjut.txt | %s | 2026-03-01 | - | - |\n"
         % (h.get("selesai.txt", "0" * 16), h.get("lanjut.txt", "0" * 16)), encoding="utf8")
-    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("status: SELESAI terdeteksi", "SELESAI" in out and "selesai.txt" in out)
     cek("status: LANJUTKAN menunjukkan tahap kosong", re.search(r"LANJUTKAN\s+\S+\ttahap_kosong=humanize,zerogpt\tlanjut.txt", out) is not None)
     cek("status: MENUNGGU untuk draft tanpa shortcode", re.search(r"MENUNGGU\t\S+\ttahap_kosong=-\tmenunggu.txt", out) is not None)
     (klien / "CLIENT.md").unlink()
-    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("status: tanpa CLIENT.md -> gagal jelas", kode != 0 and "CLIENT.md" in out)
 
 
@@ -84,7 +84,7 @@ def uji_artikel(base):
     _, bulan = bikin_skenario(base)
     mini = bulan / "mini.txt"
     mini.write_text(MINI, encoding="utf8")
-    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    skrip = ROOT / "alat" / "cek-artikel.py"
     kode, out = jalankan(skrip, mini, "--kw", "Kata Kunci Uji")
     cek("artikel: gerbang menolak draft cacat (exit 1)", kode == 1)
     cek("artikel: FAIL jumlah kata", re.search(r"FAIL.*jumlah kata \d+ < 2000", out) is not None)
@@ -162,7 +162,7 @@ def artikel_lulus():
 
 def uji_artikel_lulus(base):
     _, bulan = bikin_skenario(base)
-    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    skrip = ROOT / "alat" / "cek-artikel.py"
     lulus = bulan / "lulus.txt"
     lulus.write_text(artikel_lulus(), encoding="utf8")
     kode, out = jalankan(skrip, lulus)
@@ -192,7 +192,7 @@ META_BAIK = ("Judul SEO: Kata Kunci Uji | Klien Uji\n"
 
 def uji_meta(base):
     _, bulan = bikin_skenario(base)
-    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    skrip = ROOT / "alat" / "cek-artikel.py"
     art = bulan / "lulus - Humanized.txt"
     art.write_text(artikel_lulus(), encoding="utf8")
     meta = bulan / "lulus - Meta.txt"                       # nama dasar = nama artikel tanpa " - Humanized"
@@ -223,7 +223,7 @@ def uji_meta(base):
 
 
 def uji_lintas(base):
-    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    skrip = ROOT / "alat" / "cek-artikel.py"
     awal = artikel_lulus()
     # klien A: dua artikel; klien B: satu artikel. CLIENT.md hanya perlu ada untuk klien A.
     klien_a, bulan_a = bikin_skenario(base)
@@ -277,18 +277,72 @@ def uji_template_belum_diisi(base):
     shutil.copytree(templat, klien)
     bulan = klien / "artikel" / "YYYY Bulan"
     (bulan / "draft.txt").write_text("isi\n[whatsapp_button id=\"1\"]\n", encoding="utf8")
-    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("template: cek-status menolak CLIENT.md bawaan dengan pesan jelas", kode != 0 and "isian bawaan template" in out and "Traceback" not in out, "exit=%d" % kode)
     art = bulan / "a - Humanized.txt"
     art.write_text('<p><a href="https://x.example/artikel/k"><b><i>Kata</i></b></a> - isi.</p>\n', encoding="utf8")
-    kode, out = jalankan(ROOT / ".zcode" / "cek-artikel.py", art, "--kw", "Kata")
+    kode, out = jalankan(ROOT / "alat" / "cek-artikel.py", art, "--kw", "Kata")
     cek("template: cek-artikel menolak CLIENT.md bawaan (exit 2), bukan FAIL menyesatkan", kode == 2 and "isian bawaan template" in out and "tidak muncul di artikel" not in out, "exit=%d" % kode)
+
+
+def uji_pasang_perintah(base):
+    """Pemasang perintah: format per agent benar, placeholder terganti, tidak menyentuh berkas lain."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pasang_uji", ROOT / "alat" / "pasang-perintah.py")
+    modul = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modul)
+
+    sumber = (ROOT / "perintah" / "artikel.md").read_text(encoding="utf8")
+    cek("perintah: sumber netral tidak memuat kepala (---) khusus agent", not sumber.lstrip().startswith("---"))
+    cek("perintah: sumber memuat penanda yang akan diganti", "{{ARGUMEN}}" in sumber and "{{PYTHON}}" in sumber)
+    cek("perintah: sumber tidak merujuk folder agent (.trae/.zcode/.claude)", not re.search(r"\.(trae|zcode|claude)/", sumber))
+    cek("perintah: sumber merujuk alat/ yang ada", "alat/cek-artikel.py" in sumber and (ROOT / "alat" / "cek-artikel.py").is_file())
+
+    for nama, info in modul.AGEN.items():
+        isi = modul.bangun(info)
+        cek("perintah[%s]: tidak ada penanda tersisa" % nama, "{{" not in isi)
+        kepala = isi.split("---")[1]
+        if info["kepala"] == "trae":
+            cek("perintah[trae]: kepala memakai Name dan Description", "Name: artikel" in kepala and "Description:" in kepala)
+        else:
+            cek("perintah[%s]: kepala memakai description dan argument-hint" % nama,
+                "description:" in kepala and "argument-hint:" in kepala)
+        cek("perintah[%s]: argumen disisipkan sesuai agent" % nama, info["argumen"] in isi)
+
+    # Pasang ke folder sementara: salinan root palsu supaya repo asli tidak disentuh.
+    akar = base / "root"
+    (akar / "perintah").mkdir(parents=True)
+    (akar / "alat").mkdir()
+    shutil.copy(ROOT / "perintah" / "artikel.md", akar / "perintah" / "artikel.md")
+    shutil.copy(ROOT / "alat" / "pasang-perintah.py", akar / "alat" / "pasang-perintah.py")
+    asing = akar / ".claude" / "commands" / "milik-orang.md"
+    asing.parent.mkdir(parents=True)
+    asing.write_text("jangan disentuh", encoding="utf8")
+    skrip = akar / "alat" / "pasang-perintah.py"
+    kode, out = jalankan(skrip, "semua")
+    cek("pasang: semua agent terpasang (exit 0)", kode == 0 and out.count("terpasang:") == 3, "exit=%d" % kode)
+    cek("pasang: file perintah ada di tiap folder agent",
+        all((akar / d / "commands" / "artikel.md").is_file() for d in (".trae", ".zcode", ".claude")))
+    cek("pasang: command milik orang lain tidak disentuh", asing.read_text(encoding="utf8") == "jangan disentuh")
+    cek("pasang: akhir baris LF", b"\r" not in (akar / ".trae" / "commands" / "artikel.md").read_bytes())
+    kode, out = jalankan(skrip, "semua", "--cek")
+    cek("pasang: --cek melaporkan sudah terbaru", kode == 0 and out.count("sudah terpasang dan terbaru") == 3, out[:100].replace("\n", " | "))
+    (akar / ".zcode" / "commands" / "artikel.md").write_text("usang", encoding="utf8")
+    kode, out = jalankan(skrip, "zcode", "--cek")
+    cek("pasang: --cek mendeteksi salinan usang tanpa menulis", "berbeda" in out and (akar / ".zcode" / "commands" / "artikel.md").read_text(encoding="utf8") == "usang")
+    kode, out = jalankan(skrip, "gemini")
+    cek("pasang: agent tidak dikenal ditolak (exit 2)", kode == 2 and "tidak dikenal" in out, "exit=%d" % kode)
+    kode, out = jalankan(skrip)
+    cek("pasang: tanpa argumen menampilkan daftar (exit 2)", kode == 2 and "Agent yang didukung" in out, "exit=%d" % kode)
+    (akar / "perintah" / "artikel.md").unlink()
+    kode, out = jalankan(skrip, "trae")
+    cek("pasang: sumber hilang -> pesan jelas (exit 2)", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
 
 
 def uji_masukan_buruk(base):
     """Masukan yang salah harus menghasilkan pesan manusiawi dengan kode 2, bukan traceback."""
     _, bulan = bikin_skenario(base)
-    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    skrip = ROOT / "alat" / "cek-artikel.py"
     kode, out = jalankan(skrip, bulan / "tidak-ada.txt")
     cek("masukan: berkas tidak ada -> pesan jelas, exit 2", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
     rusak = bulan / "latin1.txt"
@@ -299,7 +353,7 @@ def uji_masukan_buruk(base):
     kosong.write_text("", encoding="utf8")
     kode, out = jalankan(skrip, kosong, "--draft")
     cek("masukan: draft kosong tetap exit 0 (audit bukan penghalang)", kode == 0 and "Traceback" not in out, "exit=%d" % kode)
-    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("masukan: cek-status tidak crash, draft kosong = MENUNGGU", kode == 0 and "MENUNGGU" in out and "Traceback" not in out, "exit=%d" % kode)
     cek("masukan: cek-status melaporkan berkas bukan UTF-8 sebagai RUSAK, draft lain tetap terbaca",
         re.search(r"RUSAK\t-\ttahap_kosong=-\tlatin1\.txt", out) is not None and "kosong.txt" in out, out[:120].replace("\n", " | "))
@@ -316,7 +370,7 @@ class HalamanPalsu:
 def uji_kbbi():
     """kbbi_cek diuji dengan halaman palsu (tanpa jaringan)."""
     import importlib.util
-    spec = importlib.util.spec_from_file_location("cek_artikel_uji", ROOT / ".zcode" / "cek-artikel.py")
+    spec = importlib.util.spec_from_file_location("cek_artikel_uji", ROOT / "alat" / "cek-artikel.py")
     modul = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modul)
     asli = modul.ureq.urlopen
@@ -342,6 +396,8 @@ def main():
         uji_status(base)
         uji_artikel(base)
         uji_artikel_lulus(base)
+    with tempfile.TemporaryDirectory(prefix="uji-dci-pasang-") as d:
+        uji_pasang_perintah(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-templat-") as d:
         uji_template_belum_diisi(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-masukan-") as d:

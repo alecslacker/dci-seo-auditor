@@ -3,7 +3,7 @@
 """DCI SEO Auditor - gerbang kualitas artikel: Rank Math + format WordPress + Anti-Typo Gate.
 
 Pakai (dari ROOT project):
-  python3 -I -X utf8 .zcode/cek-artikel.py "klien/<Klien>/artikel/<YYYY Bulan>/<Slug> - Humanized.txt"
+  python3 -I -X utf8 alat/cek-artikel.py "klien/<Klien>/artikel/<YYYY Bulan>/<Slug> - Humanized.txt"
   Opsi:
     --kw "Fokus Keyword"   batalin deteksi otomatis (default: anchor permalink pertama)
     --kbbi                 cek kata yang belum ada di kamus ke KBBI Daring (online)
@@ -22,7 +22,7 @@ from urllib import parse as uparse
 from urllib import request as ureq
 
 ROOT = Path(__file__).resolve().parent.parent
-KAMUS = ROOT / ".zcode" / "kamus-kata.txt"
+KAMUS = ROOT / "alat" / "kamus-kata.txt"
 UA = {"User-Agent": "Mozilla/5.0"}
 VOID = {"br", "img", "hr", "meta", "link", "input", "source"}
 RE_KATA = re.compile(r"[a-zà-ÿ]+(?:-[a-zà-ÿ]+)*")

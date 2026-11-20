@@ -9,6 +9,13 @@ __pycache__/
 *.pyc
 *.tmp
 
-# Catatan lokal jangan ikut repo. Hanya command project yang dibagikan ke karyawan.
-.trae/*
-!.trae/commands/
+# Folder agent: dibuat per komputer oleh alat/pasang-perintah.py dan oleh agent itu sendiri.
+# Sumber perintah /artikel ada di perintah/artikel.md (ikut repo).
+.trae/
+.zcode/
+.claude/
+.agents/
+.codex/
+.cursor/
+.gemini/
+.opencode/

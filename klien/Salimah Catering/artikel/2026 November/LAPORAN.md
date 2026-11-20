@@ -2,7 +2,7 @@
 
 > Format mengikuti `AGENT.md` Section 7. Laporan klien ini hanya ditulis di sini, bukan di AGENT.md.
 
-## Ledger (dibaca oleh `.zcode/cek-status.py`, jangan ubah urutan kolom)
+## Ledger (dibaca oleh `alat/cek-status.py`, jangan ubah urutan kolom)
 
 | Draft | Hash | Audit | Humanize | ZeroGPT |
 |---|---|---|---|---|
@@ -48,7 +48,7 @@ Riset langsung ke dokumen resmi (detail dan tanggalnya ada di `FAKTA-SEO.md`). P
   Google tidak menetapkan angka).
 
 Hasil pemeriksaan:
-- Gerbang `.zcode/cek-artikel.py`: 0 FAIL, 0 WARN (2.073 kata; P1 202 kata; keyword 31×; h2 berkeyword 3;
+- Gerbang `alat/cek-artikel.py`: 0 FAIL, 0 WARN (2.073 kata; P1 202 kata; keyword 31×; h2 berkeyword 3;
   format WordPress lolos uji render `wpautop` asli — more-tag, nbsp, gambar, blok kontak, shortcode utuh).
 - ZeroGPT versi final: **"Your Text is Human written", AI 3,7%** (14.764 karakter prosa).
 
