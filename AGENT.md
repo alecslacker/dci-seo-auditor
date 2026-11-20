@@ -31,7 +31,8 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── alat/cek-artikel.py           ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
 ├── alat/kamus-id.txt             ← kata dasar bahasa Indonesia (hunspell-id, LGPL-3.0; lisensi di kamus-id.LICENSE.txt)
 ├── alat/kamus-kata.txt           ← tambahan manual: nama, istilah, kata hasil tinjauan
-├── skills/                       ← skill milik DCI yang ikut repo (dci-seo-auditor, research-guide); dipasang oleh alat/pasang-perintah.py
+├── skills/                       ← dci-seo-auditor dan research-guide (dipasang alat/pasang-perintah.py)
+├── skills/pustaka/               ← 13 skill SEO/audit MIT + INDEKS.md (peta tahap → skill), dibaca lewat jalur
 ├── alat/uji-tools.py             ← uji otomatis semua skrip (jalankan setelah mengubah skrip)
 └── klien/                        ← SEMUA data klien hidup di sini, tidak ada di ROOT
     ├── _TEMPLATE/                ← cetakan klien baru (salin utuh, jangan dikerjakan langsung)
@@ -223,26 +224,19 @@ Aturan ledger: kolom Hash wajib 16 karakter hex agar baris terbaca. Jangan mengu
 - Angka harga hanya "kisaran"/"tergantung"; tanpa statistik/testimoni/nama/penghargaan fiktif.
 - Klaim butuh verifikasi live (harga kompetitor, fakta kota) → tandai eksplisit, jangan mengarang sumber.
 
-## 9. Aturan Mandiri dan Skill Opsional
+## 9. Aturan Mandiri dan Pustaka Skill
 
-Pipeline ini TIDAK membutuhkan skill apa pun. Semua aturan yang dipakai ada di repo: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi). Baca berkas itu sebelum Tahap 3.
+Pipeline ini TIDAK membutuhkan skill terpasang di komputer. Semua yang dipakai ada di repo:
+- Aturan inti: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, kanibalisasi). Baca berkas itu sebelum Tahap 3.
+- Pustaka skill SEO dan audit: `skills/pustaka/` (13 skill MIT, rincian dan lisensi di `skills/pustaka/INDEKS.md`). Skill dipanggil dengan **membaca berkasnya lewat jalur**, bukan lewat fitur skill agent, jadi sama untuk TRAE, ZCode, Claude Code, Codex, dan agent lain.
 
-Skill di tabel bawah hanya pelengkap bagi agent yang kebetulan memilikinya. Bila skill tidak ada, abaikan tabel ini dan ikuti `aturan/kerja-tanpa-skill.md`. Jangan mencoba mengunduh skill. Pemetaan bila tersedia:
-
-| Tahap | Skill | Peran |
-|---|---|---|
-| 2 — Audit | `blog-seo-check` | Kerangka validasi on-page (title, meta, heading, link, alt text, URL) — checklist-nya diadaptasi ke rules RankMath AI Puffer di Section 5, bukan dipakai mentah |
-| 2–3 — Audit & Rewrite | `blog-rewrite` | Metodologi rewrite: preserve voice penulis, larang statistik fiktif, audit read-only sebelum menulis, verifikasi setelah menulis |
-| 3 — Humanize | `antislop-copywriting` (wajib, muat bersama core `antislop` bila tersedia) | Filter anti-deteksi inti: 0 em dash, tanpa rule-of-three paksa, tanpa negative parallelism ("bukan hanya X tetapi Y"), tanpa rangkaian fragmen staccato, tanpa fake-candid opener dan buzzword kosong; PERTAHANKAN "signs of human writing" (variasi panjang kalimat, detail spesifik, asides, tension) |
-| 1 — Draft baru | `blog-write`, `blog-outline` | Hanya bila artikel ditulis dari nol (bukan parafrase draft yang sudah ada) |
-| 4 — Verifikasi SEO | `blog-seo-check` (jalankan ulang) | Cek pasca-tulis: struktur heading, link dedup, alt text — dipetakan ke checklist Section 5a |
-| 5 — Sebelum klaim selesai | `verification-before-completion` | Verifikasi dengan bukti terukur (word count, keyword density, hasil detector) — bukan perasaan |
+Cara memanggil: buka `skills/pustaka/INDEKS.md`, cari tahap yang sedang dikerjakan di tabel "Peta: tahap pipeline → skill", lalu baca berkas skill yang disebut (hanya bagian yang tertulis). Contoh: Tahap 3 membaca `skills/pustaka/antislop-copywriting/SKILL.md`; Tahap 4 membaca `skills/pustaka/blog-factcheck/SKILL.md` Step 2–5.
 
 Aturan pemakaian:
-1. Skill di atas adalah **filter**, bukan pengganti Section 11 — bila rules AI Puffer (Section 11) bertentangan dengan preferensi generik skill, **Section 11 menang** (contoh: marker percakapan "jujur saja," memang diwajibkan Section 11; antislop hanya membatasi frekuensinya maks 1–2×).
-2. Skill via Skill tool bila tersedia. Bila environment tidak punya skill-nya, ikuti `aturan/kerja-tanpa-skill.md`. Hasil kerja harus sama lolos gerbang `0 FAIL` dengan atau tanpa skill.
-3. Skill tambahan yang valid bila relevan: `blog-factcheck` (sebelum publish), `blog-seo-check` ulang setelah revisi detector, `copy-editing` (bila ada permintaan REVISION).
-
+1. Skill adalah **filter**, bukan pengganti. Urutan menang: Section 11 → `aturan/kerja-tanpa-skill.md` → skill. Contoh: marker percakapan "jujur saja," diwajibkan Section 11, antislop hanya membatasi frekuensinya maks 1–2×.
+2. Aturan adaptasi di `INDEKS.md` (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar, rujukan yang tidak ada dilewati) mengalahkan isi skill.
+3. Hasil kerja harus lolos gerbang `0 FAIL` dengan atau tanpa skill. Skor atau checklist di skill bukan gerbang.
+4. Jangan mengunduh skill. Bila agent juga punya skill terpasang dengan nama sama, pakai versi di repo agar hasil seragam antar karyawan.
 ## 10. Mode Pintasan (input: nama perusahaan + nama bulan)
 
 Operator hanya menyebut **nama perusahaan** dan **nama bulan**. Pemakaian mode ini = izin eksekusi penuh (setara `SKIP PLAN`): kerjakan semua tahap tanpa checkpoint per file, lapor sekali di akhir.
@@ -252,7 +246,7 @@ Langkah:
 2. **Baca `CLIENT.md`** folder itu untuk mengisi semua `{client_*}`. Tidak ada atau ada field kosong → berhenti dan minta operator melengkapi (jangan mengarang data klien).
 3. **Cari folder bulan**: di `klien/<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
-5. **Baca `aturan/kerja-tanpa-skill.md`** (skill di Section 9 hanya bila tersedia), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
+5. **Baca `aturan/kerja-tanpa-skill.md`** dan `skills/pustaka/INDEKS.md` (Section 9), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).

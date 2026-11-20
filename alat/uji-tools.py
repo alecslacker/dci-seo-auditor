@@ -340,7 +340,7 @@ def uji_pasang_perintah(base):
     cek("pasang: sumber hilang -> pesan jelas (exit 2)", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
 
     # Skill ikut repo: harus lengkap (SKILL.md dengan name sama nama folder) dan ikut terpasang.
-    daftar = sorted(p for p in (ROOT / "skills").iterdir() if p.is_dir())
+    daftar = sorted(p for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file())   # pustaka dibaca lewat jalur, tidak dipasang
     cek("skill: ada skill di repo", len(daftar) >= 1)
     for p in daftar:
         kepala = (p / "SKILL.md").read_text(encoding="utf8").split("---")[1]
@@ -355,6 +355,35 @@ def uji_pasang_perintah(base):
     cek("skill: terpasang ke .claude/skills", kode == 0 and all((akar2 / ".claude" / "skills" / p.name / "SKILL.md").is_file() for p in daftar), "exit=%d" % kode)
     kode, out = jalankan(akar2 / "alat" / "pasang-perintah.py", "claude", "--cek")
     cek("skill: --cek melaporkan terbaru", kode == 0 and "terbaru" in out and "belum" not in out, out[:100].replace("\n", " | "))
+
+
+def uji_pustaka():
+    """skills/pustaka: lengkap, berlisensi, rujukan INDEKS valid, tanpa skrip/kredensial, terhubung ke AGENT.md."""
+    pus = ROOT / "skills" / "pustaka"
+    indeks = (pus / "INDEKS.md").read_text(encoding="utf8")
+    skill = sorted(p for p in pus.iterdir() if p.is_dir() and p.name != "LISENSI")
+    cek("pustaka: ada 13 skill", len(skill) == 13, "jumlah=%d" % len(skill))
+    for p in skill:
+        sm = p / "SKILL.md"
+        kepala = sm.read_text(encoding="utf8").split("---")[1] if sm.is_file() else ""
+        cek("pustaka[%s]: SKILL.md ada dan name sama dengan folder" % p.name,
+            re.search(r"(?m)^name:\s*%s\s*$" % re.escape(p.name), kepala) is not None)
+        cek("pustaka[%s]: disebut di INDEKS" % p.name, "`%s`" % p.name in indeks)
+    for lic in ("claude-blog", "marketingskills", "anti-slop"):
+        f = pus / "LISENSI" / (lic + ".MIT.txt")
+        cek("pustaka: lisensi %s ada (MIT + Copyright)" % lic,
+            f.is_file() and "MIT License" in f.read_text(encoding="utf8") and "Copyright" in f.read_text(encoding="utf8"))
+    ada = [p for p in pus.rglob("*") if p.is_file()]
+    cek("pustaka: tanpa skrip .py (tidak ada yang bisa dijalankan tanpa sengaja)", not [p for p in ada if p.suffix == ".py"])
+    cek("pustaka: tanpa folder evals", not [p for p in ada if "evals" in p.parts])
+    cek("pustaka: tanpa jalur pribadi atau kunci API",
+        not [p for p in ada if p.suffix == ".md" and re.search(r"C:\\Users\\|AIza[0-9A-Za-z_-]{20,}|sk-[A-Za-z0-9]{20,}", p.read_text(encoding="utf8"))])
+    # Tiap `blog/references/...` yang disebut INDEKS harus ada di disk.
+    putus = [m for m in re.findall(r"`(blog/references/[A-Za-z0-9_.-]+)`", indeks) if not (pus / m).is_file()]
+    cek("pustaka: berkas rujukan di INDEKS ada", not putus, ", ".join(putus))
+    agent = (ROOT / "AGENT.md").read_text(encoding="utf8")
+    cek("pustaka: AGENT.md menunjuk INDEKS", "skills/pustaka/INDEKS.md" in agent)
+    cek("pustaka: skill penunjuk menyebut INDEKS", "skills/pustaka/INDEKS.md" in (ROOT / "skills" / "dci-seo-auditor" / "SKILL.md").read_text(encoding="utf8"))
 
 
 def jalan_menu(root, *masukan):
@@ -505,6 +534,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
         uji_lintas(Path(d))
     uji_kamus()
+    uji_pustaka()
     print("-" * 60)
     if GAGAL_UJI:
         print("UJI GAGAL: %s" % ", ".join(GAGAL_UJI))

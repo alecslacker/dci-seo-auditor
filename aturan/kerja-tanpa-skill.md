@@ -3,7 +3,7 @@
 > Author: Mas Wondho — Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
-Berkas ini berdiri sendiri. Karyawan tidak perlu memasang skill apa pun, dan agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Codex, dan lainnya) bisa memakainya. Skill yang ada di komputer pemilik project bersifat opsional (lihat bagian 8). Bila ada pertentangan, urutan menangnya: `AGENT.md` Section 11, lalu berkas ini, lalu skill apa pun.
+Berkas ini berdiri sendiri. Karyawan tidak perlu memasang skill apa pun, dan agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Codex, dan lainnya) bisa memakainya. Pustaka skill SEO dan audit ikut repo di skills/pustaka/ (lihat bagian 8). Bila ada pertentangan, urutan menangnya: `AGENT.md` Section 11, lalu berkas ini, lalu skill apa pun.
 
 ## 1. Metode menulis ulang (Tahap 3)
 
@@ -82,14 +82,8 @@ Cara memperbaiki bukan mengganti sinonim, melainkan mengubah sudut pandang: siap
 4. Gerbang kualitas sampai `0 FAIL`, lalu ZeroGPT.
 5. Catat ledger dan laporan. Sebelum menyatakan selesai, ikuti bagian 4.
 
-## 8. Skill opsional
+## 8. Pustaka skill di repo
 
-Skill milik DCI ada di folder `skills/` repo ini (`dci-seo-auditor`, `research-guide`) dan dipasang ke agent oleh `alat/pasang-perintah.py`. Skill pihak ketiga di bawah ini tidak disalin ke repo: sebagian bergantung pada folder lain, sebagian lisensinya belum terverifikasi. Bila agent memilikinya, boleh dipakai sebagai pelengkap. Tidak ada yang wajib.
+Skill SEO dan audit pihak ketiga (semuanya MIT) sudah disalin ke `skills/pustaka/`, lengkap dengan teks lisensi dan peta tahap → skill di `skills/pustaka/INDEKS.md`. Skill dibaca lewat jalur berkas, tanpa memasang apa pun. Aturan adaptasi di INDEKS (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar) mengalahkan isi skill. Skill milik DCI (`dci-seo-auditor`, `research-guide`) ada di `skills/` dan dipasang ke agent oleh `alat/pasang-perintah.py`.
 
-| Skill | Gunanya | Catatan lisensi |
-|---|---|---|
-| `blog-seo-check` | Validasi on-page tambahan | MIT (tercantum di berkas skill). Bergantung pada folder `blog` di sebelahnya, tidak bisa berdiri sendiri |
-| `blog-rewrite` | Metode menulis ulang | MIT (tercantum). Sama, bergantung pada folder `blog` |
-| `blog-factcheck` | Memeriksa sumber yang dikutip | MIT (tercantum) |
-| `antislop-copywriting` | Katalog pola tulisan mesin yang lebih lengkap | Bagian dari antislop, MIT menurut halaman repo `miqdadbadjuber/anti-slop` (dicek 2026-11-20) |
-| `verification-before-completion` | Disiplin bukti sebelum klaim selesai | Asal pastinya belum terverifikasi. Plugin `superpowers` memuat skill bernama sama dengan lisensi MIT, tetapi salinan lokal berbeda isinya |
+Yang sengaja tidak disalin: `verification-before-completion` (asal belum terverifikasi; disiplin yang sama sudah ada di bagian 4 berkas ini), `blog-google` dan skrip `.py` milik skill blog (butuh kredensial Google atau layanan berbayar), serta skill lain yang tidak berhubungan dengan artikel SEO.

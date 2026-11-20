@@ -8,6 +8,35 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.11.0] - 2026-11-21
+---------------------
+
+Pustaka skill SEO dan audit ikut repo, jadi karyawan tanpa skill terpasang tetap bisa memakainya.
+
+Ditambahkan
+- skills/pustaka/: 13 skill MIT (blog, blog-seo-check, blog-rewrite, blog-factcheck, blog-geo,
+  blog-cannibalization dari claude-blog; seo-audit, ai-seo, schema, copywriting, copy-editing dari
+  marketingskills; antislop, antislop-copywriting dari anti-slop). Teks lisensi di skills/pustaka/LISENSI/.
+- skills/pustaka/INDEKS.md: peta tahap pipeline -> skill, bagian yang dibaca, dan delapan aturan adaptasi
+  (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar, rujukan yang tidak ada dilewati, dan seterusnya).
+- uji_pustaka: 13 skill lengkap, lisensi ada, tanpa skrip .py/evals/jalur pribadi, rujukan INDEKS valid,
+  AGENT.md dan skill penunjuk menunjuk INDEKS. Total 144 uji.
+
+Diubah
+- AGENT.md Section 9 ditulis ulang: skill dipanggil dengan membaca berkas lewat jalur, bukan lewat fitur skill agent.
+- aturan/kerja-tanpa-skill.md bagian 8, AGENTS.md, README.md, skill dci-seo-auditor menyesuaikan.
+
+Sengaja tidak disalin
+- verification-before-completion (asal belum terverifikasi), blog-google (butuh kredensial Google),
+  skrip .py/templates/agents/data milik skill blog, blog-analyze/audit/write/outline/brief, blog-schema,
+  programmatic-seo, site-architecture, content-strategy, antislop-ui/human/layoutmobile/code (bukan tulisan artikel).
+
+Belum teruji
+- Belum pernah dibandingkan hasil kerja dengan dan tanpa pustaka ini pada draft nyata.
+- Kepatuhan agent pada aturan adaptasi INDEKS tergantung kemampuan agent masing-masing.
+- Skill blog-* ditulis untuk Claude Code: sebagian isinya (plan mode, skrip, templates) tidak berlaku di sini
+  dan hanya dilewati lewat aturan di INDEKS, bukan dihapus.
+
 [0.10.0] - 2026-11-21
 ---------------------
 

@@ -63,6 +63,10 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 | `1` | Ada FAIL: perbaiki bagian yang gagal |
 | `2` | Masukan tidak bisa diperiksa: berkas tidak ada, bukan UTF-8, keyword tidak terdeteksi, atau `CLIENT.md` belum diisi |
 
+## Skill SEO dan audit di dalam repo
+
+Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog, marketingskills, anti-slop; semuanya MIT) ada di `skills/pustaka/`. Agent membacanya lewat jalur berkas, jadi sama di TRAE, ZCode, Claude Code, Codex, dan agent lain. `skills/pustaka/INDEKS.md` memetakan tiap tahap pipeline ke skill yang harus dibaca, ditambah aturan adaptasi (misalnya tanpa plan mode dan tanpa alat berbayar) yang mengalahkan isi skill. Gerbang kelulusan tetap `alat/cek-artikel.py` dengan 0 FAIL.
+
 ## Struktur
 
 ```text
@@ -71,13 +75,17 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 ├── AGENT.md                 # aturan kerja: pipeline, checklist, protokol, template prompt
 ├── FAKTA-SEO.md             # fakta Google dan Rank Math, lengkap sumber dan tanggal
 ├── aturan/
-│   └── kerja-tanpa-skill.md # aturan kerja mandiri, tanpa skill apa pun
+│   └── kerja-tanpa-skill.md # aturan kerja mandiri, tidak butuh skill terpasang
 ├── PROMPT PINTASAN.md       # panduan /artikel, isi perintah, cara memasang, prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
 ├── CLAUDE.md                # impor AGENTS.md untuk Claude Code
 ├── MULAI.bat                # klik dua kali: membuka menu berbahasa Indonesia (Windows)
 ├── perintah/
 │   └── artikel.md           # sumber netral command /artikel (tanpa format khusus agent)
+├── skills/
+│   ├── dci-seo-auditor/     # skill penunjuk ke aturan repo (dipasang pasang-perintah.py)
+│   ├── research-guide/      # protokol riset milik DCI (dipasang pasang-perintah.py)
+│   └── pustaka/             # 13 skill SEO dan audit (MIT) + INDEKS.md + LISENSI/, dibaca lewat jalur
 ├── alat/
 │   ├── menu.py              # menu interaktif yang dibuka MULAI.bat
 │   ├── cek-status.py        # gerbang status draft
@@ -121,7 +129,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (108 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (144 uji). Jalankan setelah mengubah skrip |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 

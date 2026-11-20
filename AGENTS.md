@@ -12,11 +12,13 @@ Bila tugasnya mengerjakan, mengaudit, atau memeriksa artikel klien (`klien/<Nama
 1. `AGENT.md`: pipeline, checklist, aturan konten (Section 11), dan mode pintasan `/artikel` (Section 10).
 2. `aturan/kerja-tanpa-skill.md`: metode menulis ulang, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi.
 
+Skill SEO dan audit sudah ada di repo: `skills/pustaka/INDEKS.md` memetakan tahap pipeline ke skill, dibaca lewat jalur berkas tanpa memasang apa pun. Aturan adaptasi di INDEKS mengalahkan isi skill.
+
 Untuk tugas lain di repo ini (misalnya mengubah skrip di `alat/`), berkas di atas tidak perlu dibaca. Setelah mengubah skrip, jalankan `python -I -X utf8 alat/uji-tools.py`.
 
 ## Hal yang tidak boleh ditawar
 
-- Skill tidak wajib. Jangan mengunduh skill, dan jangan berhenti bila skill tidak ada.
+- Skill tidak wajib terpasang. Jangan mengunduh skill, dan jangan berhenti bila agent tidak punya fitur skill: pustaka di repo cukup dibaca sebagai berkas.
 - Jangan menyatakan artikel lulus sebelum `python -I -X utf8 alat/cek-artikel.py "<artikel>"` (atau `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` di macOS/Linux) dijalankan pada berkas terbaru dan menunjukkan `0 FAIL`. Di macOS atau Linux pakai `python3`.
 - Jangan mengarang statistik, testimoni, nama, harga, atau fakta kota. Tidak ada sumber, tidak ditulis.
 - Draft asli tidak ditimpa. Hasil akhir disimpan sebagai `<nama> - Humanized.txt`.
