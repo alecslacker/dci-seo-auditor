@@ -6,28 +6,23 @@ Pakai (dari ROOT project):
   python3 -I -X utf8 alat/cek-artikel.py "klien/<Klien>/artikel/<YYYY Bulan>/<Slug> - Humanized.txt"
   Opsi:
     --kw "Fokus Keyword"   batalin deteksi otomatis (default: anchor permalink pertama)
-    --kbbi                 cek kata yang belum ada di kamus ke KBBI Daring (online)
-    --simpan-kata          bersama --kbbi: simpan kata lolos KBBI ke kamus-kata.txt
+    --draft                mode audit draft mentah (temuan sebagai bahan humanize, exit selalu 0)
 
 Author: Mas Wondho - Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import argparse
-import html
 import re
 import sys
-import time
 from pathlib import Path
-from urllib import parse as uparse
-from urllib import request as ureq
 
 ROOT = Path(__file__).resolve().parent.parent
-KAMUS = ROOT / "alat" / "kamus-kata.txt"
-UA = {"User-Agent": "Mozilla/5.0"}
+KAMUS = ROOT / "alat" / "kamus-kata.txt"      # tambahan manual: nama, istilah, kata hasil tinjauan
+KAMUS_ID = ROOT / "alat" / "kamus-id.txt"      # kata dasar (hunspell-id, LGPL-3.0, lihat kamus-id.LICENSE.txt)
 VOID = {"br", "img", "hr", "meta", "link", "input", "source"}
 RE_KATA = re.compile(r"[a-zà-ÿ]+(?:-[a-zà-ÿ]+)*")
 
-# Ejaan tidak baku (semua sudah dicek KBBI; entri KBBI mengarah ke bentuk baku)
+# Ejaan tidak baku (bentuk baku mengikuti KBBI/PUEBI)
 NON_BAKU = {
     "silahkan": "silakan", "resiko": "risiko", "merubah": "mengubah",
     "aktifitas": "aktivitas", "analisa": "analisis", "apotik": "apotek",
@@ -36,7 +31,7 @@ NON_BAKU = {
     "capcay": "capcai", "nasehat": "nasihat", "praktek": "praktik",
     "propinsi": "provinsi", "jaman": "zaman", "sambel": "sambal",
 }
-# Kata asing umum yang memang tidak ada di KBBI (contoh terverifikasi 2026-11-20)
+# Kata asing umum yang tidak baku dalam bahasa Indonesia
 KATA_ASING = {"snack", "box", "coffee", "break", "dessert", "price", "cheap",
               "booking", "package", "service", "quality", "best", "order"}
 KLICHE = ["di era modern ini", "dalam dunia yang semakin berkembang",
@@ -48,21 +43,41 @@ MARKER_PERCAKAPAN = ["nah,", "jujur saja", "sebenarnya,", "kalau menurut pengala
                      "anda pasti pernah"]
 
 
-def baca_kamus():
-    if not KAMUS.exists():
+def _baca_daftar(jalur):
+    if not jalur.exists():
         return set()
-    return {b.strip().lower() for b in KAMUS.read_text(encoding="utf8").splitlines()
+    return {b.strip().lower() for b in jalur.read_text(encoding="utf8").splitlines()
             if b.strip() and not b.startswith("#")}
 
 
-def simpan_kamus(kata_baru):
-    ada = baca_kamus()
-    gab = sorted(ada | {k.lower() for k in kata_baru})
-    KAMUS.write_text(
-        "# Kamus kata sah DCI SEO Auditor (huruf kecil, satu kata/frasa per baris).\n"
-        "# Kata lolos KBBI Daring via --kbbi --simpan-kata. Kata bentuk tidak baku tidak disimpan.\n"
-        + "\n".join(gab) + "\n", encoding="utf8")
+def baca_kamus():
+    return _baca_daftar(KAMUS) | _baca_daftar(KAMUS_ID)
 
+
+# Pengupas imbuhan sederhana: kata berimbuhan dianggap dikenal bila akarnya ada di kamus.
+# Sengaja longgar (hasilnya hanya WARN); tujuannya menangkap salah ketik, bukan memvonis ejaan.
+SUFIKS = ("kan", "nya", "lah", "kah", "pun", "an", "i", "ku", "mu")
+PREFIKS = (("meng", ("", "k")), ("meny", ("s",)), ("men", ("", "t")), ("mem", ("", "p")), ("me", ("",)),
+           ("peng", ("", "k")), ("peny", ("s",)), ("pen", ("", "t")), ("pem", ("", "p")), ("pe", ("",)),
+           ("ber", ("",)), ("be", ("",)), ("ter", ("",)), ("te", ("",)), ("per", ("",)), ("pel", ("",)),
+           ("di", ("",)), ("ke", ("",)), ("se", ("",)), ("ku", ("",)), ("kau", ("",)))
+
+
+def kata_dikenal(kata, kamus_, kedalaman=0):
+    if kata in kamus_:
+        return True
+    if kedalaman > 3:
+        return False
+    for suf in SUFIKS:
+        akar = kata[:-len(suf)]
+        if kata.endswith(suf) and len(akar) >= 3 and kata_dikenal(akar, kamus_, kedalaman + 1):
+            return True
+    for pre, ganti in PREFIKS:
+        if kata.startswith(pre):
+            sisa = kata[len(pre):]
+            if len(sisa) >= 3 and any(kata_dikenal(g + sisa, kamus_, kedalaman + 1) for g in ganti):
+                return True
+    return False
 
 def baca_client(folder_bulan):
     client = folder_bulan.parent.parent / "CLIENT.md"
@@ -109,39 +124,12 @@ def tag_seimbang(raw):
     return masalah
 
 
-def kbbi_cek(kata):
-    url = "https://kbbi.kemendikdasmen.go.id/entri/" + uparse.quote(kata)
-    try:
-        req = ureq.Request(url, headers=UA)
-        t = ureq.urlopen(req, timeout=20).read().decode("utf8", "replace")
-    except Exception as e:
-        return "ERROR", str(e)[:80]
-    if "batas maksimum dalam sehari" in t:
-        return "KUOTA", "pencarian harian KBBI Daring habis"   # halaman kuota punya <h2> sendiri: jangan dibaca sebagai kata
-    if "Entri tidak ditemukan" in t:
-        return "TIDAK_ADA", ""
-    h2 = re.search(r"(?is)<h2[^>]*>(.*?)</h2>", t)
-    if not h2:
-        return "ERROR", "halaman tidak dikenali"
-    lemma = re.sub(r"(?s)<[^>]+>", " ", h2.group(1))
-    lemma = html.unescape(lemma).split("⇢")[0].strip()
-    lemma = lemma.split("bentuk tidak baku")[0].strip()
-    if "bentuk tidak baku" in lemma:
-        baku = lemma.split("bentuk tidak baku")[0].strip().replace(".", "")
-        return "NON_BAKU", baku
-    lemma_bersih = lemma.replace(".", "").replace("/", "").strip().lower()
-    if lemma_bersih and lemma_bersih != kata and not lemma_bersih.startswith(kata):
-        return "NON_BAKU", lemma_bersih
-    return "OK", ""
-
-
 def cek_bahasa(teks, izin):
     gagal, peringatan, unik = [], [], sorted({w.lower() for w in RE_KATA.findall(teks.lower())})
     for kata in unik:
         if kata in izin:
             continue
-        bagian = kata.split("-")
-        if kata not in kamus and not all(b in kamus for b in bagian):
+        if not all(kata_dikenal(b, kamus) for b in kata.split("-")):
             peringatan.append(kata)
     # Tanpa peka kapital: kata di awal kalimat ("Silahkan ...") tetap tertangkap.
     # Kata dari "Istilah dipertahankan"/nama klien/fokus keyword (izin) dikecualikan.
@@ -338,8 +326,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("artikel")
     ap.add_argument("--kw", default=None)
-    ap.add_argument("--kbbi", action="store_true")
-    ap.add_argument("--simpan-kata", action="store_true")
     ap.add_argument("--draft", action="store_true",
                     help="mode audit draft mentah: keluarkan temuan sebagai bahan humanize (exit selalu 0)")
     a = ap.parse_args()
@@ -497,37 +483,6 @@ def main():
     gagal += cek_angka(raw)
     peringatan += w_bahasa
 
-    # --- KBBI opsional ---
-    if a.kbbi:
-        belum = [w for w in unik if w not in kamus
-                 and not all(b in kamus for b in w.split("-"))]
-        print("KBBI: %d kata belum terverifikasi, mulai lookup..." % len(belum))
-        lolos = []
-        for n, w in enumerate(belum, 1):
-            status, saran = kbbi_cek(w)
-            time.sleep(0.25)
-            if status == "KUOTA":
-                peringatan.append("KBBI: kuota harian habis setelah %d dari %d kata; sisa kata belum dicek, "
-                                  "ulangi besok (hasil yang lolos tetap tersimpan)" % (n - 1, len(belum)))
-                print("  KUOTA     pencarian harian habis, lookup dihentikan")
-                break
-            if status == "OK":
-                lolos.append(w)
-                print("  OK        %s" % w)
-            elif status == "NON_BAKU":
-                gagal.append("KBBI: '%s' tidak baku -> '%s'" % (w, saran))
-                print("  NON_BAKU  %s -> %s" % (w, saran))
-            elif status == "TIDAK_ADA":
-                gagal.append("KBBI: '%s' tidak ditemukan (kata asing / typo / tambah manual)" % w)
-                print("  TIDAK_ADA %s" % w)
-            else:
-                peringatan.append("KBBI: '%s' tidak bisa dicek (%s)" % (w, saran))
-                print("  ERROR     %s (%s)" % (w, saran))
-            sys.stdout.flush()
-        if a.simpan_kata and lolos:
-            simpan_kamus(lolos)
-            print("KBBI: %d kata disimpan ke kamus" % len(lolos))
-
     # --- Mode draft: audit, bukan gerbang ---
     if a.draft:
         temuan_ritme = analisis_ritme(raw)
@@ -535,7 +490,7 @@ def main():
         lainnya = [w for w in peringatan if not re.fullmatch(r"[a-zà-ÿ-]+", w)]
         semua_temuan = gagal + lainnya + temuan_ritme
         if kata_tinjau:
-            semua_temuan.append("%d kata di luar kamus, perlu tinjauan KBBI (--kbbi): %s"
+            semua_temuan.append("%d kata di luar kamus, perlu tinjauan ejaan manual: %s"
                                  % (len(kata_tinjau), " ".join(kata_tinjau[:40])
                                     + (" ..." if len(kata_tinjau) > 40 else "")))
         print("=" * 60)

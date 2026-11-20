@@ -22,11 +22,13 @@ Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import argparse
 import os
+import shutil
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SUMBER = ROOT / "perintah" / "artikel.md"
+SKILLS = ROOT / "skills"      # skill ikut repo; disalin ke folder skill tiap agent
 NAMA = "artikel"
 DESKRIPSI = ("DCI SEO Auditor: kerjakan artikel SEO satu klien untuk satu bulan "
              "(audit, humanize, cek ZeroGPT, laporan). Argumen: <nama perusahaan> <bulan> [tahun]")
@@ -37,17 +39,17 @@ DESKRIPSI = ("DCI SEO Auditor: kerjakan artikel SEO satu klien untuk satu bulan 
 #   argumen : teks pengganti {{ARGUMEN}}.
 AGEN = {
     "trae": {
-        "project": ".trae/commands", "global": ".trae/commands", "kepala": "trae",
+        "project": ".trae/commands", "global": ".trae/commands", "skills": ".trae/skills", "kepala": "trae",
         "argumen": "yang operator tulis setelah /artikel",
         "sumber": "https://docs.trae.ai/ide/slash-commands",
     },
     "zcode": {
-        "project": ".zcode/commands", "global": ".zcode/commands", "kepala": "markdown",
+        "project": ".zcode/commands", "global": ".zcode/commands", "skills": ".zcode/skills", "kepala": "markdown",
         "argumen": "yang operator tulis setelah /artikel",
         "sumber": "https://zcode.z.ai/en/newdocs/commands",
     },
     "claude": {
-        "project": ".claude/commands", "global": ".claude/commands", "kepala": "markdown",
+        "project": ".claude/commands", "global": ".claude/commands", "skills": ".claude/skills", "kepala": "markdown",
         "argumen": "$ARGUMENTS",
         "sumber": "https://code.claude.com/docs/en/slash-commands",
     },
@@ -68,6 +70,21 @@ def bangun(info):
     isi = SUMBER.read_text(encoding="utf8")
     isi = isi.replace("{{ARGUMEN}}", info["argumen"]).replace("{{PYTHON}}", python_cmd())
     return kepala(info["kepala"]) + isi
+
+
+def salin_skill(info, global_, cek_saja):
+    """Salin tiap skills/<nama>/ ke folder skill agent. Hanya folder bernama sama yang ditimpa."""
+    if not SKILLS.is_dir():
+        return
+    dasar = (Path.home() if global_ else ROOT) / info["skills"]
+    for sumber in sorted(p for p in SKILLS.iterdir() if (p / "SKILL.md").is_file()):
+        t = dasar / sumber.name
+        if cek_saja:
+            sama = (t / "SKILL.md").is_file() and (t / "SKILL.md").read_bytes() == (sumber / "SKILL.md").read_bytes()
+            print("        skill %s: %s" % (sumber.name, "terbaru" if sama else "belum terpasang atau berbeda"))
+            continue
+        shutil.copytree(sumber, t, dirs_exist_ok=True)
+        print("        skill terpasang: %s" % t)
 
 
 def tujuan(info, global_):
@@ -114,10 +131,12 @@ def main():
             sama = ada and t.read_text(encoding="utf8") == isi
             print("%-7s %s -> %s" % (k, "sudah terpasang dan terbaru" if sama else
                                     ("terpasang tetapi berbeda (jalankan ulang untuk memperbarui)" if ada else "belum terpasang"), t))
+            salin_skill(info, a.global_, True)
             continue
         t.parent.mkdir(parents=True, exist_ok=True)
         t.write_text(isi, encoding="utf8", newline="\n")
         print("%-7s terpasang: %s" % (k, t))
+        salin_skill(info, a.global_, False)
     if not a.cek:
         print("\nMuat ulang agent atau buka sesi baru, lalu ketik /artikel <perusahaan> <bulan>.")
 

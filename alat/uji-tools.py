@@ -339,6 +339,23 @@ def uji_pasang_perintah(base):
     kode, out = jalankan(skrip, "trae")
     cek("pasang: sumber hilang -> pesan jelas (exit 2)", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
 
+    # Skill ikut repo: harus lengkap (SKILL.md dengan name sama nama folder) dan ikut terpasang.
+    daftar = sorted(p for p in (ROOT / "skills").iterdir() if p.is_dir())
+    cek("skill: ada skill di repo", len(daftar) >= 1)
+    for p in daftar:
+        kepala = (p / "SKILL.md").read_text(encoding="utf8").split("---")[1]
+        cek("skill[%s]: nama di kepala sama dengan nama folder" % p.name, re.search(r"(?m)^name:\s*%s\s*$" % re.escape(p.name), kepala) is not None)
+    akar2 = base / "root2"
+    (akar2 / "perintah").mkdir(parents=True)
+    (akar2 / "alat").mkdir()
+    shutil.copy(ROOT / "perintah" / "artikel.md", akar2 / "perintah" / "artikel.md")
+    shutil.copy(ROOT / "alat" / "pasang-perintah.py", akar2 / "alat" / "pasang-perintah.py")
+    shutil.copytree(ROOT / "skills", akar2 / "skills")
+    kode, out = jalankan(akar2 / "alat" / "pasang-perintah.py", "claude")
+    cek("skill: terpasang ke .claude/skills", kode == 0 and all((akar2 / ".claude" / "skills" / p.name / "SKILL.md").is_file() for p in daftar), "exit=%d" % kode)
+    kode, out = jalankan(akar2 / "alat" / "pasang-perintah.py", "claude", "--cek")
+    cek("skill: --cek melaporkan terbaru", kode == 0 and "terbaru" in out and "belum" not in out, out[:100].replace("\n", " | "))
+
 
 def jalan_menu(root, *masukan):
     """Jalankan menu.py dari salinan root dengan masukan terskrip (tanpa clipboard dan tanpa buka editor)."""
@@ -452,36 +469,21 @@ def uji_masukan_buruk(base):
         re.search(r"RUSAK\t-\ttahap_kosong=-\tlatin1\.txt", out) is not None and "kosong.txt" in out, out[:120].replace("\n", " | "))
 
 
-class HalamanPalsu:
-    def __init__(self, html_teks):
-        self.html_teks = html_teks
-
-    def read(self):
-        return self.html_teks.encode("utf8")
-
-
-def uji_kbbi():
-    """kbbi_cek diuji dengan halaman palsu (tanpa jaringan)."""
+def uji_kamus():
+    """Kamus offline: kata dasar, imbuhan, dan salah ketik (tanpa jaringan)."""
     import importlib.util
     spec = importlib.util.spec_from_file_location("cek_artikel_uji", ROOT / "alat" / "cek-artikel.py")
     modul = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modul)
-    asli = modul.ureq.urlopen
-    kasus = {
-        "halaman kuota harian -> KUOTA (bukan dibaca sebagai kata)":
-            ("<h2>Pencarian Anda telah mencapai batas maksimum dalam sehari</h2>", "KUOTA"),
-        "entri tidak ditemukan -> TIDAK_ADA": ("<p>Entri tidak ditemukan</p>", "TIDAK_ADA"),
-        "entri sah -> OK": ("<h2>kata</h2>", "OK"),
-        "halaman tanpa h2 -> ERROR": ("<p>kosong</p>", "ERROR"),
-    }
-    try:
-        for nama, (halaman, harap) in kasus.items():
-            modul.ureq.urlopen = lambda *a, _h=halaman, **k: HalamanPalsu(_h)
-            status, _ = modul.kbbi_cek("kata")
-            cek("kbbi: " + nama, status == harap, "status=%s" % status)
-    finally:
-        modul.ureq.urlopen = asli
-
+    kamus = modul.baca_kamus()
+    cek("kamus: memuat puluhan ribu kata dasar", len(kamus) > 40000, "jumlah=%d" % len(kamus))
+    for kata in ("makanan", "mengonsumsi", "pengaruhnya", "diutak-atik", "katering", "dipesankan"):
+        ok = all(modul.kata_dikenal(b, kamus) for b in kata.split("-"))
+        cek("kamus: '%s' dikenali" % kata, ok)
+    for kata in ("pelaynan", "kualitsa", "mkanan"):
+        cek("kamus: salah ketik '%s' tertangkap" % kata, not modul.kata_dikenal(kata, kamus))
+    lisensi = ROOT / "alat" / "kamus-id.LICENSE.txt"
+    cek("kamus: berkas lisensi LGPL ikut repo", lisensi.is_file() and "GNU LESSER GENERAL PUBLIC LICENSE" in lisensi.read_text(encoding="utf8").upper())
 
 def main():
     with tempfile.TemporaryDirectory(prefix="uji-dci-seo-") as d:
@@ -502,7 +504,7 @@ def main():
         uji_meta(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
         uji_lintas(Path(d))
-    uji_kbbi()
+    uji_kamus()
     print("-" * 60)
     if GAGAL_UJI:
         print("UJI GAGAL: %s" % ", ".join(GAGAL_UJI))

@@ -83,7 +83,9 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 │   ├── cek-status.py        # gerbang status draft
 │   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
 │   ├── pasang-perintah.py   # memasang /artikel ke TRAE, ZCode, atau Claude Code
-│   ├── kamus-kata.txt       # kamus kata hasil verifikasi KBBI
+│   ├── kamus-id.txt         # kata dasar bahasa Indonesia (hunspell-id, LGPL-3.0) untuk cek salah ketik
+│   ├── kamus-id.LICENSE.txt # teks lisensi LGPL-3.0 kamus di atas
+│   ├── kamus-kata.txt       # tambahan manual: nama, istilah, kata hasil tinjauan
 │   └── uji-tools.py         # uji otomatis semua skrip
 └── klien/                   # semua data klien ada di sini
     ├── _TEMPLATE/           # cetakan klien baru
@@ -117,12 +119,11 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I alat/cek-status.py "klien/<klien>/artikel/<bulan>"` | Klasifikasi draft sebelum dikerjakan |
 | `python3 -I -X utf8 alat/cek-artikel.py "<draft>" --draft` | Audit draft mentah, keluar daftar temuan |
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
-| `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (96 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (108 uji). Jalankan setelah mengubah skrip |
 
-Pencarian KBBI Daring tanpa akun dibatasi harian. Bila kuota habis, skrip berhenti dengan satu peringatan, kata yang sudah lolos tetap tersimpan, dan sisanya diulang keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang. Jangan membuat banyak akun untuk menembus batas ini: KBBI Daring mengenali pola pencarian beruntun dan bisa memasukkannya ke daftar hitam. Untuk pemakaian rutin, ajukan izin ke `adminkbbi@kemdikbud.go.id`.
+Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 
 ## ZeroGPT
 
@@ -137,7 +138,7 @@ Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyw
 - `/artikel` belum diuji dari menu TRAE. Formatnya meniru command TRAE yang sudah ada.
 - Opsi *Include AGENTS.md in the context* di TRAE adalah pengaturan per komputer, tidak bisa dibagikan lewat repo.
 - Ambang kalimat yang disalin (3 rangkaian 8 kata) belum dikalibrasi pada artikel nyata lebih dari satu klien.
-- Verifikasi KBBI massal pertama kali perlu beberapa hari bila kuota harian habis.
+- Kamus offline berasal dari KBBI edisi 3 (lewat hunspell-id), jadi kosakata terbaru dan nama diri bisa muncul sebagai WARN yang sebenarnya sah.
 
 ---
 

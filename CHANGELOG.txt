@@ -8,6 +8,36 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.10.0] - 2026-11-21
+---------------------
+
+KBBI Daring dibuang dari pipeline (kuota harian, daftar hitam, dan Pasal 113 UU Hak Cipta tidak cocok untuk
+pemakaian massal oleh banyak karyawan). Pengantinya kamus offline. Skill milik DCI ikut repo.
+
+Ditambahkan
+- alat/kamus-id.txt: 46 ribuan kata dasar dari hunspell-id (shuLhan dan kontributor, LGPL-3.0-only),
+  dikonversi ke UTF-8 tanpa tanda imbuhan. Teks lisensi: alat/kamus-id.LICENSE.txt. Perubahan dicatat di
+  kepala berkas.
+- Pengupas imbuhan sederhana (me-, pe-, ber-, ter-, di-, -kan, -an, -nya, dan sejenisnya, akar minimal 3 huruf)
+  agar kata berimbuhan tidak membanjiri WARN.
+- skills/dci-seo-auditor dan skills/research-guide: skill milik DCI di dalam repo. alat/pasang-perintah.py
+  menyalinnya ke .trae/.zcode/.claude skills (project atau --global); --cek ikut memeriksa skill.
+- 12 uji baru (kamus, imbuhan, salah ketik, lisensi ikut repo, skill terpasang). Total 108 uji.
+
+Diubah
+- Kata di luar kamus tetap hanya WARN (bukan FAIL). Artikel Salimah Catering: 0 FAIL, 0 WARN.
+- alat/kamus-kata.txt dipangkas menjadi tambahan manual (429 kata yang belum ada di kamus-id).
+- AGENT.md, README.md, perintah/artikel.md, aturan/kerja-tanpa-skill.md, LAPORAN Salimah diperbarui.
+
+Dihapus
+- Opsi --kbbi dan --simpan-kata, fungsi kbbi_cek, status KUOTA, uji KBBI, peringatan "banyak akun".
+
+Belum teruji
+- Kamus berbasis KBBI edisi 3: kosakata baru dan nama diri bisa muncul sebagai WARN sah.
+- Skill belum diuji di dalam agent sungguhan (hanya pemasangan berkas yang diuji).
+- Skill pihak ketiga (antislop*, blog-*, verification-before-completion) sengaja tidak disalin: lisensi atau
+  ketergantungan belum jelas.
+
 [0.9.0] - 2026-11-20
 --------------------
 

@@ -84,7 +84,7 @@ Cara memperbaiki bukan mengganti sinonim, melainkan mengubah sudut pandang: siap
 
 ## 8. Skill opsional
 
-Bila agent memilikinya, skill berikut boleh dipakai sebagai pelengkap. Tidak ada yang wajib, dan isinya tidak disalin ke repo ini.
+Skill milik DCI ada di folder `skills/` repo ini (`dci-seo-auditor`, `research-guide`) dan dipasang ke agent oleh `alat/pasang-perintah.py`. Skill pihak ketiga di bawah ini tidak disalin ke repo: sebagian bergantung pada folder lain, sebagian lisensinya belum terverifikasi. Bila agent memilikinya, boleh dipakai sebagai pelengkap. Tidak ada yang wajib.
 
 | Skill | Gunanya | Catatan lisensi |
 |---|---|---|
