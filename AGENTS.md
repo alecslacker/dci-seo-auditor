@@ -28,4 +28,4 @@ Cara menyapa mengikuti `AGENTS.md` atau persona yang ada di komputer masing-masi
 
 ## Menjalankan
 
-Ketik `/artikel <nama perusahaan> <bulan> [tahun]` bila perintah sudah dipasang (`python -I -X utf8 alat/pasang-perintah.py --daftar` menunjukkan agent yang didukung). Di agent mana pun, cukup tulis: `Baca AGENT.md, lalu kerjakan <nama perusahaan> bulan <bulan> sesuai Section 10.` Panduan lengkap: `PROMPT PINTASAN.md`.
+Operator Windows cukup klik dua kali `MULAI.bat` (menu berbahasa Indonesia). Bila memakai command, ketik `/artikel <nama perusahaan> <bulan> [tahun]` setelah perintah dipasang (`python -I -X utf8 alat/pasang-perintah.py --daftar` menunjukkan agent yang didukung). Di agent mana pun, cukup tulis: `Baca AGENT.md, lalu kerjakan <nama perusahaan> bulan <bulan> sesuai Section 10.` Panduan lengkap: `PROMPT PINTASAN.md`.

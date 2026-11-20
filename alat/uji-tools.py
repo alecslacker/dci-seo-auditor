@@ -8,6 +8,7 @@ Semua skenario dibuat di folder sementara; tidak menyentuh data klien.
 Author: Mas Wondho - Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
+import os
 import re
 import shutil
 import subprocess
@@ -339,6 +340,98 @@ def uji_pasang_perintah(base):
     cek("pasang: sumber hilang -> pesan jelas (exit 2)", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
 
 
+def jalan_menu(root, *masukan):
+    """Jalankan menu.py dari salinan root dengan masukan terskrip (tanpa clipboard dan tanpa buka editor)."""
+    env = dict(os.environ, DCI_TANPA_SALIN="1", DCI_TANPA_BUKA="1")
+    r = subprocess.run([sys.executable, "-I", "-X", "utf8", str(root / "alat" / "menu.py")],
+                       input="\n".join(masukan) + "\n", capture_output=True, text=True,
+                       encoding="utf-8", errors="replace", timeout=120, env=env, cwd=str(root))
+    return r.returncode, r.stdout + r.stderr
+
+
+def uji_menu(base):
+    """Menu interaktif: tiap pilihan menghasilkan bahasa yang mudah dipahami, tanpa traceback."""
+    akar = base / "root"
+    shutil.copytree(ROOT / "alat", akar / "alat", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "klien" / "_TEMPLATE", akar / "klien" / "_TEMPLATE")
+    shutil.copytree(ROOT / "perintah", akar / "perintah")
+    shutil.copytree(ROOT / "klien" / "Salimah Catering", akar / "klien" / "Salimah Catering")
+    shutil.copy(ROOT / "AGENT.md", akar / "AGENT.md")
+
+    kode, out = jalan_menu(akar, "0")
+    cek("menu: tampil dan keluar dengan 0", kode == 0 and "DCI SEO Auditor" in out and "Sampai jumpa" in out and "Traceback" not in out, "exit=%d" % kode)
+    kode, out = jalan_menu(akar, "99", "abc", "0")
+    cek("menu: pilihan ngawur ditolak dengan sopan", out.count("Pilihan tidak dikenal") >= 2 and "Traceback" not in out)
+    kode, out = jalan_menu(akar, "")
+    cek("menu: masukan habis (Enter kosong lalu EOF) tidak crash", "Traceback" not in out, "exit=%d" % kode)
+
+    kode, out = jalan_menu(akar, "3", "1", "1", "", "0")
+    cek("menu 3: status memakai bahasa biasa, bukan kode mentah", "[SELESAI]" in out and "Tidak perlu dikerjakan lagi" in out and "tahap_kosong" not in out)
+    kode, out = jalan_menu(akar, "4", "1", "1", "1", "", "0")
+    cek("menu 4: artikel Salimah dinyatakan LULUS", "LULUS" in out and "Traceback" not in out, out[-120:].replace("\n", " | "))
+    kode, out = jalan_menu(akar, "2", "1", "1", "", "0")
+    cek("menu 2: perintah kerja memuat nama klien, bulan, dan tahun",
+        "kerjakan Salimah Catering bulan November 2026" in out, out[-160:].replace("\n", " | "))
+
+    # Artikel dibuat gagal: pesan harus menyebut jumlah masalah dalam bahasa biasa.
+    bulan = akar / "klien" / "Salimah Catering" / "artikel" / "2026 November"
+    art = bulan / "Jasa Catering Instansi Blitar - Humanized.txt"
+    art.write_text(art.read_text(encoding="utf8").replace("<!--more-->", ""), encoding="utf8")
+    kode, out = jalan_menu(akar, "4", "1", "1", "1", "", "0")
+    cek("menu 4: artikel bermasalah -> BELUM LULUS + daftar bernomor", "BELUM LULUS" in out and "more" in out and "1." in out)
+
+    kode, out = jalan_menu(akar, "5", "Klien Baru Uji", "", "0")
+    cek("menu 5: klien baru dibuat dari template", (akar / "klien" / "Klien Baru Uji" / "CLIENT.md").is_file() and "BERHASIL" in out, out[-150:].replace("\n", " | "))
+    cek("menu 5: folder bulan memakai tahun dan bulan sekarang (bukan YYYY Bulan)",
+        not (akar / "klien" / "Klien Baru Uji" / "artikel" / "YYYY Bulan").exists()
+        and len(list((akar / "klien" / "Klien Baru Uji" / "artikel").iterdir())) == 1)
+    kode, out = jalan_menu(akar, "5", "Klien Baru Uji", "", "0")
+    cek("menu 5: klien yang sudah ada tidak ditimpa", "sudah ada" in out and "Traceback" not in out)
+    for buruk in ("a/b", "_rahasia", ".x", 'x*y'):
+        kode, out = jalan_menu(akar, "5", buruk, "", "0")
+        cek("menu 5: nama '%s' ditolak" % buruk, "tidak boleh" in out and not (akar / "klien" / buruk.replace("/", "")).exists())
+    kode, out = jalan_menu(akar, "3", "1", "1", "", "0")
+    kode, out = jalan_menu(akar, "1", "4", "", "0")
+    cek("menu 1: pasang untuk semua agent berhasil dengan pesan langkah berikut",
+        "BERHASIL" in out and "tutup lalu buka lagi" in out, out[-200:].replace("\n", " | "))
+    cek("menu 1: berkas /artikel muncul di folder agent",
+        all((akar / d / "commands" / "artikel.md").is_file() for d in (".trae", ".zcode", ".claude")))
+
+    kode, out = jalan_menu(akar, "6", "", "0")
+    cek("menu 6: bantuan tampil", "Urutan kerja yang biasa" in out and "Traceback" not in out)
+
+    # Tanpa klien sama sekali: pesan jelas.
+    shutil.rmtree(akar / "klien" / "Salimah Catering")
+    shutil.rmtree(akar / "klien" / "Klien Baru Uji")
+    kode, out = jalan_menu(akar, "3", "", "0")
+    cek("menu: belum ada klien -> petunjuk ke menu 5", "Belum ada klien" in out and "Traceback" not in out)
+
+
+def uji_peluncur():
+    isi = (ROOT / "MULAI.bat").read_bytes()
+    cek("MULAI.bat: akhir baris CRLF (LF merusak goto di cmd)", isi.count(b"\r\n") == isi.count(b"\n") and b"\r\n" in isi)
+    teks = isi.decode("utf-8")
+    cek("MULAI.bat: UTF-8 diaktifkan dan pindah ke folder berkas", "chcp 65001" in teks and 'cd /d "%~dp0"' in teks)
+    cek("MULAI.bat: mencoba py, python, python3 dan punya pesan bila Python tidak ada",
+        '"py -3"' in teks and '"python"' in teks and '"python3"' in teks and "Python belum terpasang" in teks)
+    cek("MULAI.bat: jendela tidak tertutup sendiri (pause)", "pause" in teks)
+    cek("MULAI.bat: hanya ASCII di baris perintah", all(ord(c) < 128 for c in teks))
+    if os.name == "nt":
+        env = dict(os.environ)
+        r = subprocess.run([os.environ.get("ComSpec", "cmd.exe"), "/c", str(ROOT / "MULAI.bat")],
+                           input="0\n\n", capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=60, env=env, cwd=os.environ.get("TEMP", "."))
+        cek("MULAI.bat: dijalankan dari folder lain, menu muncul dan keluar bersih",
+            r.returncode == 0 and "DCI SEO Auditor" in r.stdout and "Sampai jumpa" in r.stdout, "exit=%d" % r.returncode)
+        env["PATH"] = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), "System32")
+        r = subprocess.run([os.environ.get("ComSpec", "cmd.exe"), "/c", str(ROOT / "MULAI.bat")],
+                           input="\n", capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=60, env=env, cwd=os.environ.get("TEMP", "."))
+        cek("MULAI.bat: tanpa Python -> petunjuk memasang, bukan error cmd", "Python belum terpasang" in r.stdout and "CENTANG" in r.stdout)
+    else:
+        print("LEWAT uji MULAI.bat berjalan: hanya untuk Windows")
+
+
 def uji_masukan_buruk(base):
     """Masukan yang salah harus menghasilkan pesan manusiawi dengan kode 2, bukan traceback."""
     _, bulan = bikin_skenario(base)
@@ -396,6 +489,9 @@ def main():
         uji_status(base)
         uji_artikel(base)
         uji_artikel_lulus(base)
+    with tempfile.TemporaryDirectory(prefix="uji-dci-menu-") as d:
+        uji_menu(Path(d))
+    uji_peluncur()
     with tempfile.TemporaryDirectory(prefix="uji-dci-pasang-") as d:
         uji_pasang_perintah(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-templat-") as d:

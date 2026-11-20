@@ -23,7 +23,9 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── FAKTA-SEO.md                  ← fakta Google/Rank Math bersumber + tanggal (wajib rujuk)
 ├── AGENTS.md                     ← penunjuk pendek ke berkas ini, dimuat agent otomatis (jaga tetap pendek)
 ├── aturan/kerja-tanpa-skill.md   ← aturan kerja mandiri, tanpa skill apa pun (Section 9)
+├── MULAI.bat                     ← klik dua kali di Windows: membuka alat/menu.py (menu berbahasa Indonesia)
 ├── perintah/artikel.md           ← sumber NETRAL command /artikel, tanpa format khusus agent (Section 10)
+├── alat/menu.py                  ← menu interaktif: pasang perintah, salin prompt, status, periksa, klien baru
 ├── alat/pasang-perintah.py       ← memasang /artikel ke TRAE, ZCode, atau Claude Code di komputer ini
 ├── alat/cek-status.py            ← gerbang status: klasifikasi draft sebelum audit (Section 4)
 ├── alat/cek-artikel.py           ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)

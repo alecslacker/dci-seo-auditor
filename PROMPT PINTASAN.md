@@ -5,6 +5,10 @@
 
 Panduan ini menjelaskan cara memanggil pipeline artikel dengan satu perintah, di agent mana pun.
 
+## Cara termudah di Windows: menu
+
+Klik dua kali `MULAI.bat` di folder utama project. Menu berbahasa Indonesia akan membuka. Menu 1 memasang perintah `/artikel` ke program AI Anda, dan menu 2 menyalin perintah kerja ke clipboard sehingga tinggal ditempel (Ctrl+V) ke chat. Tidak perlu mengetik perintah Python. Bagian di bawah ini untuk yang ingin memahami atau memasang secara manual.
+
 ## Dua cara memanggil
 
 | Cara | Cocok untuk | Syarat |

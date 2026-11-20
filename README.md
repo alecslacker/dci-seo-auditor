@@ -12,6 +12,23 @@ draft mentah ──► GERBANG STATUS ──► AUDIT ──► HUMANIZE ──�
                                        perbaiki hanya bagian FAIL ◄┘
 ```
 
+## Mulai cepat di Windows
+
+1. Pastikan Python sudah terpasang (bila belum, `MULAI.bat` akan menunjukkan caranya).
+2. Klik dua kali **`MULAI.bat`** di folder utama project.
+3. Pilih pekerjaan dengan mengetik angka lalu Enter. Semua petunjuk berbahasa Indonesia.
+
+| Menu | Gunanya |
+|---|---|
+| 1. Siapkan komputer | Memasang perintah `/artikel` ke program AI Anda (sekali saja) |
+| 2. Salin perintah kerja | Menyiapkan perintah untuk ditempel ke program AI, otomatis masuk clipboard |
+| 3. Lihat status draft | Menunjukkan draft mana yang sudah, belum, atau menunggu dikerjakan |
+| 4. Periksa artikel | Menyatakan LULUS atau BELUM LULUS beserta daftar yang harus diperbaiki |
+| 5. Tambah klien baru | Membuat folder klien dari template dan membuka `CLIENT.md` untuk diisi |
+| 6. Bantuan | Urutan kerja singkat |
+
+Menu hanya mengatur berkas dan menjalankan pemeriksaan. Penulisan ulang artikelnya tetap dikerjakan program AI Anda (TRAE, ZCode, Claude Code, dan sejenisnya) dengan perintah yang disalin dari menu 2.
+
 ## Yang dijamin dan yang tidak
 
 Gerbang kualitas membuktikan bahwa artikel memenuhi aturan format dan bahasa di repo ini: jumlah kata, keyword, heading, format WordPress, judul SEO dan slug, ejaan, serta tidak ada kalimat yang disalin dari artikel lain. Lulus berarti `0 FAIL`.
@@ -58,9 +75,11 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 ├── PROMPT PINTASAN.md       # panduan /artikel, isi perintah, cara memasang, prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
 ├── CLAUDE.md                # impor AGENTS.md untuk Claude Code
+├── MULAI.bat                # klik dua kali: membuka menu berbahasa Indonesia (Windows)
 ├── perintah/
 │   └── artikel.md           # sumber netral command /artikel (tanpa format khusus agent)
 ├── alat/
+│   ├── menu.py              # menu interaktif yang dibuka MULAI.bat
 │   ├── cek-status.py        # gerbang status draft
 │   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
 │   ├── pasang-perintah.py   # memasang /artikel ke TRAE, ZCode, atau Claude Code
@@ -100,7 +119,8 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (71 uji). Jalankan setelah mengubah skrip |
+| `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (96 uji). Jalankan setelah mengubah skrip |
 
 Pencarian KBBI Daring tanpa akun dibatasi harian. Bila kuota habis, skrip berhenti dengan satu peringatan, kata yang sudah lolos tetap tersimpan, dan sisanya diulang keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang. Jangan membuat banyak akun untuk menembus batas ini: KBBI Daring mengenali pola pencarian beruntun dan bisa memasukkannya ke daftar hitam. Untuk pemakaian rutin, ajukan izin ke `adminkbbi@kemdikbud.go.id`.
 

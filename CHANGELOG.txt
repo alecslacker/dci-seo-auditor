@@ -8,6 +8,40 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.9.0] - 2026-11-20
+--------------------
+
+Karyawan Windows cukup klik dua kali, lalu memilih angka di menu berbahasa Indonesia.
+
+Ditambahkan
+- MULAI.bat: peluncur klik-dua-kali. Mengaktifkan UTF-8 (chcp 65001), pindah ke folder berkas, mencari
+  Python lewat "py -3", "python", lalu "python3", dan bila tidak ada menampilkan langkah memasang Python
+  (termasuk centang "Add python.exe to PATH"). Jendela tidak menutup sendiri (pause). Akhir baris CRLF
+  (LF merusak label goto di cmd); .gitattributes diberi aturan "*.bat text eol=crlf".
+- alat/menu.py: menu interaktif 6 pilihan (siapkan komputer, salin perintah kerja ke clipboard, lihat
+  status draft, periksa artikel, tambah klien baru, bantuan). Status dan hasil pemeriksaan
+  diterjemahkan ke kalimat biasa ("BELUM LULUS, ada 3 hal yang harus diperbaiki" dengan daftar
+  bernomor), bukan kode mentah. Pilihan ngawur, masukan kosong, dan masukan habis tidak membuat crash.
+  Clipboard memakai PowerShell Set-Clipboard dengan UTF-8 (huruf non-ASCII diuji selamat).
+  Nama klien baru divalidasi (tanpa \ / : * ? " < > |, tidak diawali _ atau titik) dan klien yang
+  sudah ada tidak ditimpa. Folder bulan dibuat memakai tahun dan bulan saat ini.
+- uji-tools.py: 25 uji baru (menu 17, peluncur 8), total 96. Termasuk MULAI.bat dijalankan sungguhan
+  dari folder lain, dan dengan PATH dikosongkan untuk meniru komputer tanpa Python.
+- README: bagian "Mulai cepat di Windows". PROMPT PINTASAN, AGENTS.md, AGENT.md disesuaikan.
+
+Terverifikasi
+- Lingkungan Windows 10 (build 19045): py launcher, python, clip, dan PowerShell 5.1 bawaan ada.
+- MULAI.bat menampilkan menu dari folder lain dan menampilkan petunjuk memasang Python bila PATH kosong.
+
+Belum teruji
+- Klik dua kali sungguhan di Explorer (diuji lewat proses terkendali, bukan jendela nyata).
+- Windows 11, Windows Terminal, dan komputer dengan kebijakan kantor yang memblokir .bat atau PowerShell.
+- Clipboard bila PowerShell diblokir: menu menampilkan teks untuk disalin manual, belum diuji di
+  komputer yang benar-benar terblokir.
+- Layar kecil atau font yang tidak mendukung huruf tertentu; menu memakai ASCII murni untuk garis.
+- Menu hanya mengatur berkas dan pemeriksaan. Penulisan ulang artikel tetap oleh program AI.
+
+
 [0.8.0] - 2026-11-20
 --------------------
 
