@@ -8,6 +8,22 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.5.4] - 2026-11-20
+--------------------
+
+Ditambahkan
+- .gitattributes (* text=auto eol=lf): akhir baris seragam LF di semua komputer karyawan.
+
+Diubah
+- 15 file dikonversi dari CRLF ke LF. Isi tidak berubah: hash ledger Salimah tetap sama, gerbang
+  artikel tetap 0 FAIL, uji-tools tetap lulus semua.
+
+Belum teruji
+- Project ini dipakai di TRAE, bukan ZCode. Menurut dokumentasi TRAE, command project dibaca dari
+  .trae/commands dan rules dari .trae/rules, sedangkan .zcode/commands/artikel.md tidak disebut.
+  .gitignore saat ini mengabaikan .trae/ sehingga command atau skill project tidak ikut repo.
+
+
 [0.5.3] - 2026-11-20
 --------------------
 
