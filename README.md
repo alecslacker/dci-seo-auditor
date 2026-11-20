@@ -31,8 +31,9 @@ Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA
 ├── PROMPT PINTASAN.md       # panduan /artikel dan prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
 ├── CLAUDE.md                # impor AGENT.md untuk Claude Code
+├── .trae/
+│   └── commands/artikel.md  # command /artikel untuk TRAE
 ├── .zcode/
-│   ├── commands/artikel.md  # command /artikel
 │   ├── cek-status.py        # gerbang status draft
 │   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
 │   ├── kamus-kata.txt       # kamus kata hasil verifikasi KBBI
@@ -51,11 +52,11 @@ Folder berawalan `_` bukan klien dan tidak pernah diproses.
 
 ## Memulai
 
-Butuh ZCode (atau agent lain yang membaca `AGENT.md`) dan Python 3.8 ke atas. Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
+Butuh TRAE (atau agent lain yang bisa membaca `AGENT.md`) dan Python 3.8 ke atas. Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
 
 1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`.
 2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.
-3. **Jalankan** di ZCode dengan root project sebagai workspace:
+3. **Jalankan** di TRAE dengan root project sebagai workspace:
 
    ```text
    /artikel Salimah Catering November

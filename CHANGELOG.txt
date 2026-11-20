@@ -8,6 +8,29 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.6.0] - 2026-11-20
+--------------------
+
+Diubah
+- Platform kerja: TRAE (sebelumnya ZCode). Command /artikel dipindah dari .zcode/commands/ ke
+  .trae/commands/ (git mv). Format frontmatter mengikuti command TRAE yang sudah ada (Name,
+  Description), argumen dibaca dari teks setelah /artikel, daftar skill menjadi instruksi di isi
+  command karena TRAE tidak mengenal kunci skills di frontmatter.
+- .gitignore: .trae/ tidak lagi diabaikan seluruhnya. Hanya .trae/commands/ yang ikut repo supaya
+  karyawan lain menerima command; isi .trae/ lainnya (catatan lokal) tetap diabaikan.
+- README, AGENT.md, PROMPT PINTASAN.md: sebutan ZCode diganti TRAE, path command dan folder skill
+  diperbarui. Perintah di command memakai "python" (Windows), bukan "python3".
+- Folder .zcode/ tetap dipakai untuk skrip gerbang, kamus, dan uji (nama folder tidak diubah agar
+  path di dokumen, docstring, dan LAPORAN klien tidak berubah).
+
+Belum teruji
+- /artikel belum dipanggil dari menu "/" di TRAE. Format frontmatter meniru graphify-update.md,
+  bukan hasil uji langsung.
+- Kunci "skills:" lama dibuang dari frontmatter. Pemuatan keempat skill kini bergantung pada
+  agent mengikuti instruksi teks, tidak otomatis.
+- Nama folder .zcode/ membingungkan karena platform sudah TRAE; belum diganti.
+
+
 [0.5.4] - 2026-11-20
 --------------------
 

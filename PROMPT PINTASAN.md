@@ -5,7 +5,7 @@
 
 ## Cara utama: command `/artikel`
 
-Ketik di kotak input ZCode:
+Ketik di kotak input TRAE (ketik `/` lalu pilih `artikel`):
 
 ```
 /artikel <nama perusahaan> <bulan> [tahun]
@@ -20,13 +20,13 @@ Contoh:
 
 Aturan membaca: kata terakhir = bulan (atau kata sebelum angka tahun), semua kata di depannya = nama perusahaan. Nama perusahaan boleh lebih dari satu kata.
 
-File command: `.zcode/commands/artikel.md` (di ROOT project ini). Command memuat otomatis 4 skill (antislop-copywriting, blog-rewrite, blog-seo-check, verification-before-completion) dan menyuruh agent membaca `AGENT.md` Section 10.
+File command: `.trae/commands/artikel.md` (di ROOT project ini). Command menyuruh agent memuat 4 skill (antislop-copywriting, blog-rewrite, blog-seo-check, verification-before-completion) dan membaca `AGENT.md` Section 10.
 
 ### Syarat agar `/artikel` muncul di menu `/`
 
-- ZCode harus dibuka dengan **ROOT project ini sebagai workspace** (folder yang berisi `AGENT.md` dan `.zcode/`). Command workspace hanya dipindai dari folder kerja ke atas sampai root repositori.
-- Bila tidak muncul setelah file dibuat, muat ulang jendela ZCode atau buka sesi baru.
-- Bila ingin command ini tersedia di semua workspace, salin `artikel.md` ke `~/.zcode/commands/`. Konsekuensinya, command itu mengandalkan `AGENT.md` di folder kerja saat dipanggil, jadi hanya berguna bila ROOT ini yang sedang dibuka.
+- TRAE harus dibuka dengan **ROOT project ini sebagai workspace** (folder yang berisi `AGENT.md` dan `.trae/`). Command project dibaca dari `.trae/commands` (dokumentasi TRAE: docs.trae.ai/ide/slash-commands).
+- Bila tidak muncul, buka Settings > Skills & Commands dan cek bagian Commands, atau buka sesi baru.
+- Bila ingin command ini tersedia di semua project, salin `artikel.md` ke `%userprofile%/.trae/commands`. Konsekuensinya, command itu mengandalkan `AGENT.md` di folder kerja saat dipanggil, jadi hanya berguna bila ROOT ini yang sedang dibuka.
 
 ## Cadangan: prompt biasa (tanpa command)
 
@@ -34,7 +34,7 @@ File command: `.zcode/commands/artikel.md` (di ROOT project ini). Command memuat
 @AGENT.md Kerjakan [NAMA PERUSAHAAN] bulan [NAMA BULAN] sesuai Section 10 (Mode Pintasan).
 ```
 
-ZCode hanya membaca `AGENTS.md` (pakai S) secara otomatis, sedangkan file ini bernama `AGENT.md`, jadi tidak termuat sendiri. Karena itu prompt cadangan memakai `@AGENT.md`.
+TRAE membaca `AGENTS.md` (pakai S) dan `CLAUDE.md` bila opsinya diaktifkan di Settings > Rules & Memories. File ini bernama `AGENT.md`, jadi tidak termuat sendiri. Karena itu prompt cadangan memakai `@AGENT.md`.
 
 ## Yang terjadi setelah dikirim
 
@@ -63,7 +63,7 @@ Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], a
 
 - Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3).
 - Draft mentah `.txt` ada di `klien/<Klien>/artikel/<tahun bulan>/`.
-- Browser dalam aplikasi ZCode bisa dibuka (untuk ZeroGPT). Bila gagal, agent menandai `MANUAL CHECK NEEDED`.
+- Agent punya akses browser (untuk ZeroGPT). Bila gagal, agent menandai `MANUAL CHECK NEEDED`.
 
 ## Variasi opsional (tambahkan di akhir perintah)
 

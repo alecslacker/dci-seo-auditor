@@ -21,7 +21,7 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── AGENT.md                      ← file ini (pipeline + checklist, TANPA data klien)
 ├── PROMPT PINTASAN.md            ← panduan memanggil Mode Pintasan
 ├── FAKTA-SEO.md                  ← fakta Google/Rank Math bersumber + tanggal (wajib rujuk)
-├── .zcode/commands/artikel.md    ← command /artikel (Section 10)
+├── .trae/commands/artikel.md     ← command /artikel untuk TRAE (Section 10)
 ├── .zcode/cek-status.py          ← gerbang status: klasifikasi draft sebelum audit (Section 4)
 ├── .zcode/cek-artikel.py         ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
 ├── .zcode/kamus-kata.txt         ← kamus kata sah hasil verifikasi KBBI
@@ -209,7 +209,7 @@ Aturan ledger: kolom Hash wajib 16 karakter hex agar baris terbaca. Jangan mengu
 
 ## 9. Skill Mapping (WAJIB dicek sebelum kerja manual)
 
-Sesuai aturan AGENTS.md: sebelum tiap tahap, cari skill yang cocok di `~/.zcode/skills/` dan muat SKILL.md-nya. Skill paling spesifik dimuat lebih dulu. Mapping untuk pipeline ini:
+Sesuai aturan AGENTS.md: sebelum tiap tahap, cari skill yang cocok di folder skill agent yang dipakai (TRAE: `%userprofile%/.trae/skills/`) dan muat SKILL.md-nya. Skill paling spesifik dimuat lebih dulu. Mapping untuk pipeline ini:
 
 | Tahap | Skill | Peran |
 |---|---|---|
@@ -239,7 +239,7 @@ Langkah:
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` (pertama kali untuk klien baru). Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).
 
-Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]` (file `.zcode/commands/artikel.md`). Panduan dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
+Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]` (file `.trae/commands/artikel.md`). Panduan dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
 
 ## 11. Template Prompt AI Puffer (aturan konten, GLOBAL)
 

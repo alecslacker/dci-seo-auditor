@@ -9,5 +9,6 @@ __pycache__/
 *.pyc
 *.tmp
 
-# Catatan lokal jangan ikut repo
-.trae/
+# Catatan lokal jangan ikut repo. Hanya command project yang dibagikan ke karyawan.
+.trae/*
+!.trae/commands/
