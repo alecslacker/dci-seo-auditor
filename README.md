@@ -26,11 +26,14 @@ Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA
 
 ```text
 .
+├── AGENTS.md                # penunjuk pendek (±500 token) yang dimuat agent otomatis
 ├── AGENT.md                 # aturan kerja: pipeline, checklist, protokol, template prompt
 ├── FAKTA-SEO.md             # fakta Google dan Rank Math, lengkap sumber dan tanggal
+├── aturan/
+│   └── kerja-tanpa-skill.md # aturan kerja mandiri, tanpa skill apa pun
 ├── PROMPT PINTASAN.md       # panduan /artikel dan prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
-├── CLAUDE.md                # impor AGENT.md untuk Claude Code
+├── CLAUDE.md                # impor AGENTS.md untuk Claude Code
 ├── .trae/
 │   └── commands/artikel.md  # command /artikel untuk TRAE
 ├── .zcode/
@@ -45,6 +48,7 @@ Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA
         └── artikel/<YYYY Bulan>/
             ├── <slug>.txt              # draft mentah (arsip, tidak ditimpa)
             ├── <slug> - Humanized.txt  # hasil akhir, siap tempel ke WordPress
+            ├── <slug> - Meta.txt       # judul SEO, deskripsi meta, slug
             └── LAPORAN.md              # ledger dan laporan bulan itu
 ```
 
@@ -52,7 +56,7 @@ Folder berawalan `_` bukan klien dan tidak pernah diproses.
 
 ## Memulai
 
-Butuh TRAE (atau agent lain yang bisa membaca `AGENT.md`) dan Python 3.8 ke atas. Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
+Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Codex, dan lainnya) dan Python 3.8 ke atas. Tidak perlu memasang skill: semua aturan ada di repo ini (`aturan/kerja-tanpa-skill.md`). Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
 
 1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`.
 2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.

@@ -8,6 +8,52 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.7.0] - 2026-11-20
+--------------------
+
+Ditambahkan
+- aturan/kerja-tanpa-skill.md: aturan kerja mandiri (metode menulis ulang, tanda tulisan mesin, aturan
+  fakta, disiplin bukti sebelum klaim selesai, berkas meta, kanibalisasi). Ditulis dengan kata sendiri,
+  tidak menyalin teks skill. Karyawan tidak perlu memasang skill apa pun. Skill menjadi pelengkap opsional.
+- Gerbang final memeriksa judul SEO, deskripsi meta, dan slug lewat berkas pendamping
+  "<artikel> - Meta.txt" (Judul SEO / Deskripsi meta / Slug). Sebelumnya aturan "keyword di judul SEO,
+  deskripsi meta, slug" ada di AGENT.md tetapi tidak pernah diperiksa dan tidak ada tempat menyimpannya.
+  Berkas meta tidak ada: WARN. Keyword tidak ada, slug tidak sesuai, atau field kosong: FAIL.
+  Klaim superlatif ("termurah", "terbaik", dan sejenisnya) di judul/deskripsi: WARN.
+- Gerbang final memeriksa kanibalisasi (keyword sama dalam satu klien: FAIL, mirip: WARN) dan kalimat
+  yang disalin (3 rangkaian 8 kata atau lebih sama dengan artikel final lain, lintas klien: FAIL).
+  Folder berawalan "_" dilewati. FAKTA-SEO.md poin 5 sebelumnya tidak dijaga skrip.
+- klien/Salimah Catering/.../Jasa Catering Instansi Blitar - Meta.txt (judul 48 karakter, deskripsi
+  151 karakter, slug sama dengan anchor permalink; isi dari usulan di LAPORAN, bukan karangan baru).
+- uji-tools.py: 15 uji baru (meta 9, lintas 6), total 42. Pada skrip versi lama 10 di antaranya gagal.
+
+Diubah
+- cek-status.py: berkas "<nama> - Meta.txt" tidak lagi dianggap draft (sebelumnya terbaca MENUNGGU,
+  dibuktikan dengan uji nyata).
+- AGENT.md Section 9: skill tidak lagi WAJIB, bukan syarat jalannya pipeline. Section 4 Tahap 4 dan
+  command /artikel disesuaikan.
+- README: struktur dan prasyarat disesuaikan, tidak lagi menyebut skill sebagai syarat.
+
+Ditambahkan (AGENTS.md)
+- AGENTS.md (±500 token) sebagai penunjuk pendek yang dimuat otomatis oleh agent yang membaca AGENTS.md
+  (TRAE bila opsinya aktif, Codex, dan lainnya). Isinya hanya kapan membaca AGENT.md dan
+  aturan/kerja-tanpa-skill.md, lima larangan inti, dan perintah menjalankan. AGENT.md (±8.000 token)
+  sengaja tidak dijadikan berkas yang dimuat otomatis, supaya tidak memakan token pada tugas non-artikel.
+- CLAUDE.md kini mengimpor AGENTS.md (sebelumnya AGENT.md).
+
+Belum teruji
+- Satu kali uji-tools.py sempat gagal pada 8 pemanggilan dengan kode keluar 0xC0000005 (crash proses
+  Python di Windows). Enam putaran berikutnya lulus 42 dari 42. Penyebabnya belum diketahui dan tidak
+  bisa direproduksi. Bila muncul lagi, catat kondisinya.
+- Cek kalimat disalin memakai jendela 8 kata dan ambang 3 rangkaian. Angka ini tebakan wajar, belum
+  dikalibrasi pada artikel nyata lebih dari satu klien.
+- Asal pasti verification-before-completion dan antislop-copywriting belum terverifikasi sepenuhnya;
+  isinya tidak disalin ke repo.
+- AGENTS.md hanya penunjuk: agent tetap harus mau membuka AGENT.md saat tugasnya artikel. Belum diuji
+  pada agent selain TRAE. Di TRAE, opsi "Include AGENTS.md in the context" harus diaktifkan di
+  Settings > Rules & Memories, dan itu pengaturan per komputer.
+
+
 [0.6.0] - 2026-11-20
 --------------------
 

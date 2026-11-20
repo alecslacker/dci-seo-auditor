@@ -34,7 +34,7 @@ File command: `.trae/commands/artikel.md` (di ROOT project ini). Command menyuru
 @AGENT.md Kerjakan [NAMA PERUSAHAAN] bulan [NAMA BULAN] sesuai Section 10 (Mode Pintasan).
 ```
 
-TRAE membaca `AGENTS.md` (pakai S) dan `CLAUDE.md` bila opsinya diaktifkan di Settings > Rules & Memories. File ini bernama `AGENT.md`, jadi tidak termuat sendiri. Karena itu prompt cadangan memakai `@AGENT.md`.
+TRAE membaca `AGENTS.md` (pakai S) dan `CLAUDE.md` bila opsinya diaktifkan di Settings > Rules & Memories. `AGENTS.md` di repo ini sengaja pendek dan hanya menunjuk ke `AGENT.md` (aturan lengkap, ±8.000 token), jadi `AGENT.md` tidak termuat sendiri. Karena itu prompt cadangan memakai `@AGENT.md`.
 
 ## Yang terjadi setelah dikirim
 

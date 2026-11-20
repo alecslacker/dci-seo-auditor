@@ -21,6 +21,8 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── AGENT.md                      ← file ini (pipeline + checklist, TANPA data klien)
 ├── PROMPT PINTASAN.md            ← panduan memanggil Mode Pintasan
 ├── FAKTA-SEO.md                  ← fakta Google/Rank Math bersumber + tanggal (wajib rujuk)
+├── AGENTS.md                     ← penunjuk pendek ke berkas ini, dimuat agent otomatis (jaga tetap pendek)
+├── aturan/kerja-tanpa-skill.md   ← aturan kerja mandiri, tanpa skill apa pun (Section 9)
 ├── .trae/commands/artikel.md     ← command /artikel untuk TRAE (Section 10)
 ├── .zcode/cek-status.py          ← gerbang status: klasifikasi draft sebelum audit (Section 4)
 ├── .zcode/cek-artikel.py         ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
@@ -119,9 +121,11 @@ Tulis ulang sebagai "penulis manusia", bukan edit kosmetik:
 Selesai humanize: isi kolom Humanize di ledger dengan tanggal.
 
 ### Tahap 4 — Verifikasi SEO (Rank Math 80–100)
+Tulis dulu berkas pendamping `<artikel> - Meta.txt` (judul SEO, deskripsi meta, slug; format di `aturan/kerja-tanpa-skill.md` bagian 5).
 Jalankan gerbang kualitas: `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel Humanized>"`.
 Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, heading, format WordPress
-(more-tag, nbsp, list, alt, shortcode, kontak), Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
+(more-tag, nbsp, list, alt, shortcode, kontak), judul SEO/deskripsi meta/slug, kanibalisasi dan kalimat
+yang disalin dari artikel lain di `klien/`, Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
 "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
 Opsi `--kbbi --simpan-kata` memverifikasi kata yang belum ada di kamus ke KBBI Daring.
 Fakta Google/Rank Math yang menjadi dasar ambang ada di `FAKTA-SEO.md` — rujuk situ, jangan ingatan.
@@ -207,9 +211,11 @@ Aturan ledger: kolom Hash wajib 16 karakter hex agar baris terbaca. Jangan mengu
 - Angka harga hanya "kisaran"/"tergantung"; tanpa statistik/testimoni/nama/penghargaan fiktif.
 - Klaim butuh verifikasi live (harga kompetitor, fakta kota) → tandai eksplisit, jangan mengarang sumber.
 
-## 9. Skill Mapping (WAJIB dicek sebelum kerja manual)
+## 9. Aturan Mandiri dan Skill Opsional
 
-Sesuai aturan AGENTS.md: sebelum tiap tahap, cari skill yang cocok di folder skill agent yang dipakai (TRAE: `%userprofile%/.trae/skills/`) dan muat SKILL.md-nya. Skill paling spesifik dimuat lebih dulu. Mapping untuk pipeline ini:
+Pipeline ini TIDAK membutuhkan skill apa pun. Semua aturan yang dipakai ada di repo: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi). Baca berkas itu sebelum Tahap 3.
+
+Skill di tabel bawah hanya pelengkap bagi agent yang kebetulan memilikinya. Bila skill tidak ada, abaikan tabel ini dan ikuti `aturan/kerja-tanpa-skill.md`. Jangan mencoba mengunduh skill. Pemetaan bila tersedia:
 
 | Tahap | Skill | Peran |
 |---|---|---|
@@ -222,7 +228,7 @@ Sesuai aturan AGENTS.md: sebelum tiap tahap, cari skill yang cocok di folder ski
 
 Aturan pemakaian:
 1. Skill di atas adalah **filter**, bukan pengganti Section 11 — bila rules AI Puffer (Section 11) bertentangan dengan preferensi generik skill, **Section 11 menang** (contoh: marker percakapan "jujur saja," memang diwajibkan Section 11; antislop hanya membatasi frekuensinya maks 1–2×).
-2. Skill via Skill tool bila tersedia; bila environment tidak punya skill-nya (platform lain), terapkan prinsipnya manual sesuai tabel ini.
+2. Skill via Skill tool bila tersedia. Bila environment tidak punya skill-nya, ikuti `aturan/kerja-tanpa-skill.md`. Hasil kerja harus sama lolos gerbang `0 FAIL` dengan atau tanpa skill.
 3. Skill tambahan yang valid bila relevan: `blog-factcheck` (sebelum publish), `blog-seo-check` ulang setelah revisi detector, `copy-editing` (bila ada permintaan REVISION).
 
 ## 10. Mode Pintasan (input: nama perusahaan + nama bulan)
