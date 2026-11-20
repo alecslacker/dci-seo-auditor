@@ -88,6 +88,9 @@ Jalankan: `python3 -I .zcode/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"`
 | `SELESAI` | Ada di ledger, isi tidak berubah, semua tahap terisi | Lewati. Dilarang diaudit ulang |
 | `BERUBAH` | Ada di ledger, tetapi isi draft sudah berbeda dari yang diaudit | Jangan diproses otomatis. Lapor ke operator dan tanya apakah diaudit ulang. Hasil Humanized yang ada tidak boleh ditimpa tanpa persetujuan |
 | `TANPA-CATATAN` | Versi Humanized sudah ada tetapi draft tidak tercatat di ledger | Jangan disentuh. Lapor ke operator, dan catat di ledger hanya atas persetujuan operator |
+| `RUSAK` | Berkas draft bukan UTF-8 sehingga tidak bisa dibaca | Jangan diproses. Minta operator menyimpan ulang berkas sebagai UTF-8. Draft lain di folder yang sama tetap dinilai seperti biasa |
+
+Berkas pendamping `<nama> - Humanized.txt` dan `<nama> - Meta.txt` bukan draft dan tidak dinilai. Bila `CLIENT.md` masih berisi isian bawaan template, skrip berhenti dengan pesan jelas: isi dulu semua field.
 
 Aturan gerbang:
 1. Hash di ledger hanya boleh disalin dari output skrip. Dilarang menghitung manual (`sha256sum` shell menghasilkan nilai berbeda karena cara normalisasinya lain, dan itu akan membuat semua draft tampak `BERUBAH`).
@@ -127,7 +130,9 @@ Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, head
 (more-tag, nbsp, list, alt, shortcode, kontak), judul SEO/deskripsi meta/slug, kanibalisasi dan kalimat
 yang disalin dari artikel lain di `klien/`, Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
 "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
-Opsi `--kbbi --simpan-kata` memverifikasi kata yang belum ada di kamus ke KBBI Daring.
+Opsi `--kbbi --simpan-kata` memverifikasi kata yang belum ada di kamus ke KBBI Daring. Pencarian tanpa akun dibatasi harian: bila kuota habis, skrip berhenti dengan satu WARN (bukan FAIL), kata yang lolos tetap tersimpan, dan sisanya diulang di hari berikutnya.
+
+Kode keluar `cek-artikel.py`: `0` tidak ada FAIL, `1` ada FAIL, `2` masukan tidak bisa diperiksa (berkas tidak ada, bukan UTF-8, keyword tidak terdeteksi, atau `CLIENT.md` belum diisi). Kode `2` bukan FAIL artikel: perbaiki masukannya, lalu jalankan ulang.
 Fakta Google/Rank Math yang menjadi dasar ambang ada di `FAKTA-SEO.md` — rujuk situ, jangan ingatan.
 
 ### Tahap 5 — Crosscheck ZeroGPT + Final
@@ -239,8 +244,8 @@ Langkah:
 1. **Cari folder klien**: cocokkan nama perusahaan dengan folder di `klien/` (abaikan kapital/spasi; folder berawalan `_` dilewati). Tidak ada atau lebih dari satu kandidat → tanya operator, jangan menebak.
 2. **Baca `CLIENT.md`** folder itu untuk mengisi semua `{client_*}`. Tidak ada atau ada field kosong → berhenti dan minta operator melengkapi (jangan mengarang data klien).
 3. **Cari folder bulan**: di `klien/<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
-4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, dan `TANPA-CATATAN` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
-5. **Muat skill** sesuai Section 9, lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
+4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
+5. **Baca `aturan/kerja-tanpa-skill.md`** (skill di Section 9 hanya bila tersedia), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` (pertama kali untuk klien baru). Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).

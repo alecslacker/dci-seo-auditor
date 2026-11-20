@@ -8,6 +8,47 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.7.1] - 2026-11-20
+--------------------
+
+Cross-check menyeluruh: kode, rujukan path, perintah di dokumen, simulasi klien baru, konsistensi isi.
+Rujukan path dan Section di semua dokumen sudah benar. Tiga celah kode ditemukan lewat kasus tepi
+dan semuanya dibuktikan dulu (kode lama gagal, kode baru lulus):
+
+Diperbaiki
+- cek-artikel.py: berkas tidak ada atau bukan UTF-8 menampilkan traceback Python mentah. Kini pesan
+  jelas dengan kode keluar 2.
+- cek-status.py: satu berkas bukan UTF-8 membuat skrip crash dan menyembunyikan status semua draft
+  lain di folder itu. Kini berkas itu berstatus RUSAK dan draft lain tetap dinilai.
+- cek-status.py dan cek-artikel.py: klien baru yang menyalin klien/_TEMPLATE tetapi belum mengisi
+  CLIENT.md mendapat FAIL menyesatkan ("nama klien '[nama bisnis klien]' tidak muncul") dan draft
+  lengkap terbaca MENUNGGU. Kini berhenti dengan pesan "isian bawaan template" (kode keluar 2).
+
+Ditambahkan
+- Status RUSAK (status ketujuh) di cek-status.py, AGENT.md Section 4 dan 10, PROMPT PINTASAN.md,
+  command /artikel.
+- Kode keluar cek-artikel.py didokumentasikan: 0 lulus, 1 ada FAIL, 2 masukan tidak bisa diperiksa.
+- uji-tools.py: 7 uji baru (masukan buruk 5, template belum diisi 2), total 49.
+  Pada skrip versi lama 6 di antaranya gagal (diukur ulang sebelum commit). Satu uji lain, "draft
+  kosong tetap exit 0", memang sudah lulus pada skrip lama sehingga hanya menjaga agar tidak mundur.
+
+Diubah
+- README ditulis ulang: bagian "Yang dijamin dan yang tidak" (gerbang bukan jaminan peringkat), tabel
+  status dan kode keluar, struktur terbaru, peringatan agar tidak membuat banyak akun KBBI, angka
+  ZeroGPT Salimah ditandai berasal dari catatan dan belum diverifikasi ulang, bagian batasan.
+  "Tiga skrip" dikoreksi menjadi dua skrip gerbang.
+- AGENT.md Section 10 langkah 5: "Muat skill" menjadi "Baca aturan/kerja-tanpa-skill.md" (sisa
+  kata-kata lama yang bertentangan dengan Section 9).
+- AGENT.md Tahap 4: perilaku kuota KBBI dijelaskan.
+
+Terverifikasi
+- Sintaks ketiga skrip valid untuk Python 3.8 (ast feature_version), sesuai klaim README.
+- Semua perintah di dokumen dijalankan apa adanya: exit code sesuai yang dijanjikan.
+
+Belum teruji
+- Kasus tepi dicoba pada Windows saja. Perilaku di macOS dan Linux belum dicoba.
+
+
 [0.7.0] - 2026-11-20
 --------------------
 

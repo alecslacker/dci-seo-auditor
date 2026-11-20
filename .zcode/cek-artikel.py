@@ -347,9 +347,23 @@ def main():
     kamus = baca_kamus()
 
     p = Path(a.artikel)
-    raw = p.read_text(encoding="utf8").replace("\r", "")
+    if not p.is_file():
+        print("GAGAL: berkas '%s' tidak ada. Periksa nama dan folder (huruf besar kecil dan spasi harus sama)." % a.artikel)
+        sys.exit(2)
+    try:
+        raw = p.read_text(encoding="utf8").replace("\r", "")
+    except UnicodeDecodeError as e:
+        print("GAGAL: '%s' bukan UTF-8 (byte tidak sah di posisi %d). Simpan ulang berkas sebagai UTF-8." % (p.name, e.start))
+        sys.exit(2)
     folder = p.parent
     cli = baca_client(folder)
+    kosong = [k for k, v in cli.items() if v.startswith("[") and v.endswith("]") and k != "shortcode"]
+    if "shortcode" in cli and "shortcode tombol WA" in cli["shortcode"]:
+        kosong.append("shortcode")
+    if kosong:
+        print("GAGAL: CLIENT.md masih berisi isian bawaan template (%s). Isi semua field dulu "
+              "(lihat AGENT.md Section 3)." % ", ".join(sorted(kosong)))
+        sys.exit(2)
     nama = cli.get("nama", "")
     url_cli = (cli.get("url") or "").rstrip("/")
     shortcode = cli.get("shortcode", "")

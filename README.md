@@ -1,6 +1,6 @@
 # DCI SEO Auditor: Agentic SEO Auditor by Duta Corpora Indonesia
 
-DCI SEO Auditor mengubah draft artikel mentah dari plugin AI Puffer menjadi artikel WordPress yang siap tayang. Agent mengerjakan audit, penulisan ulang, dan pemeriksaan. Tiga skrip Python menjadi gerbang yang memutuskan lulus atau tidaknya, jadi hasilnya tidak bergantung pada penilaian agent sendiri.
+DCI SEO Auditor mengubah draft artikel mentah dari plugin AI Puffer menjadi artikel WordPress yang siap tayang. Agent mengerjakan audit, penulisan ulang, dan pemeriksaan. Dua skrip Python menjadi gerbang yang memutuskan lulus atau tidaknya, jadi hasilnya tidak bergantung pada penilaian agent sendiri.
 
 Tool ini dibuat untuk karyawan Duta Corpora Indonesia. Cara agent menyapa operator mengikuti `AGENTS.md` atau persona di komputer masing-masing.
 
@@ -12,15 +12,39 @@ draft mentah ──► GERBANG STATUS ──► AUDIT ──► HUMANIZE ──�
                                        perbaiki hanya bagian FAIL ◄┘
 ```
 
+## Yang dijamin dan yang tidak
+
+Gerbang kualitas membuktikan bahwa artikel memenuhi aturan format dan bahasa di repo ini: jumlah kata, keyword, heading, format WordPress, judul SEO dan slug, ejaan, serta tidak ada kalimat yang disalin dari artikel lain. Lulus berarti `0 FAIL`.
+
+Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinyal Google. Google tidak menetapkan jumlah kata atau jumlah keyword, dan melarang pengulangan yang terdengar tidak wajar (`FAKTA-SEO.md`). Target 31 sampai 34 kali keyword adalah aturan template kita sendiri. Hasil di Google hanya bisa dinilai dari data Search Console klien.
+
 ## Cara kerja
 
 1. **Gerbang status.** `cek-status.py` membandingkan sidik jari isi draft dengan ledger di `LAPORAN.md`. Draft yang sudah diaudit tidak diaudit dua kali, dan draft yang masih ditulis penulis dilewati.
-2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI.
-3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan. Statistik, testimoni, dan nama tidak boleh dikarang.
-4. **Gerbang kualitas.** `cek-artikel.py` memeriksa kata, paragraf pertama, keyword, heading, format WordPress, dan ejaan. Artikel lulus bila hasilnya `0 FAIL`.
+2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI. Audit ini tidak pernah menghentikan pekerjaan (exit 0).
+3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan dan `aturan/kerja-tanpa-skill.md`. Statistik, testimoni, dan nama tidak boleh dikarang.
+4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel dan berkas `- Meta.txt` pendampingnya. Artikel lulus bila hasilnya `0 FAIL`.
 5. **ZeroGPT dan laporan.** Hasil dipindai di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
 
-Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA-CATATAN`. Artinya ada di `AGENT.md` Section 4.
+### Status draft
+
+| Status | Artinya |
+|---|---|
+| `BARU` | Draft lengkap, belum pernah diaudit |
+| `MENUNGGU` | Draft belum lengkap, penulis masih bekerja |
+| `LANJUTKAN` | Pernah dikerjakan sebagian, hanya tahap yang kosong dilanjutkan |
+| `SELESAI` | Semua tahap tercatat, tidak diaudit ulang |
+| `BERUBAH` | Draft diedit setelah diaudit, agent bertanya ke operator |
+| `TANPA-CATATAN` | Versi Humanized ada tetapi tidak tercatat di ledger |
+| `RUSAK` | Berkas bukan UTF-8, perlu disimpan ulang |
+
+### Kode keluar `cek-artikel.py`
+
+| Kode | Artinya |
+|---|---|
+| `0` | Tidak ada FAIL |
+| `1` | Ada FAIL: perbaiki bagian yang gagal |
+| `2` | Masukan tidak bisa diperiksa: berkas tidak ada, bukan UTF-8, keyword tidak terdeteksi, atau `CLIENT.md` belum diisi |
 
 ## Struktur
 
@@ -52,22 +76,18 @@ Enam status draft: `BARU`, `MENUNGGU`, `LANJUTKAN`, `SELESAI`, `BERUBAH`, `TANPA
             └── LAPORAN.md              # ledger dan laporan bulan itu
 ```
 
-Folder berawalan `_` bukan klien dan tidak pernah diproses.
+Folder berawalan `_` bukan klien dan tidak pernah diproses. Nama folder `.zcode/` berasal dari platform lama. Isinya skrip biasa yang jalan di agent mana pun.
 
 ## Memulai
 
 Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Codex, dan lainnya) dan Python 3.8 ke atas. Tidak perlu memasang skill: semua aturan ada di repo ini (`aturan/kerja-tanpa-skill.md`). Di Windows, jalankan skrip dengan `python`. Contoh di dokumen memakai `python3`.
 
-1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`.
+1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`. Isian bawaan template yang belum diganti ditolak skrip.
 2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.
-3. **Jalankan** di TRAE dengan root project sebagai workspace:
-
-   ```text
-   /artikel Salimah Catering November
-   ```
-
-   Tanpa command, pakai prompt cadangan: `@AGENT.md Kerjakan Salimah Catering bulan November.`
-4. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko.
+3. **Jalankan** dengan root project sebagai workspace.
+   - TRAE: ketik `/artikel Salimah Catering November`. Pastikan opsi *Include AGENTS.md in the context* aktif di Settings > Rules & Memories.
+   - Agent lain: `Baca AGENT.md, lalu kerjakan Salimah Catering bulan November sesuai Section 10.`
+4. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko. Isi `- Meta.txt` dimasukkan ke kolom judul SEO, deskripsi meta, dan permalink di Rank Math.
 
 ## Alat bawaan
 
@@ -77,17 +97,24 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 .zcode/cek-artikel.py "<draft>" --draft` | Audit draft mentah, keluar daftar temuan |
 | `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 .zcode/cek-artikel.py "<artikel>" --kbbi --simpan-kata` | Cek kata ke KBBI Daring dan simpan ke kamus |
-| `python3 -I -X utf8 .zcode/uji-tools.py` | Uji otomatis kedua gerbang. Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 .zcode/uji-tools.py` | Uji otomatis kedua gerbang (49 uji). Jalankan setelah mengubah skrip |
 
-Pencarian KBBI Daring tanpa akun dibatasi harian. Bila pencarian massal terhenti, lanjutkan keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang.
+Pencarian KBBI Daring tanpa akun dibatasi harian. Bila kuota habis, skrip berhenti dengan satu peringatan, kata yang sudah lolos tetap tersimpan, dan sisanya diulang keesokan harinya. Kamus tersimpan, jadi kata yang sudah lolos tidak dicek ulang. Jangan membuat banyak akun untuk menembus batas ini: KBBI Daring mengenali pola pencarian beruntun dan bisa memasukkannya ke daftar hitam. Untuk pemakaian rutin, ajukan izin ke `adminkbbi@kemdikbud.go.id`.
 
 ## ZeroGPT
 
-Versi final dipindai di <https://www.zerogpt.com/>. Targetnya verdict *Human written* dengan AI di bawah 10%. Batas gratis 15.000 karakter, jadi blok editor dibuang dulu sebelum teks ditempel. Bila lebih panjang, teks dipecah di batas paragraf dan kedua angkanya dilaporkan. Plagiarisme belum punya alat cek otomatis.
+Versi final dipindai di <https://www.zerogpt.com/>. Targetnya verdict *Human written* dengan AI di bawah 10%. Batas gratis 15.000 karakter, jadi blok editor dibuang dulu sebelum teks ditempel. Bila lebih panjang, teks dipecah di batas paragraf dan kedua angkanya dilaporkan. Plagiarisme belum punya alat cek otomatis. Gerbang kualitas hanya menangkap kalimat yang disalin antar artikel di repo ini.
 
-## Contoh terverifikasi
+## Contoh
 
-Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyword 31 kali (density 1,50%), gerbang `0 FAIL 0 WARN`, ZeroGPT AI 3,7% (*Human written*). Rinciannya ada di `klien/Salimah Catering/artikel/2026 November/LAPORAN.md`.
+Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyword 31 kali (density 1,50%), gerbang `0 FAIL 0 WARN`. Angka ZeroGPT (AI 3,7%, *Human written*) berasal dari catatan di `LAPORAN.md` dan belum diverifikasi ulang. Rinciannya ada di `klien/Salimah Catering/artikel/2026 November/LAPORAN.md`.
+
+## Batasan yang diketahui
+
+- `/artikel` belum diuji dari menu TRAE. Formatnya meniru command TRAE yang sudah ada.
+- Opsi *Include AGENTS.md in the context* di TRAE adalah pengaturan per komputer, tidak bisa dibagikan lewat repo.
+- Ambang kalimat yang disalin (3 rangkaian 8 kata) belum dikalibrasi pada artikel nyata lebih dari satu klien.
+- Verifikasi KBBI massal pertama kali perlu beberapa hari bila kuota harian habis.
 
 ---
 

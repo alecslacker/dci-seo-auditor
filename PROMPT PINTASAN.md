@@ -56,12 +56,13 @@ Aman dijalankan berulang kali. Gerbang Status membandingkan isi draft dengan led
 | `SELESAI` | Semua tahap sudah tercatat | Dilewati, tidak diaudit ulang |
 | `BERUBAH` | Penulis mengedit draft setelah diaudit | Berhenti dan bertanya ke operator |
 | `TANPA-CATATAN` | Versi Humanized ada tetapi tidak tercatat di ledger | Dilewati dan dilaporkan |
+| `RUSAK` | Berkas draft bukan UTF-8 | Dilewati, operator diminta menyimpan ulang sebagai UTF-8 |
 
 Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], alasannya: ...`.
 
 ## Syarat sebelum dipakai untuk klien baru
 
-- Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3).
+- Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3). Isian bawaan template yang belum diganti ditolak skrip dengan pesan jelas.
 - Draft mentah `.txt` ada di `klien/<Klien>/artikel/<tahun bulan>/`.
 - Agent punya akses browser (untuk ZeroGPT). Bila gagal, agent menandai `MANUAL CHECK NEEDED`.
 

@@ -9,6 +9,7 @@ Author: Mas Wondho - Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -269,6 +270,41 @@ def uji_lintas(base):
     cek("lintas: folder _TEMPLATE diabaikan", "_TEMPLATE" not in out, "exit=%d" % kode)
 
 
+def uji_template_belum_diisi(base):
+    """Klien baru yang menyalin _TEMPLATE tapi belum mengisi CLIENT.md harus dapat pesan jelas."""
+    templat = ROOT / "klien" / "_TEMPLATE"
+    klien = base / "klien" / "Klien Baru"
+    shutil.copytree(templat, klien)
+    bulan = klien / "artikel" / "YYYY Bulan"
+    (bulan / "draft.txt").write_text("isi\n[whatsapp_button id=\"1\"]\n", encoding="utf8")
+    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    cek("template: cek-status menolak CLIENT.md bawaan dengan pesan jelas", kode != 0 and "isian bawaan template" in out and "Traceback" not in out, "exit=%d" % kode)
+    art = bulan / "a - Humanized.txt"
+    art.write_text('<p><a href="https://x.example/artikel/k"><b><i>Kata</i></b></a> - isi.</p>\n', encoding="utf8")
+    kode, out = jalankan(ROOT / ".zcode" / "cek-artikel.py", art, "--kw", "Kata")
+    cek("template: cek-artikel menolak CLIENT.md bawaan (exit 2), bukan FAIL menyesatkan", kode == 2 and "isian bawaan template" in out and "tidak muncul di artikel" not in out, "exit=%d" % kode)
+
+
+def uji_masukan_buruk(base):
+    """Masukan yang salah harus menghasilkan pesan manusiawi dengan kode 2, bukan traceback."""
+    _, bulan = bikin_skenario(base)
+    skrip = ROOT / ".zcode" / "cek-artikel.py"
+    kode, out = jalankan(skrip, bulan / "tidak-ada.txt")
+    cek("masukan: berkas tidak ada -> pesan jelas, exit 2", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
+    rusak = bulan / "latin1.txt"
+    rusak.write_bytes(b"<p>\xe9\xe8</p>")
+    kode, out = jalankan(skrip, rusak, "--kw", "x")
+    cek("masukan: bukan UTF-8 -> pesan jelas, exit 2", kode == 2 and "UTF-8" in out and "Traceback" not in out, "exit=%d" % kode)
+    kosong = bulan / "kosong.txt"
+    kosong.write_text("", encoding="utf8")
+    kode, out = jalankan(skrip, kosong, "--draft")
+    cek("masukan: draft kosong tetap exit 0 (audit bukan penghalang)", kode == 0 and "Traceback" not in out, "exit=%d" % kode)
+    kode, out = jalankan(ROOT / ".zcode" / "cek-status.py", bulan)
+    cek("masukan: cek-status tidak crash, draft kosong = MENUNGGU", kode == 0 and "MENUNGGU" in out and "Traceback" not in out, "exit=%d" % kode)
+    cek("masukan: cek-status melaporkan berkas bukan UTF-8 sebagai RUSAK, draft lain tetap terbaca",
+        re.search(r"RUSAK\t-\ttahap_kosong=-\tlatin1\.txt", out) is not None and "kosong.txt" in out, out[:120].replace("\n", " | "))
+
+
 class HalamanPalsu:
     def __init__(self, html_teks):
         self.html_teks = html_teks
@@ -306,6 +342,10 @@ def main():
         uji_status(base)
         uji_artikel(base)
         uji_artikel_lulus(base)
+    with tempfile.TemporaryDirectory(prefix="uji-dci-templat-") as d:
+        uji_template_belum_diisi(Path(d))
+    with tempfile.TemporaryDirectory(prefix="uji-dci-masukan-") as d:
+        uji_masukan_buruk(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-meta-") as d:
         uji_meta(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
