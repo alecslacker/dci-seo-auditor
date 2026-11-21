@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PY = [sys.executable, "-I", "-X", "utf8"]
 GAGAL_UJI = []
+JUMLAH_UJI = [0]
 
 
 def jalankan(*argv):
@@ -27,6 +28,7 @@ def jalankan(*argv):
 
 
 def cek(nama, kondisi, detail=""):
+    JUMLAH_UJI[0] += 1
     status = "OK  " if kondisi else "GAGAL"
     print("%s %s %s" % (status, nama, detail))
     if not kondisi:
@@ -618,7 +620,7 @@ def main():
     if GAGAL_UJI:
         print("UJI GAGAL: %s" % ", ".join(GAGAL_UJI))
         sys.exit(1)
-    print("Semua uji lulus.")
+    print("Semua %d uji lulus." % JUMLAH_UJI[0])
 
 
 main()
