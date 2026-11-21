@@ -185,12 +185,23 @@ def uji_artikel_lulus(base):
         "more-tag hilang": (isi.replace("<!--more-->", ""), "<!--more--> ada 0"),
         "shortcode WA hilang": (isi.replace('\n\n[wa id="9"]', ""), "baris terakhir bukan shortcode"),
         "keyword body tidak dibold": (isi.replace("<b>%s</b>" % KW, KW, 1), "hanya"),
+        "kata cakapan": (isi.replace("<p>Terima kasih", "<p>Menu nggak berubah. Terima kasih"), "kata cakapan: 'nggak'"),
+        "kata kembar dua huruf": (isi.replace("<p>Terima kasih", "<p>Kami tiba di di lokasi. Terima kasih"), "kata kembar"),
     }
+    # Salah ketik Indonesia: di gerbang final kata di luar kamus = FAIL (dulu hanya WARN atau lolos).
+    for typo in ("menyedikan", "sesua", "hraga", "instasi", "acra", "yag"):
+        mutasi["salah ketik '%s'" % typo] = (isi.replace("<p>Terima kasih", "<p>Kami %s menu. Terima kasih" % typo), typo)
     for nama, (teks, pesan) in mutasi.items():
         f = bulan / "mutasi.txt"
         f.write_text(teks, encoding="utf8")
         kode, out = jalankan(skrip, f)
         cek("lulus: mutasi '%s' ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
+
+    # Mode draft: salah ketik hanya temuan, exit tetap 0.
+    f = bulan / "mutasi.txt"
+    f.write_text(isi.replace("<p>Terima kasih", "<p>Kami menyedikan menu. Terima kasih"), encoding="utf8")
+    kode, out = jalankan(skrip, f, "--draft")
+    cek("lulus: salah ketik di mode draft tetap exit 0", kode == 0 and "menyedikan" in out, "exit=%d" % kode)
 
 
 def uji_tanpa_meta(base):
@@ -695,8 +706,11 @@ def uji_kamus():
     for kata in ("makanan", "mengonsumsi", "pengaruhnya", "diutak-atik", "katering", "dipesankan"):
         ok = all(modul.kata_dikenal(b, kamus) for b in kata.split("-"))
         cek("kamus: '%s' dikenali" % kata, ok)
-    for kata in ("pelaynan", "kualitsa", "mkanan"):
+    for kata in ("pelaynan", "kualitsa", "mkanan", "menyedikan", "sesua"):
         cek("kamus: salah ketik '%s' tertangkap" % kata, not modul.kata_dikenal(kata, kamus))
+    # Kata sah dengan awalan + akar pendek tetap dikenali (kamus utama atau alat/kamus-kata.txt).
+    for kata in ("sesuai", "kedua", "pesanan", "dicat", "sepiring"):
+        cek("kamus: kata sah '%s' tetap dikenali" % kata, modul.kata_dikenal(kata, kamus))
     lisensi = ROOT / "alat" / "kamus-id.LICENSE.txt"
     cek("kamus: berkas lisensi LGPL ikut repo", lisensi.is_file() and "GNU LESSER GENERAL PUBLIC LICENSE" in lisensi.read_text(encoding="utf8").upper())
 

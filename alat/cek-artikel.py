@@ -34,6 +34,10 @@ NON_BAKU = {
 # Kata asing umum yang tidak baku dalam bahasa Indonesia
 KATA_ASING = {"snack", "box", "coffee", "break", "dessert", "price", "cheap",
               "booking", "package", "service", "quality", "best", "order"}
+# Kata cakapan (ragam santai) yang tidak pantas di artikel baku. Sebagian ada di kamus, jadi dicek terpisah.
+KATA_CAKAPAN = {"nggak", "ngga", "gak", "enggak", "udah", "aja", "banget", "gimana", "kayak",
+                "emang", "dong", "sih", "deh", "kok", "lho", "gitu", "gini", "nih", "tuh",
+                "doang", "kalo", "pake", "ampe", "bener"}
 KLICHE = ["di era modern ini", "dalam dunia yang semakin berkembang",
           "tidak dapat dipungkiri", "perlu diketahui bahwa", "sangat penting untuk",
           "merupakan salah satu", "berbagai macam", "memainkan peran penting"]
@@ -55,27 +59,30 @@ def baca_kamus():
 
 
 # Pengupas imbuhan sederhana: kata berimbuhan dianggap dikenal bila akarnya ada di kamus.
-# Sengaja longgar (hasilnya hanya WARN); tujuannya menangkap salah ketik, bukan memvonis ejaan.
+# Awalan dua huruf selain di- menuntut akar akhir (yang cocok di kamus) minimal 4 huruf, agar
+# salah ketik seperti "sesua" (se+sua) atau "menyedikan" (meny+se+dik+an) tidak dianggap kata sah.
 SUFIKS = ("kan", "nya", "lah", "kah", "pun", "an", "i", "ku", "mu")
+AKAR_MIN = {"se": 4, "pe": 4, "ke": 4, "te": 4, "be": 4, "me": 4}
 PREFIKS = (("meng", ("", "k")), ("meny", ("s",)), ("men", ("", "t")), ("mem", ("", "p")), ("me", ("",)),
            ("peng", ("", "k")), ("peny", ("s",)), ("pen", ("", "t")), ("pem", ("", "p")), ("pe", ("",)),
            ("ber", ("",)), ("be", ("",)), ("ter", ("",)), ("te", ("",)), ("per", ("",)), ("pel", ("",)),
            ("di", ("",)), ("ke", ("",)), ("se", ("",)), ("ku", ("",)), ("kau", ("",)))
 
 
-def kata_dikenal(kata, kamus_, kedalaman=0):
-    if kata in kamus_:
+def kata_dikenal(kata, kamus_, kedalaman=0, min_akar=0):
+    if kata in kamus_ and len(kata) >= min_akar:
         return True
     if kedalaman > 3:
         return False
     for suf in SUFIKS:
         akar = kata[:-len(suf)]
-        if kata.endswith(suf) and len(akar) >= 3 and kata_dikenal(akar, kamus_, kedalaman + 1):
+        if kata.endswith(suf) and len(akar) >= 3 and kata_dikenal(akar, kamus_, kedalaman + 1, min_akar):
             return True
     for pre, ganti in PREFIKS:
         if kata.startswith(pre):
             sisa = kata[len(pre):]
-            if len(sisa) >= 3 and any(kata_dikenal(g + sisa, kamus_, kedalaman + 1) for g in ganti):
+            batas = max(min_akar, AKAR_MIN.get(pre, 0))
+            if len(sisa) >= 3 and any(kata_dikenal(g + sisa, kamus_, kedalaman + 1, batas) for g in ganti):
                 return True
     return False
 
@@ -125,7 +132,11 @@ def tag_seimbang(raw):
 
 
 def cek_bahasa(teks, izin):
-    gagal, peringatan, unik = [], [], sorted({w.lower() for w in RE_KATA.findall(teks.lower())})
+    # Email dan domain (info@klien.com, klien.co.id) bukan kata: dibuang sebelum cek kamus.
+    # Daftar akhiran domain dibatasi agar "selesai.terima" (lupa spasi) tetap tertangkap.
+    polos = re.sub(r"\S+@\S+|\b[\w-]+(\.(co|com|net|org|id|info|biz|web|my|sch|go|ac|example))+\b",
+                   " ", teks.lower())
+    gagal, peringatan, unik = [], [], sorted(set(RE_KATA.findall(polos)))
     for kata in unik:
         if kata in izin:
             continue
@@ -139,6 +150,9 @@ def cek_bahasa(teks, izin):
     for kata in sorted(KATA_ASING):
         if kata not in izin and re.search(r"\b" + kata + r"\b", teks, re.I):
             gagal.append("kata asing: '%s' (ganti padanan Indonesia baku)" % kata)
+    for kata in sorted(KATA_CAKAPAN):
+        if kata not in izin and re.search(r"\b" + kata + r"\b", teks, re.I):
+            gagal.append("kata cakapan: '%s' (pakai ragam baku)" % kata)
     for frasa in KLICHE:
         if frasa in teks.lower():
             gagal.append("kliche terlarang: '%s'" % frasa)
@@ -153,7 +167,7 @@ def cek_bahasa(teks, izin):
         if not isi or "\n" in jeda or isi[-1] in ".!?":
             continue                                      # awal kalimat/paragraf: kapital sah
         gagal.append("'Anda' kapital di tengah kalimat: ...%s" % teks[max(0, m.start() - 25):m.start() + 8])
-    for m in re.finditer(r"\b([a-zà-ÿ]{3,}) \1\b", teks):
+    for m in re.finditer(r"\b([a-zà-ÿ]{2,}) \1\b", teks):
         gagal.append("kata kembar: '%s %s'" % (m.group(1), m.group(1)))
     for m in re.finditer(r" [,.!?;:]", teks):
         peringatan.append("spasi sebelum tanda baca: ...%s" % teks[max(0, m.start() - 20):m.start() + 6])
@@ -457,6 +471,13 @@ def main():
     g_bahasa, w_bahasa, unik = cek_bahasa(teks, izin)
     gagal += g_bahasa
     gagal += cek_angka(raw)
+    if not a.draft:
+        # Gerbang final: kata di luar kamus = FAIL. Kata sah (nama, istilah) masuk alat/kamus-kata.txt.
+        luar = [w for w in w_bahasa if re.fullmatch(r"[a-zà-ÿ-]+", w)]
+        w_bahasa = [w for w in w_bahasa if w not in luar]
+        if luar:
+            gagal.append("%d kata di luar kamus (salah ketik, atau kata sah yang perlu ditambahkan ke "
+                         "alat/kamus-kata.txt): %s" % (len(luar), " ".join(luar[:40]) + (" ..." if len(luar) > 40 else "")))
     peringatan += w_bahasa
 
     # --- Mode draft: audit, bukan gerbang ---

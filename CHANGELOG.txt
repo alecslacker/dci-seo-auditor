@@ -8,6 +8,20 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.18.0] - 2026-11-22
+----------------------
+Diubah
+- Anti-Typo Gate diperketat (uji 14 salah ketik pada artikel Salimah: dulu 11 WARN, 3 lolos, 0 FAIL).
+  - Gerbang final: kata di luar kamus menjadi FAIL (dulu WARN). Mode --draft tetap temuan, exit 0.
+  - Pengupas imbuhan: awalan se-, pe-, ke-, te-, be-, me- menuntut akar akhir minimal 4 huruf,
+    sehingga "sesua" dan "menyedikan" tidak lagi dianggap kata sah.
+  - Kata kembar kini mulai dari 2 huruf ("di di").
+  - Email dan domain tidak lagi dipecah menjadi kata saat cek kamus.
+Ditambahkan
+- Daftar kata cakapan (nggak, udah, aja, banget, dan lain-lain) sebagai FAIL.
+- kamus-kata.txt: "kedua" (satu-satunya kata sah di korpus repo yang hilang akibat aturan akar).
+- uji-tools.py: 16 uji baru (6 salah ketik, cakapan, kata kembar, draft exit 0, kata sah tetap dikenal).
+
 [0.17.1] - 2026-11-22
 ----------------------
 Ditambahkan

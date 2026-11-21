@@ -145,9 +145,9 @@ Jalankan gerbang kualitas: `python3 -I -X utf8 alat/cek-artikel.py "<artikel Hum
 Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, heading, format WordPress
 (more-tag, nbsp, list, alt, shortcode, kontak), kanibalisasi dan kalimat
 yang disalin dari artikel lain di `klien/`, kedalaman parafrase terhadap draft aslinya (FAIL bila lebih dari
-25% rangkaian 8 kata draft masih utuh), Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
-"Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
-Cek kata berjalan offline: kata di luar kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`, dengan pengupasan imbuhan) hanya WARN untuk ditinjau manual. Kata sah yang belum ada (nama, istilah) ditambahkan ke `alat/kamus-kata.txt`.
+25% rangkaian 8 kata draft masih utuh), Anti-Typo Gate (ejaan tidak baku, kata asing, kata cakapan,
+kata kembar, salah ketik, em dash, "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
+Cek kata berjalan offline: di gerbang final, kata di luar kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`, dengan pengupasan imbuhan) adalah FAIL. Salah ketik diperbaiki di artikel. Kata yang memang sah (nama, istilah) ditambahkan ke `alat/kamus-kata.txt`, jangan ditambahkan hanya agar lulus. Di mode `--draft` kata itu hanya temuan.
 
 Kode keluar `cek-artikel.py`: `0` tidak ada FAIL, `1` ada FAIL, `2` masukan tidak bisa diperiksa (berkas tidak ada, bukan UTF-8, keyword tidak terdeteksi, atau `CLIENT.md` belum diisi). Kode `2` bukan FAIL artikel: perbaiki masukannya, lalu jalankan ulang.
 Fakta Google/Rank Math yang menjadi dasar ambang ada di `FAKTA-SEO.md` — rujuk situ, jangan ingatan.
@@ -180,7 +180,7 @@ Jalur humanize penuh: uji hasil ke ZeroGPT (protokol di Section 6). Jalur draf d
 ### 5c. WordPress + PUEBI + Bahasa Baku
 - [ ] Format H2/H3, nbsp, more-tag, shortcode sesuai Section 11.
 - [ ] EYD: "silakan", kapital hari/bulan, "di" pisah sebagai kata depan.
-- [ ] Semua kata prosa lolos kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`) atau sudah ditinjau manual; kata asing ditulis ulang sesuai Tahap 3.
+- [ ] Semua kata prosa lolos kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`); tanpa kata cakapan (nggak, udah, aja); kata asing ditulis ulang sesuai Tahap 3.
 - [ ] Format kode aman WordPress: paragraf dipisah baris kosong (wpautop membungkus `<p>`), baris tunggal
   dalam blok kontak menjadi `<br />` (dilakukan WordPress), tanpa komentar blok Gutenberg `<!-- wp:… -->`
   agar wpautop tidak dimatikan (lihat FAKTA-SEO.md bagian WordPress).

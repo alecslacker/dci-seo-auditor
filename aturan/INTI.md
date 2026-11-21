@@ -34,6 +34,7 @@ Ini ringkasan satu halaman. Bila ada yang bertentangan, `AGENT.md` Section 11 me
 - Cliché: "Di era modern ini", "Tidak dapat dipungkiri", "Perlu diketahui bahwa", "Sangat penting untuk", "Merupakan salah satu", "Berbagai macam", "Memainkan peran penting", "Dalam dunia yang semakin berkembang".
 - "Anda" berkapital kecuali di awal kalimat. Tulis "silakan", bukan "silahkan". Tidak ada heading "Kesimpulan".
 - Kata asing yang punya padanan baku ditulis ulang (snack box jadi kotak kudapan, dessert jadi pencuci mulut). Pertahankan nama brand, keyword, dan istilah di `CLIENT.md`.
+- Kata cakapan (nggak, udah, aja, banget) dan salah ketik. Kata di luar kamus = FAIL: perbaiki ejaannya. Tambahkan ke `alat/kamus-kata.txt` hanya bila kata itu memang sah (nama, istilah).
 - Mengarang statistik, testimoni, nama, penghargaan, tahun pengalaman, atau harga pasti. Harga hanya "kisaran" atau "tergantung".
 - Menyebut atau menautkan klien lain.
 
