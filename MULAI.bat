@@ -1,6 +1,6 @@
 @echo off
 rem DCI SEO Auditor - klik dua kali berkas ini untuk membuka menu.
-rem Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+rem Author: Duta Corpora Indonesia (DCI)
 chcp 65001 >nul
 title DCI SEO Auditor
 cd /d "%~dp0"

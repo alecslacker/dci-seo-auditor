@@ -1,6 +1,6 @@
 # AGENT.md — DCI SEO Auditor (Agentic SEO Auditor by Duta Corpora Indonesia)
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 > Sumber aturan konten: Section 11 file ini (template prompt AI Puffer, GLOBAL, tanpa hardcode klien).
 > File ini = otak project: format registry klien, pipeline kerja, checklist audit, protokol crosscheck, dan mode pintasan.

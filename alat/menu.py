@@ -5,7 +5,7 @@
 Cara pakai di Windows: klik dua kali MULAI.bat di folder utama project.
 Cara lain: python -X utf8 alat/menu.py
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import datetime

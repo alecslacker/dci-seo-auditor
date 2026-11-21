@@ -1,6 +1,6 @@
 # Pustaka Skill SEO dan Audit (DCI SEO Auditor)
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 > Isi folder ini berasal dari proyek MIT pihak ketiga (rincian di bagian Sumber). Teks lisensinya ada di `LISENSI/`.
 

@@ -1,6 +1,6 @@
 # PINTASAN — DCI SEO Auditor
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
 Panduan ini menjelaskan cara memanggil pipeline artikel dengan satu perintah, di agent mana pun.

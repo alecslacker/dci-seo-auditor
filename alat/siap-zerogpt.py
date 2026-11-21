@@ -13,7 +13,7 @@ Pakai (dari ROOT project):
 Keluaran: payload-zerogpt.txt (satu bagian bila muat, dua bila dipecah). Exit 0 sukses,
 2 masukan tidak bisa diproses.
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import html

@@ -17,7 +17,7 @@ Pakai (dari root project):
 Agent tanpa folder command (Codex, Cursor, dan lainnya) tidak dipasang. Untuk mereka, tulis di chat:
   Baca AGENT.md, lalu kerjakan <nama perusahaan> bulan <bulan> sesuai Section 10.
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import argparse

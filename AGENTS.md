@@ -1,6 +1,6 @@
 # AGENTS.md — DCI SEO Auditor
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
 Project ini mengerjakan artikel SEO WordPress untuk klien Duta Corpora Indonesia. Berkas ini sengaja pendek. Aturan lengkap ada di berkas lain, dan dibaca hanya saat tugasnya artikel.

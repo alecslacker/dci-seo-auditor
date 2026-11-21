@@ -8,7 +8,7 @@ Pakai (dari ROOT project):
     --kw "Fokus Keyword"   batalin deteksi otomatis (default: anchor permalink pertama)
     --draft                mode audit draft mentah (temuan sebagai bahan humanize, exit selalu 0)
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import argparse

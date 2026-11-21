@@ -21,5 +21,5 @@
 **Catatan klien:** [fokus wilayah, jenis konten, pantangan khusus, atau hal lain yang perlu agent ketahui]
 
 ---
-Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright © 2026 Duta Corpora Indonesia — All rights reserved

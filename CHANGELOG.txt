@@ -1,6 +1,6 @@
 CHANGELOG - DCI SEO Auditor
 ===========================
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 
 Isi file ini: perubahan pada SISTEM kerja project (AGENT.md, command, panduan).
@@ -8,8 +8,15 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.16.1] - 2026-11-22
+----------------------
+Diubah
+- Identitas di semua berkas kerja (aturan, skrip, templat klien, skill) hanya "Duta Corpora Indonesia";
+  nama pribadi dihapus karena repo dipakai karyawan. Nama pribadi hanya tersisa di README.
+- Uji baru: nama pribadi tidak boleh muncul di luar README (184 -> 185).
+
 [0.16.0] - 2026-11-22
----------------------
+----------------------
 Diubah (berlaku untuk semua klien, keputusan pemilik)
 - Gerbang ZeroGPT dipindah ke depan: operator memindai DRAF dulu. Draf di bawah 10% AI melewati
   humanize (salin jadi - Humanized.txt, perbaiki hanya temuan audit); draf 10% atau lebih humanize

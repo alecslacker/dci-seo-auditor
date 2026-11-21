@@ -1,6 +1,6 @@
 # Aturan Kerja Mandiri
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
 Berkas ini berdiri sendiri. Karyawan tidak perlu memasang skill apa pun, dan agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Codex, dan lainnya) bisa memakainya. Pustaka skill SEO dan audit ikut repo di skills/pustaka/ (lihat bagian 8). Bila ada pertentangan, urutan menangnya: `AGENT.md` Section 11, lalu berkas ini, lalu skill apa pun.

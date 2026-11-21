@@ -134,7 +134,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (184 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (185 uji). Jalankan setelah mengubah skrip |
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --tanpa-humanize` | Gerbang final untuk artikel dari draf yang lolos ZeroGPT di bawah 10% (melewati ukuran parafrase saja) |
 | `python3 -I -X utf8 alat/siap-zerogpt.py "<draf atau Humanized>" ["<lain>" ...]` | Siapkan `payload-zerogpt.txt` (satu atau banyak berkas) untuk operator pindai di ZeroGPT |
 | `WINSTON_API_KEY=<kunci> python3 -I -X utf8 alat/cek-ai-api.py "<artikel Humanized>" --ambang 50` | EKSPERIMENTAL. Tulis `kalimat-ai.txt` (skor manusia Winston per kalimat). Bukan pengganti ZeroGPT. Di PowerShell: `$env:WINSTON_API_KEY="<kunci>"` dulu |

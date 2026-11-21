@@ -18,7 +18,7 @@ Pakai (dari ROOT project):
 Biaya: 1 kredit per kata. Satu artikel 1.000 kata = 1.000 kredit. Cek sisa kredit di keluaran.
 Keluaran: kalimat-ai.txt di folder artikel. Exit 0 selesai, 2 masukan atau API bermasalah.
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import importlib.util

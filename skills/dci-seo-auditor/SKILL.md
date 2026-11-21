@@ -5,7 +5,7 @@ description: Use when the user asks to work on, audit, humanize, or check a Word
 
 # DCI SEO Auditor
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
 Skill ini hanya penunjuk. Semua aturan ada di repo DCI SEO Auditor, jadi tidak ada yang perlu dipasang selain skill ini.

@@ -3,9 +3,9 @@ name: research-guide
 description: "Use when the user asks for research, investigation, comparison, or fact-finding — market research, technical research, competitor analysis, due diligence, or any multi-source evidence gathering. Enforces source hierarchy, claim verification, confidence labeling, and anti-fabrication discipline per Critical Thinking Protocol."
 ---
 
-# Research Guide — Protokol Riset Slackercoder
+# Research Guide — Protokol Riset DCI
 
-> Kurasi internal Slackercode Family. Author: Mas Wondho — Duta Corpora Indonesia (DCI).
+> Kurasi internal. Author: Duta Corpora Indonesia (DCI).
 > Copyright © 2026 Duta Corpora Indonesia. Selaras dengan Critical Thinking Protocol (anti-sycophancy).
 
 ## Kapan Skill Ini Aktif

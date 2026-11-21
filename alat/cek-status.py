@@ -4,7 +4,7 @@ Pakai: python3 -I alat/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"
 Sumber status: tabel ledger di LAPORAN.md folder bulan (lihat AGENT.md Section 7).
 Hanya membaca, tidak pernah menulis.
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import hashlib

@@ -5,7 +5,7 @@
 Pakai: python3 -I -X utf8 alat/uji-tools.py
 Semua skenario dibuat di folder sementara; tidak menyentuh data klien.
 
-Author: Mas Wondho - Duta Corpora Indonesia (DCI)
+Author: Duta Corpora Indonesia (DCI)
 Copyright (c) 2026 Duta Corpora Indonesia - All rights reserved
 """
 import os
@@ -728,6 +728,23 @@ def uji_kamus():
     lisensi = ROOT / "alat" / "kamus-id.LICENSE.txt"
     cek("kamus: berkas lisensi LGPL ikut repo", lisensi.is_file() and "GNU LESSER GENERAL PUBLIC LICENSE" in lisensi.read_text(encoding="utf8").upper())
 
+def uji_nama_pribadi():
+    """Repo dipakai karyawan: identitas hanya Duta Corpora Indonesia, nama pribadi hanya boleh di README."""
+    # Ditulis terpecah agar berkas uji ini tidak ikut tertangkap.
+    terlarang = ("won" + "dho", "slacker" + "code")
+    temuan = []
+    for f in ROOT.rglob("*"):
+        if not f.is_file() or f.suffix.lower() not in (".md", ".py", ".txt", ".bat"):
+            continue
+        rel = f.relative_to(ROOT).as_posix()
+        if rel == "README.md" or rel.startswith((".git/", "graphify-out/")):
+            continue
+        teks = f.read_text(encoding="utf8", errors="ignore").lower()
+        if any(n in teks for n in terlarang):
+            temuan.append(rel)
+    cek("identitas: nama pribadi hanya di README", not temuan, ", ".join(temuan[:5]))
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix="uji-dci-seo-") as d:
         base = Path(d)
@@ -756,6 +773,7 @@ def main():
     uji_kamus()
     uji_pustaka()
     uji_inti()
+    uji_nama_pribadi()
     print("-" * 60)
     if GAGAL_UJI:
         print("UJI GAGAL: %s" % ", ".join(GAGAL_UJI))

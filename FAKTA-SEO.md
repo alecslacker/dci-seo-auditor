@@ -1,6 +1,6 @@
 # FAKTA-SEO.md — Fakta Google Search & Rank Math (bersumber + tanggal)
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 > Tujuan: satu-satunya tempat klaim "aturan Google/SEO" di project ini. Semua poin diambil langsung
 > dari halaman resmi (bukan ingatan), dengan tanggal "Last updated" yang tertera di halaman.

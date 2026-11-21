@@ -1,6 +1,6 @@
 # Aturan Inti (jalur cepat untuk model kecil)
 
-> Author: Mas Wondho — Duta Corpora Indonesia (DCI)
+> Author: Duta Corpora Indonesia (DCI)
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 
 Ini ringkasan satu halaman. Bila ada yang bertentangan, `AGENT.md` Section 11 menang. Buka `AGENT.md` penuh hanya untuk hal yang tidak ada di sini (format ledger, status langka, template HTML persis). Jangan membaca `skills/pustaka/`.
