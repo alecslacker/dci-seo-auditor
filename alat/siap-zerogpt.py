@@ -52,27 +52,33 @@ def pecah(teks):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Pakai: python -I -X utf8 alat/siap-zerogpt.py \"<artikel - Humanized.txt>\"")
+    if len(sys.argv) < 2:
+        print("Pakai: python -I -X utf8 alat/siap-zerogpt.py \"<artikel.txt>\" [\"<artikel lain.txt>\" ...]")
         sys.exit(2)
-    p = Path(sys.argv[1])
-    if not p.is_file():
-        print("GAGAL: berkas '%s' tidak ada." % p)
-        sys.exit(2)
-    try:
-        raw = p.read_text(encoding="utf8")
-    except UnicodeDecodeError as e:
-        print("GAGAL: '%s' bukan UTF-8 (byte tidak sah di posisi %d)." % (p.name, e.start))
-        sys.exit(2)
-    bagian = pecah(bersihkan(raw))
-    if not bagian:
-        print("GAGAL: artikel kosong.")
-        sys.exit(2)
-    out = p.parent / "payload-zerogpt.txt"
-    isi = []
-    for i, b in enumerate(bagian, 1):
-        label = ("BAGIAN %d/%d\n\n" % (i, len(bagian))) if len(bagian) > 1 else ""
-        isi.append(label + b)
+    banyak = len(sys.argv) > 2
+    bagian, isi = [], []
+    for arg in sys.argv[1:]:
+        p = Path(arg)
+        if not p.is_file():
+            print("GAGAL: berkas '%s' tidak ada." % p)
+            sys.exit(2)
+        try:
+            raw = p.read_text(encoding="utf8")
+        except UnicodeDecodeError as e:
+            print("GAGAL: '%s' bukan UTF-8 (byte tidak sah di posisi %d)." % (p.name, e.start))
+            sys.exit(2)
+        potongan = pecah(bersihkan(raw))
+        if not potongan:
+            print("GAGAL: artikel '%s' kosong." % p.name)
+            sys.exit(2)
+        for i, b in enumerate(potongan, 1):
+            if banyak:
+                label = "ARTIKEL: %s (bagian %d/%d)\n\n" % (p.stem, i, len(potongan))
+            else:
+                label = ("BAGIAN %d/%d\n\n" % (i, len(potongan))) if len(potongan) > 1 else ""
+            isi.append(label + b)
+            bagian.append(b)
+    out = Path(sys.argv[1]).parent / "payload-zerogpt.txt"
     out.write_text(("\n\n=====\n\n").join(isi) + "\n", encoding="utf8")
     print("OK: %s (%d bagian, karakter terpanjang %d)" % (out, len(bagian), max(len(b) for b in bagian)))
     print()
@@ -81,7 +87,13 @@ def main():
     print("=" * 60)
     print("1. Buka https://www.zerogpt.com/ di browser.")
     print("2. Buka berkas: %s" % out)
-    if len(bagian) > 1:
+    if banyak:
+        print("3. Berkas berisi %d bagian, dipisah baris =====, tiap bagian bertanda nama ARTIKEL." % len(bagian))
+        print("   Tempel satu bagian ke kolom teks, klik \"Detect Text\", tunggu 15-30 detik, catat hasilnya.")
+        print("4. Ulangi untuk bagian berikutnya sampai semua artikel terpindai.")
+        print("5. Laporkan ke agent: nama artikel + verdict + AI %, contoh:")
+        print("   \"salimah-catering-blitar: Human written, AI 3,8%.\"")
+    elif len(bagian) > 1:
         print("3. Tempel isi BAGIAN 1/%d (sebelum baris =====) ke kolom teks," % len(bagian))
         print("   klik \"Detect Text\", tunggu 15-30 detik, catat hasilnya.")
         print("4. Ulangi untuk tiap bagian berikutnya (BAGIAN 2/%d, dst)." % len(bagian))

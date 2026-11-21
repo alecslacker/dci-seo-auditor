@@ -355,6 +355,9 @@ def main():
     ap.add_argument("--kw", default=None)
     ap.add_argument("--draft", action="store_true",
                     help="mode audit draft mentah: keluarkan temuan sebagai bahan humanize (exit selalu 0)")
+    ap.add_argument("--tanpa-humanize", action="store_true",
+                    help="artikel final berasal dari draft yang skor ZeroGPT-nya sudah di bawah 10%%: "
+                         "lewati pengukuran kedalaman parafrase, gerbang lain tetap berlaku")
     a = ap.parse_args()
     global kamus
     kamus = baca_kamus()
@@ -503,10 +506,13 @@ def main():
         g_lintas, w_lintas = cek_lintas(p, raw, kw)
         gagal += g_lintas
         peringatan += w_lintas
-        g_par, w_par, i_par = cek_parafrase(p, raw)
-        gagal += g_par
-        peringatan += w_par
-        info += i_par
+        if a.tanpa_humanize:
+            info.append("kedalaman parafrase dilewati (--tanpa-humanize): draft lolos ZeroGPT di bawah 10%")
+        else:
+            g_par, w_par, i_par = cek_parafrase(p, raw)
+            gagal += g_par
+            peringatan += w_par
+            info += i_par
 
     # --- Anti-Typo Gate ---
     g_bahasa, w_bahasa, unik = cek_bahasa(teks, izin)

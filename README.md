@@ -7,9 +7,11 @@ Tool ini dibuat untuk karyawan Duta Corpora Indonesia. Cara agent menyapa operat
 Target tiap artikel: skor Rank Math 80 sampai 100, bahasa Indonesia baku, lolos ZeroGPT, dan tercatat per klien.
 
 ```text
-draft mentah ──► GERBANG STATUS ──► AUDIT ──► HUMANIZE ──► GERBANG KUALITAS ──► ZeroGPT ──► LAPORAN
-                                                                  │
-                                       perbaiki hanya bagian FAIL ◄┘
+draft mentah ──► GERBANG STATUS ──► AUDIT ──► ZeroGPT DRAF ──┬─ di bawah 10% ──► perbaiki temuan ──┐
+                                                            └─ 10% atau lebih ─► HUMANIZE ──► ZeroGPT final
+                                                                                                  │
+              GERBANG KUALITAS ◄──────────────────────────────────────────────────────────────────┘ ──► LAPORAN
+              (perbaiki hanya bagian FAIL)
 ```
 
 ## Mulai cepat di Windows
@@ -39,7 +41,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 
 1. **Gerbang status.** `cek-status.py` membandingkan sidik jari isi draft dengan ledger di `LAPORAN.md`. Draft yang sudah diaudit tidak diaudit dua kali, dan draft yang masih ditulis penulis dilewati.
 2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI. Audit ini tidak pernah menghentikan pekerjaan (exit 0).
-3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan dan `aturan/INTI.md` (ringkasan satu halaman; rincian di `aturan/kerja-tanpa-skill.md`). Statistik, testimoni, dan nama tidak boleh dikarang.
+3. **ZeroGPT draf, lalu humanize bila perlu.** Operator memindai DRAF dulu. Di bawah 10% AI, humanize dilewati dan agent hanya memperbaiki temuan audit (gerbang dijalankan dengan `--tanpa-humanize`). Di atas atau sama dengan 10%, agent menulis ulang. Ambang ini baru berdasar satu artikel uji, jadi skor draf dan final dicatat untuk dievaluasi. Agent menulis ulang berdasarkan daftar temuan dan `aturan/INTI.md` (ringkasan satu halaman; rincian di `aturan/kerja-tanpa-skill.md`). Statistik, testimoni, dan nama tidak boleh dikarang.
 4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel dan berkas `- Meta.txt` pendampingnya. Artikel lulus bila hasilnya `0 FAIL`.
 5. **ZeroGPT dan laporan.** Operator memindai payload (disiapkan agent lewat `alat/siap-zerogpt.py`) di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
 
@@ -132,8 +134,9 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (177 uji). Jalankan setelah mengubah skrip |
-| `python3 -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"` | Siapkan `payload-zerogpt.txt` untuk operator pindai di ZeroGPT |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (181 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --tanpa-humanize` | Gerbang final untuk artikel dari draf yang lolos ZeroGPT di bawah 10% (melewati ukuran parafrase saja) |
+| `python3 -I -X utf8 alat/siap-zerogpt.py "<draf atau Humanized>" ["<lain>" ...]` | Siapkan `payload-zerogpt.txt` (satu atau banyak berkas) untuk operator pindai di ZeroGPT |
 | `WINSTON_API_KEY=<kunci> python3 -I -X utf8 alat/cek-ai-api.py "<artikel Humanized>" --ambang 50` | EKSPERIMENTAL. Tulis `kalimat-ai.txt` (skor manusia Winston per kalimat). Bukan pengganti ZeroGPT. Di PowerShell: `$env:WINSTON_API_KEY="<kunci>"` dulu |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.

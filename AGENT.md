@@ -10,7 +10,7 @@
 
 Tool ini dibuat untuk karyawan Duta Corpora Indonesia. Kata "operator" di dokumen ini berarti karyawan yang sedang menjalankan tool. Cara agent menyapa operator mengikuti `AGENTS.md` atau persona di komputer masing-masing, bukan file ini.
 
-Menghasilkan artikel SEO WordPress siap publish untuk klien yang menggunakan plugin **AI Puffer**. Alur lengkap: draft mentah dari AI model → audit terhadap rules → parafrase/humanize (goal: lolos AI detector, human score 90%+) → verifikasi RankMath 80–100 → crosscheck ZeroGPT → final.
+Menghasilkan artikel SEO WordPress siap publish untuk klien yang menggunakan plugin **AI Puffer**. Alur lengkap: draft mentah dari AI model → audit terhadap rules → crosscheck ZeroGPT pada draf (operator) → draf di bawah 10% AI: humanize dilewati, perbaiki temuan audit saja; draf 10% atau lebih: parafrase/humanize (goal: lolos AI detector, human score 90%+) lalu ZeroGPT final → verifikasi RankMath 80–100 → final.
 
 Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{client_*}`). Data klien asli diisi dari `CLIENT.md` di folder klien (format di Section 3) — tidak pernah di-hardcode ke template maupun ke file ini.
 
@@ -113,7 +113,14 @@ Output = daftar TEMUAN bernomor (kompomen wajib, ejaan, kata asing, pola khas AI
 variasi kalimat, marker percakapan berlebih, rule-of-three, angka tanpa label, kata di luar kamus).
 Daftar itu = bahan kerja Tahap 3. Mode audit selalu exit 0 (laporan, bukan penghalang).
 
-### Tahap 3 — Parafrase / Humanize
+### Tahap 2b — Gerbang ZeroGPT draf (semua klien, keputusan pemilik 2026-11-22)
+Setelah audit, jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<draf 1>" "<draf 2>" ...` (satu atau banyak draf; payload ditandai nama artikel). Catat ledger: Audit terisi, Humanize `-`, ZeroGPT `MENUNGGU OPERATOR (draf)`. Berhenti dan serahkan blok TUGAS OPERATOR. Setelah operator melapor, per draf:
+- **Di bawah 10% AI:** humanize dilewati. Salin draf menjadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WordPress), tulis Meta, lalu gerbang Tahap 4 dengan flag `--tanpa-humanize` (hanya melewati ukuran kedalaman parafrase; semua gerbang lain tetap berlaku). Ledger: Humanize `dilewati (draf <10%)`, ZeroGPT `<angka>% AI (draf)`.
+- **10% atau lebih:** lanjut Tahap 3 penuh, lalu ZeroGPT final (Tahap 5).
+- **Operator belum atau tidak bisa melapor:** lanjut Tahap 3 penuh seperti biasa.
+Dasar ambang: satu artikel uji (draf 3,72%, final 3,7%). Catat skor draf dan final di `LAPORAN.md` supaya aturan ini bisa dievaluasi.
+
+### Tahap 3 — Parafrase / Humanize (hanya untuk draf 10% AI atau lebih)
 Tulis ulang sebagai "penulis manusia", bukan edit kosmetik:
 - Variasi panjang kalimat: pendek (5–8 kata), sedang (12–18), sesekali panjang (20–30). Tanpa pola seragam.
 - Variasi panjang paragraf (1–7 kalimat); tanpa dua paragraf berurutan berawalan kata sama.
@@ -146,7 +153,7 @@ Kode keluar `cek-artikel.py`: `0` tidak ada FAIL, `1` ada FAIL, `2` masukan tida
 Fakta Google/Rank Math yang menjadi dasar ambang ada di `FAKTA-SEO.md` — rujuk situ, jangan ingatan.
 
 ### Tahap 5 — Crosscheck ZeroGPT + Final
-Uji ke ZeroGPT (protokol di Section 6), isi kolom ZeroGPT di ledger (mis. `3,72% AI`) dan blok laporan di `LAPORAN.md` folder bulan klien (Section 7), baru klaim final.
+Jalur humanize penuh: uji hasil ke ZeroGPT (protokol di Section 6). Jalur draf di bawah 10%: skor draf dari Tahap 2b sudah menjadi angka ZeroGPT, operator boleh memindai ulang bila ingin. Isi kolom ZeroGPT di ledger (mis. `3,72% AI`) dan blok laporan di `LAPORAN.md` folder bulan klien (Section 7), baru klaim final.
 
 ## 5. Checklist Audit
 
@@ -192,7 +199,7 @@ Pembagian tugas:
 | ZeroGPT | https://www.zerogpt.com/ | % AI (paste teks) | Verdict **"Your Text is Human written"**; AI % serendah mungkin (target praktis di bawah 10%) |
 
 Prosedur:
-1. **Agent:** jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"`. Skrip men-strip HTML, membuang blok editor/boilerplate, membatasi 15.000 karakter per bagian (batas gratis ZeroGPT), dan menyimpan `payload-zerogpt.txt` di folder artikel (dipecah BAGIAN 1/2 bila artikel panjang).
+1. **Agent:** jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<draf atau artikel Humanized>" ["<berkas lain>" ...]` (draf pada Tahap 2b, hasil humanize pada Tahap 5; payload satu folder ditimpa tiap dijalankan). Skrip men-strip HTML, membuang blok editor/boilerplate, membatasi 15.000 karakter per bagian (batas gratis ZeroGPT), dan menyimpan `payload-zerogpt.txt` di folder artikel (dipecah BAGIAN 1/2 bila artikel panjang).
 2. **Operator:** tempel isi payload ke kolom teks, klik **"Detect Text"**, tunggu hasil (bisa lebih dari 15 detik), lalu sampaikan verdict dan angkanya ke agent.
 3. Jika verdict AI: revisi bagian yang ditandai detector → operator memindai ulang (maks 2 iterasi). Laporkan angka apa adanya, jangan manis-maniskan.
 4. Bila ZeroGPT terhalang captcha atau operator tidak sempat: kolom ZeroGPT diisi `MENUNGGU OPERATOR`. Artikel tidak boleh dinyatakan final sebelum angka masuk.
@@ -253,7 +260,7 @@ Langkah:
 2. **Baca `CLIENT.md`** folder itu untuk mengisi semua `{client_*}`. Tidak ada atau ada field kosong → berhenti dan minta operator melengkapi (jangan mengarang data klien).
 3. **Cari folder bulan**: di `klien/<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
-5. **Baca `aturan/INTI.md`** (ringkasan satu halaman; `aturan/kerja-tanpa-skill.md` bagian yang dibutuhkan saja, pustaka di Section 9 hanya bila aturan itu kurup atau diminta), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
+5. **Baca `aturan/INTI.md`** (ringkasan satu halaman; `aturan/kerja-tanpa-skill.md` bagian yang dibutuhkan saja, pustaka di Section 9 hanya bila aturan itu kurup atau diminta), lalu jalankan Pipeline Section 4: audit semua draf → ZeroGPT draf (Tahap 2b, operator memindai, agent berhenti dan lapor) → setelah skor masuk: draf di bawah 10% lewati humanize (perbaiki temuan audit, gerbang dengan `--tanpa-humanize`), draf 10% atau lebih humanize penuh lalu ZeroGPT final. Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, status plagiarisme (belum dicek manual kecuali operator melaporkan), dan diakhiri blok **TUGAS OPERATOR** (Section 6 butir 5) bila masih ada payload yang belum dipindai.
@@ -261,7 +268,7 @@ Langkah:
 Variasi opsional (operator menambahkan di akhir perintah; daftar sama di `PROMPT PINTASAN.md`):
 - `Hanya audit, jangan humanize.` — audit saja, keluarkan temuan, jangan tulis ulang.
 - `Hanya file <nama>.` — kerjakan hanya draft yang disebut; boleh beberapa sekaligus dipisah koma (`Hanya file A, B, C.`; dengan atau tanpa `.txt`). Draft lain dilewati dan dilaporkan sebagai "dilewati: dipilih operator". Nama tidak cocok dengan draft mana pun → tanya operator, jangan menebak.
-- `Lewati ZeroGPT.` — jangan siapkan payload ZeroGPT (humanize + gerbang saja); kolom ZeroGPT dibiarkan `-`.
+- `Lewati ZeroGPT.` — jangan siapkan payload ZeroGPT; semua draf langsung humanize penuh + gerbang, kolom ZeroGPT dibiarkan `-`.
 
 Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]`, atau prompt biasa untuk agent apa pun. Sumber command ada di `perintah/artikel.md` dan dipasang per komputer dengan `alat/pasang-perintah.py` (TRAE, ZCode, Claude Code). Panduan lengkap, penjelasan isi perintah, dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
 

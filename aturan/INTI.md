@@ -9,11 +9,14 @@ Ini ringkasan satu halaman. Bila ada yang bertentangan, `AGENT.md` Section 11 me
 
 1. Status: `python -I -X utf8 alat/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"`. Kerjakan hanya `BARU` dan `LANJUTKAN`. Status lain dilaporkan, tidak disentuh.
 2. Audit: `python -I -X utf8 alat/cek-artikel.py "<draft>" --draft`. Baca daftar TEMUAN, jangan ubah apa pun.
-3. Humanize: tulis `<nama> - Humanized.txt` SEKALI, penuh, sesuai bagian "Cara menulis ulang". Draft asli tidak ditimpa.
-4. Meta: tulis `<nama> - Meta.txt` (tiga baris: `Judul SEO:`, `Deskripsi meta:`, `Slug:`).
-5. Gerbang: `python -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"`. Perbaiki hanya baris FAIL. Maksimal 2 putaran. Masih FAIL setelah itu: berhenti, lapor sisa FAIL ke operator.
-6. ZeroGPT: `python -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"`. Operator yang memindai. Salin blok TUGAS OPERATOR ke laporan akhir.
-7. Catat ledger (hash disalin dari keluaran `cek-status.py`) dan blok laporan di `LAPORAN.md`.
+3. ZeroGPT DRAF dulu (berlaku semua klien): `python -I -X utf8 alat/siap-zerogpt.py "<draft 1>" "<draft 2>" ...` (boleh banyak draft sekaligus). Catat ledger (Audit terisi, Humanize `-`, ZeroGPT `MENUNGGU OPERATOR (draf)`), salin blok TUGAS OPERATOR, lalu BERHENTI dan lapor. Jangan humanize sebelum operator melapor skor draf.
+4. Keputusan per draft dari skor operator: di bawah 10% = lewati humanize (langkah 4a). 10% atau lebih = humanize penuh (langkah 4b). Operator belum atau tidak bisa melapor: humanize penuh seperti biasa.
+   - 4a. Salin draft jadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WP). Jangan menulis ulang kalimat lain.
+   - 4b. Tulis `<nama> - Humanized.txt` SEKALI, penuh, sesuai bagian "Cara menulis ulang". Draft asli tidak ditimpa.
+5. Meta: tulis `<nama> - Meta.txt` (tiga baris: `Judul SEO:`, `Deskripsi meta:`, `Slug:`).
+6. Gerbang: `python -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"` (jalur 4a tambah `--tanpa-humanize`). Perbaiki hanya baris FAIL. Maksimal 2 putaran. Masih FAIL setelah itu: berhenti, lapor sisa FAIL ke operator.
+7. ZeroGPT FINAL: hanya jalur 4b (`siap-zerogpt.py "<artikel Humanized>"`). Jalur 4a: catat skor draf di kolom ZeroGPT dengan tambahan `(draf)`, operator boleh memindai ulang bila ingin. Salin blok TUGAS OPERATOR bila ada yang menunggu.
+8. Catat ledger (hash disalin dari keluaran `cek-status.py`; jalur 4a: Humanize `dilewati (draf <10%)`) dan blok laporan di `LAPORAN.md`.
 
 ## Cara menulis ulang (ini yang menentukan skor ZeroGPT)
 
@@ -43,3 +46,4 @@ Paragraf pertama minimal 200 kata. Keyword 31-34 kali (density 1,0-2,5%), di bod
 - Tulis berkas hasil sekali. Setelah FAIL, edit bagian yang gagal, jangan tulis ulang seluruh artikel.
 - Jangan menyatakan lulus tanpa `0 FAIL` dari gerbang terbaru pada berkas terbaru.
 - Angka ZeroGPT hanya dari laporan operator. Belum ada: tulis `MENUNGGU OPERATOR`.
+- Ambang 10% adalah target praktis dari satu artikel uji (draf 3,72%, final 3,7%). Catat skor draf dan final di `LAPORAN.md` agar aturan ini bisa dievaluasi.

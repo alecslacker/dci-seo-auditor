@@ -244,6 +244,12 @@ def uji_parafrase(base):
     cek("parafrase: tulis ulang penuh lolos (hanya INFO)", kode == 0 and "kedalaman parafrase: 0.0%" in out, "exit=%d" % kode)
     kode, out = jalankan(skrip, draft, "--draft")
     cek("parafrase: mode --draft tidak membandingkan draft dengan dirinya", "parafrase" not in out, out[-80:])
+    draft.write_text(awal, encoding="utf8")                      # draft = final (jalur tanpa humanize)
+    kode, out = jalankan(skrip, art, "--tanpa-humanize")
+    cek("tanpa-humanize: salinan draft lolos, parafrase dilewati", kode == 0 and "parafrase dilewati" in out and "parafrase dangkal" not in out, "exit=%d" % kode)
+    art.write_text(awal.replace("\u2014", "") + "\n<p>Ada tanda pisah \u2014 di sini.</p>", encoding="utf8")
+    kode, out = jalankan(skrip, art, "--tanpa-humanize")
+    cek("tanpa-humanize: gerbang lain tetap menolak (em dash)", kode == 1, "exit=%d" % kode)
 
 
 def uji_zerogpt(base):
@@ -265,6 +271,15 @@ def uji_zerogpt(base):
     kode, out = jalankan(skrip, panjang)
     isi2 = (bulan / "payload-zerogpt.txt").read_text(encoding="utf8")
     cek("zerogpt: artikel panjang dipecah BAGIAN 1/2", kode == 0 and "BAGIAN 1/2" in isi2 and "=====" in isi2, out[-60:].replace("\n", " | "))
+    draf_a, draf_b = bulan / "draf-a.txt", bulan / "draf-b.txt"
+    draf_a.write_text("<p>Isi draf pertama yang cukup untuk diuji.</p>", encoding="utf8")
+    draf_b.write_text("<p>Isi draf kedua yang berbeda dari yang pertama.</p>", encoding="utf8")
+    kode, out = jalankan(skrip, draf_a, draf_b)
+    isi3 = (bulan / "payload-zerogpt.txt").read_text(encoding="utf8")
+    cek("zerogpt: banyak draf sekaligus, tiap bagian bertanda nama artikel",
+        kode == 0 and "ARTIKEL: draf-a" in isi3 and "ARTIKEL: draf-b" in isi3 and "=====" in isi3, out[:60].replace("\n", " | "))
+    kode, out = jalankan(skrip, draf_a, bulan / "tidak-ada.txt")
+    cek("zerogpt: salah satu berkas tidak ada -> exit 2", kode == 2 and "tidak ada" in out, "exit=%d" % kode)
     kode, out = jalankan(skrip, bulan / "tidak-ada.txt")
     cek("zerogpt: berkas tidak ada -> pesan jelas exit 2", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
     # Payload pendamping tidak boleh terbaca sebagai draft oleh cek-status.

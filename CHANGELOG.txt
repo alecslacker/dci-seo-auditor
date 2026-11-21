@@ -8,6 +8,21 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.16.0] - 2026-11-22
+---------------------
+Diubah (berlaku untuk semua klien, keputusan pemilik)
+- Gerbang ZeroGPT dipindah ke depan: operator memindai DRAF dulu. Draf di bawah 10% AI melewati
+  humanize (salin jadi - Humanized.txt, perbaiki hanya temuan audit); draf 10% atau lebih humanize
+  penuh lalu ZeroGPT final. Disinkronkan di AGENT.md (Tahap 2b), aturan/INTI.md, perintah/artikel.md,
+  PROMPT PINTASAN.md, README.md.
+- cek-artikel.py: flag --tanpa-humanize melewati ukuran kedalaman parafrase saja; semua gerbang lain tetap.
+- siap-zerogpt.py menerima banyak berkas sekaligus (bagian ditandai nama artikel).
+- Ledger: Humanize boleh bernilai "dilewati (draf <10%)"; ZeroGPT draf diberi tambahan "(draf)".
+- Uji 177 -> 181.
+Belum teruji
+- Ambang 10% berdasar SATU artikel (Salimah: draf 3,72%, final 3,7%). Catat skor draf dan final per
+  artikel agar aturan bisa dievaluasi; bila banyak draf lolos ZeroGPT tetapi terasa kaku, naikkan kembali.
+
 [0.15.0] - 2026-11-21
 ---------------------
 Ditambahkan

@@ -135,10 +135,11 @@ Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], a
 
 - Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3). Isian bawaan template yang belum diganti ditolak skrip dengan pesan jelas.
 - Draft mentah `.txt` ada di `klien/<Klien>/artikel/<tahun bulan>/`.
+- Alur ZeroGPT (semua klien): agent audit draf lalu menyiapkan payload ZeroGPT dari DRAF dan berhenti. Operator memindai dan melapor. Draf di bawah 10% AI melewati humanize (hanya temuan audit diperbaiki); draf 10% atau lebih di-humanize penuh, lalu dipindai ulang.
 - ZeroGPT dikerjakan operator (manusia), bukan agent. Agent menyiapkan `payload-zerogpt.txt` lewat `alat/siap-zerogpt.py`; bila belum dipindai, kolom ZeroGPT diisi `MENUNGGU OPERATOR` (lihat AGENT.md Section 6).
 
 ## Variasi opsional (tambahkan di akhir perintah)
 
 - `Hanya audit, jangan humanize.` untuk melihat temuan saja.
 - `Hanya file [nama draft].` untuk satu artikel, atau `Hanya file A, B, C.` untuk beberapa sekaligus (nama dipisah koma; sisanya dilewati dan dilaporkan). Nama boleh dengan atau tanpa `.txt`.
-- `Lewati ZeroGPT.` bila hanya butuh rewrite.
+- `Lewati ZeroGPT.` bila hanya butuh rewrite (semua draf langsung humanize penuh).
