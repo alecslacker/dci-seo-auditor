@@ -9,9 +9,14 @@ Berkas ini berdiri sendiri. Karyawan tidak perlu memasang skill apa pun, dan age
 
 1. Baca draft dan daftar TEMUAN dari `--draft` tanpa mengubah apa pun.
 2. Catat suara penulis aslinya: panjang kalimat, cara menyapa pembaca, istilah khas. Pertahankan, jangan diseragamkan.
-3. Tulis ulang paragraf demi paragraf. Mengganti beberapa kata saja tidak cukup.
+3. Tulis ulang paragraf demi paragraf. Mengganti beberapa kata saja tidak cukup. Gerbang kualitas mengukurnya: bila lebih dari 25% rangkaian 8 kata draft masih utuh, artikel FAIL (artikel contoh Salimah: 2,8%). Teknik yang membuat tulisan ulang benar-benar baru:
+   - Tangkap maksud paragraf dalam satu kalimat pendek, tutup draftnya, lalu tulis dari maksud itu.
+   - Ubah urutan: mulai dari situasi pembaca atau contoh, baru penjelasan, atau sebaliknya.
+   - Pecah kalimat panjang, gabungkan kalimat pendek yang berurutan, ganti pasif menjadi aktif dengan pelaku yang jelas.
+   - Ganti contoh umum dengan contoh yang memang ada di situs klien (menu, layanan, wilayah). Bila tidak ada, biarkan umum. Jangan mengarang.
+   - Daftar butir boleh tetap butir, tetapi kalimat di dalamnya ditulis ulang.
 4. Jangan menambah fakta yang tidak ada di draft atau di situs klien.
-5. Jalankan gerbang kualitas, lalu perbaiki hanya baris yang FAIL. Jangan menulis ulang seluruh artikel.
+5. Jalankan gerbang kualitas, lalu perbaiki hanya baris yang FAIL. Bila FAIL-nya parafrase dangkal, tulis ulang paragraf yang paling mirip draft, bukan seluruh artikel.
 
 ## 2. Tanda tulisan mesin dan perbaikannya
 

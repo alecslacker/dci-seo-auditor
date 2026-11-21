@@ -8,6 +8,35 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.13.0] - 2026-11-21
+---------------------
+
+Gerbang kualitas kini mengukur kedalaman parafrase. Uji A/B pustaka membuka celah: tulisan ulang yang
+masih menyalin hampir seluruh draft (79-82% rangkaian 8 kata utuh) tetap lolos 0 FAIL.
+
+Ditambahkan
+- cek-artikel.py: cek_parafrase membandingkan "<nama> - Humanized.txt" dengan draft "<nama>.txt" di folder
+  yang sama. FAIL di atas 25%, WARN di atas 10%, INFO di bawahnya. Draft tidak ada = WARN. Mode --draft tidak
+  memakai cek ini. Patokan: artikel lulus Salimah 2,8%.
+- aturan/kerja-tanpa-skill.md bagian 1: teknik menulis ulang yang benar-benar baru (tangkap maksud lalu tulis
+  dari maksud, ubah urutan, pecah/gabung kalimat, contoh dari situs klien, butir tetap ditulis ulang).
+- 4 uji parafrase. Total 149 uji.
+
+Diubah
+- AGENT.md Tahap 4 menyebut cek parafrase. INDEKS pustaka: aturan 7 (parafrase harus dalam), aturan
+  adaptasi dirapikan, baris lisensi impeccable.
+
+Diperbaiki
+- Dua perubahan 0.12.0 tidak pernah masuk karena tanda kutip di skrip PowerShell: aturan adaptasi INDEKS
+  (masih menyebut blog-google/blog-brand yang sudah dibuang) dan kalimat README "sudah disunting". Keduanya
+  kini ada. Laporan 0.12.0 yang menyatakan keduanya selesai keliru.
+
+Belum teruji
+- Ambang 25% baru dikalibrasi pada tiga data (satu lulus, dua dangkal).
+- Uji A/B pustaka 2026-11-21 dibatalkan: kedua versi menyalin draft, jadi tidak ada kesimpulan soal manfaat
+  pustaka. Uji ulang perlu tulisan ulang yang lolos cek parafrase.
+
+
 [0.12.0] - 2026-11-21
 ---------------------
 

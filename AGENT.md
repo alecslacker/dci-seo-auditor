@@ -136,7 +136,8 @@ Tulis dulu berkas pendamping `<artikel> - Meta.txt` (judul SEO, deskripsi meta, 
 Jalankan gerbang kualitas: `python3 -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"`.
 Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, heading, format WordPress
 (more-tag, nbsp, list, alt, shortcode, kontak), judul SEO/deskripsi meta/slug, kanibalisasi dan kalimat
-yang disalin dari artikel lain di `klien/`, Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
+yang disalin dari artikel lain di `klien/`, kedalaman parafrase terhadap draft aslinya (FAIL bila lebih dari
+25% rangkaian 8 kata draft masih utuh), Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
 "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
 Cek kata berjalan offline: kata di luar kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`, dengan pengupasan imbuhan) hanya WARN untuk ditinjau manual. Kata sah yang belum ada (nama, istilah) ditambahkan ke `alat/kamus-kata.txt`.
 

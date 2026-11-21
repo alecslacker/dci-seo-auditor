@@ -65,7 +65,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 
 ## Skill SEO dan audit di dalam repo
 
-Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog, marketingskills, anti-slop; semuanya MIT) ada di `skills/pustaka/`. Agent membacanya lewat jalur berkas, jadi sama di TRAE, ZCode, Claude Code, Codex, dan agent lain. `skills/pustaka/INDEKS.md` memetakan tiap tahap pipeline ke skill yang harus dibaca, ditambah aturan adaptasi (misalnya tanpa plan mode dan tanpa alat berbayar) yang mengalahkan isi skill. Gerbang kelulusan tetap `alat/cek-artikel.py` dengan 0 FAIL.
+Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog, marketingskills, anti-slop; semuanya MIT) ada di `skills/pustaka/`, sudah disunting agar berdiri sendiri (tanpa plan mode, skrip, atau alat berbayar). Agent membacanya lewat jalur berkas, jadi sama di TRAE, ZCode, Claude Code, Codex, dan agent lain. `skills/pustaka/INDEKS.md` memetakan tiap tahap pipeline ke skill yang harus dibaca, ditambah aturan adaptasi (misalnya tanpa plan mode dan tanpa alat berbayar) yang mengalahkan isi skill. Gerbang kelulusan tetap `alat/cek-artikel.py` dengan 0 FAIL.
 
 ## Struktur
 
@@ -129,7 +129,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (145 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (149 uji). Jalankan setelah mengubah skrip |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 
@@ -146,6 +146,8 @@ Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyw
 - `/artikel` belum diuji dari menu TRAE. Formatnya meniru command TRAE yang sudah ada.
 - Opsi *Include AGENTS.md in the context* di TRAE adalah pengaturan per komputer, tidak bisa dibagikan lewat repo.
 - Ambang kalimat yang disalin (3 rangkaian 8 kata) belum dikalibrasi pada artikel nyata lebih dari satu klien.
+- Ambang kedalaman parafrase (FAIL di atas 25% rangkaian 8 kata draft yang masih utuh) baru dikalibrasi pada satu artikel lulus (2,8%) dan dua tulisan ulang dangkal (79-82%).
+- Belum ada bukti terukur bahwa pustaka skill menaikkan mutu tulisan. Uji A/B pada 2026-11-21 tidak sah karena kedua versi masih menyalin draft, sehingga tidak ada kesimpulan.
 - Kamus offline berasal dari KBBI edisi 3 (lewat hunspell-id), jadi kosakata terbaru dan nama diri bisa muncul sebagai WARN yang sebenarnya sah.
 
 ---

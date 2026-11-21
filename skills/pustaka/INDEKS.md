@@ -13,13 +13,14 @@ Bila agent punya fitur skill sendiri, abaikan fitur itu untuk folder ini. Baca b
 Skill di sini ditulis untuk blog umum dan alat lain. Di repo ini, aturan berikut menang:
 
 1. **Urutan menang:** `AGENT.md` Section 11 → `aturan/kerja-tanpa-skill.md` → skill di folder ini. Gerbang kelulusan tetap `alat/cek-artikel.py` dengan `0 FAIL`. Skor 100 poin atau checklist di skill hanya bahan pertimbangan, bukan gerbang.
-2. **Tidak ada plan mode dan tidak ada menunggu persetujuan.** Mode `/artikel` adalah eksekusi penuh. Abaikan kalimat "enter plan mode", "wait for user approval", dan sejenisnya di `blog-rewrite`.
+2. **Tanpa plan mode dan tanpa menunggu persetujuan.** Mode `/artikel` adalah eksekusi penuh.
 3. **antislop: tanpa wizard dan tanpa pertanyaan mode.** Lewati "First-Run Install Wizard", "Two Usage Modes", dan pengumuman `antislop active`. Anggap mode `during`. Jangan menulis ke `AGENTS.md`, `CLAUDE.md`, atau berkas pengaturan. Jangan mengunduh apa pun.
 4. **antislop hanya untuk tulisan.** Pakai `antislop-copywriting` dan, dari `antislop/SKILL.md`, hanya bagian "Copywriting & Content" serta aturan R-02, R-15, R-16, R-17, R-18, R-36, R-38. Bagian UI, warna, layout, dan dial desain dilewati. Jangan membaca `antislop/SKILL.md` penuh (±60 KB).
-5. **Dilarang menjalankan alat berbayar atau berkredensial:** `blog-google`, DataForSEO (mode API `blog-cannibalization`), dan skrip `.py` milik skill blog. Skrip itu memang tidak disertakan. Kanibalisasi di repo ini sudah diperiksa `alat/cek-artikel.py`.
-6. **Rujukan yang tidak ada di folder ini dilewati, bukan dicari:** `blog-google`, `blog-brand`, `blog-chart`, `scripts/`, `templates/`, `data/`, dan `agents/`. Itu bagian dari paket aslinya yang tidak disertakan.
-7. **Bagian yang tidak berlaku untuk artikel klien DCI:** pembuatan gambar dan chart, video embed, `dateModified`, schema FAQ, penulisan ulang meta dengan klaim baru. Kata "blog" di skill berarti artikel WordPress klien.
+5. **Tanpa alat berbayar atau berkredensial.** Skrip `.py`, `templates/`, dan mode API DataForSEO memang tidak disertakan. Kanibalisasi di repo ini sudah diperiksa `alat/cek-artikel.py`.
+6. **Bagian yang tidak berlaku untuk artikel klien DCI:** pembuatan gambar dan chart, video embed, `dateModified`, schema FAQ, penulisan ulang meta dengan klaim baru. Kata "blog" di skill berarti artikel WordPress klien. Temuan visual cukup dilaporkan sebagai usulan ke operator.
+7. **Parafrase harus dalam.** `blog-rewrite` menyuruh menjaga suara penulis; itu bukan izin mempertahankan kalimat draft. Gerbang menolak artikel bila lebih dari 25% rangkaian 8 kata draft masih utuh. Teknik menulis ulang ada di `aturan/kerja-tanpa-skill.md` bagian 1.
 8. **Fakta:** tidak ada sumber, tidak ditulis. Skill yang menyuruh "mencari statistik pengganti" dijalankan hanya bila sumbernya benar-benar dibaca pada sesi ini.
+9. **Setiap skill di pustaka sudah disunting untuk repo ini** (catatan adaptasi di kepala tiap berkas): tanpa `${CLAUDE_SKILL_DIR}` dan tanpa rujukan alat yang tidak ada. Bila menemukan rujukan yang mati, laporkan sebagai bug; jangan menebak isinya.
 
 ## Peta: tahap pipeline → skill
 
@@ -61,6 +62,7 @@ Skill sengaja tidak ditempel semuanya ke chat. Membaca seluruh pustaka (±630 KB
 | `blog`, `blog-seo-check`, `blog-rewrite`, `blog-factcheck`, `blog-geo`, `blog-cannibalization` | claude-blog oleh AgriciDaniel | MIT, `LISENSI/claude-blog.MIT.txt` |
 | `seo-audit`, `ai-seo`, `schema`, `copywriting`, `copy-editing` | marketingskills oleh Corey Haines | MIT, `LISENSI/marketingskills.MIT.txt` |
 | `antislop`, `antislop-copywriting` | anti-slop oleh Miqdad Badjuber | MIT, `LISENSI/anti-slop.MIT.txt` |
+| `blog/references/ai-slop-detection.md` (metodologi) | impeccable oleh Paul Bakaus | Apache-2.0, `LISENSI/impeccable.Apache-2.0.txt` |
 
-Perubahan dari aslinya: berkas `evals/` dibuang, folder `scripts/`, `templates/`, `agents/`, `data/` milik `blog` dibuang, dan akhir baris diseragamkan ke LF. Isi SKILL.md tidak diubah. Teks lisensi diambil dari repo asal pada 2026-11-21.
-Untuk memperbarui: ambil versi baru dari repo asal, timpa folder terkait, lalu jalankan `python -I -X utf8 alat/uji-tools.py`.
+Perubahan dari asli (commit 746d263): berkas `evals/`, folder `scripts/`, `templates/`, `agents/`, `data/`, dan 7 berkas references yang tidak terpakai dibuang; akhir baris diseragamkan ke LF; SKILL.md disunting agar berdiri sendiri di repo ini (rujukan `${CLAUDE_SKILL_DIR}` diganti jalur relatif, blok plan mode, subagent, dan alat berbayar dihapus, temuan visual menjadi usulan ke operator). `blog/references/ai-slop-detection.md` mengadaptasi metodologi impeccable (Apache-2.0, `LISENSI/impeccable.Apache-2.0.txt`). Teks lisensi diambil dari repo asal pada 2026-11-21.
+Untuk memperbarui: ambil versi baru dari repo asal, timpa folder terkait, ulangi penyuntingan adaptasi di atas (bandingkan dengan riwayat git), lalu jalankan `python -I -X utf8 alat/uji-tools.py`.

@@ -288,6 +288,33 @@ def rangkaian(kata, n=8):
     return {" ".join(kata[i:i + n]) for i in range(len(kata) - n + 1)}
 
 
+PARAFRASE_FAIL = 25.0   # persen rangkaian 8 kata draft yang masih utuh; patokan artikel lulus Salimah 2,8%
+PARAFRASE_WARN = 10.0
+
+
+def cek_parafrase(p, raw):
+    """Bandingkan hasil humanize dengan draft aslinya: berapa persen rangkaian 8 kata yang masih sama.
+
+    Tanpa cek ini, artikel yang hampir menyalin draft tetap lolos semua gerbang lain.
+    """
+    if not p.stem.endswith(" - Humanized"):
+        return [], [], []
+    draft = p.parent / (p.stem[:-len(" - Humanized")] + p.suffix)
+    if not draft.is_file():
+        return [], ["draft asli '%s' tidak ada: kedalaman parafrase tidak bisa diukur" % draft.name], []
+    asal = rangkaian(kata_isi(draft.read_text(encoding="utf8", errors="replace").replace("\r", "")))
+    if not asal:
+        return [], [], []
+    persen = 100.0 * len(asal & rangkaian(kata_isi(raw))) / len(asal)
+    pesan = "%.1f%% rangkaian 8 kata draft masih utuh" % persen
+    if persen > PARAFRASE_FAIL:
+        return ["parafrase dangkal: %s (batas %.0f%%). Tulis ulang per paragraf dengan susunan kalimat baru, "
+                "bukan mengganti beberapa kata" % (pesan, PARAFRASE_FAIL)], [], []
+    if persen > PARAFRASE_WARN:
+        return [], ["parafrase sebagian: %s. Periksa paragraf yang masih mirip draft" % pesan], []
+    return [], [], ["kedalaman parafrase: %s" % pesan]
+
+
 def cek_lintas(p, raw, kw):
     """Bandingkan dengan artikel final lain di klien/: kanibalisasi keyword dan kalimat yang disalin.
 
@@ -476,6 +503,10 @@ def main():
         g_lintas, w_lintas = cek_lintas(p, raw, kw)
         gagal += g_lintas
         peringatan += w_lintas
+        g_par, w_par, i_par = cek_parafrase(p, raw)
+        gagal += g_par
+        peringatan += w_par
+        info += i_par
 
     # --- Anti-Typo Gate ---
     g_bahasa, w_bahasa, unik = cek_bahasa(teks, izin)

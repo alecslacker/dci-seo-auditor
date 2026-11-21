@@ -223,6 +223,27 @@ def uji_meta(base):
     cek("meta: klaim 'termurah' hanya WARN", kode == 0 and "superlatif 'termurah'" in out, "exit=%d" % kode)
 
 
+def uji_parafrase(base):
+    """Kedalaman parafrase: hasil humanize yang masih menyalin draft harus ditolak."""
+    _, bulan = bikin_skenario(base)
+    skrip = ROOT / "alat" / "cek-artikel.py"
+    awal = artikel_lulus()
+    art = bulan / "uji - Humanized.txt"
+    art.write_text(awal, encoding="utf8")
+    (bulan / "uji - Meta.txt").write_text(META_BAIK, encoding="utf8")
+    kode, out = jalankan(skrip, art)
+    cek("parafrase: tanpa draft hanya WARN", kode == 0 and "kedalaman parafrase tidak bisa diukur" in out, "exit=%d" % kode)
+    draft = bulan / "uji.txt"
+    draft.write_text(awal, encoding="utf8")                      # humanize = salinan draft
+    kode, out = jalankan(skrip, art)
+    cek("parafrase: salinan draft ditolak (FAIL)", kode == 1 and "parafrase dangkal" in out, "exit=%d" % kode)
+    draft.write_text("<p>Teks draft yang sama sekali berbeda dari hasil akhir artikel ini.</p>\n", encoding="utf8")
+    kode, out = jalankan(skrip, art)
+    cek("parafrase: tulis ulang penuh lolos (hanya INFO)", kode == 0 and "kedalaman parafrase: 0.0%" in out, "exit=%d" % kode)
+    kode, out = jalankan(skrip, draft, "--draft")
+    cek("parafrase: mode --draft tidak membandingkan draft dengan dirinya", "parafrase" not in out, out[-80:])
+
+
 def uji_lintas(base):
     skrip = ROOT / "alat" / "cek-artikel.py"
     awal = artikel_lulus()
@@ -555,6 +576,8 @@ def main():
         uji_meta(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
         uji_lintas(Path(d))
+    with tempfile.TemporaryDirectory(prefix="uji-dci-parafrase-") as d:
+        uji_parafrase(Path(d))
     uji_kamus()
     uji_pustaka()
     print("-" * 60)
