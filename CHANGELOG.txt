@@ -8,6 +8,19 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.17.0] - 2026-11-22
+----------------------
+Dihapus
+- Berkas "<nama> - Meta.txt" tidak lagi dibuat agent: judul SEO, deskripsi meta, dan slug dibuat
+  otomatis oleh AIPuffer di WordPress (hemat token). Disinkronkan di AGENT.md, AGENTS.md,
+  aturan/INTI.md, aturan/kerja-tanpa-skill.md, perintah/artikel.md, PROMPT PINTASAN.md, README.md,
+  skills/dci-seo-auditor/SKILL.md, skills/pustaka/INDEKS.md (aturan adaptasi 6), blog-rewrite,
+  dan blog-seo-check (cek judul SEO, deskripsi meta, slug dihapus).
+- cek-artikel.py: pemeriksaan berkas meta (cek_meta) dihapus dari gerbang final.
+Diubah
+- Uji meta diganti uji "artikel lulus tanpa berkas meta" (185 -> 178).
+- Meta.txt lama tetap diabaikan cek-status.py agar tidak terbaca sebagai draf.
+
 [0.16.1] - 2026-11-22
 ----------------------
 Diubah

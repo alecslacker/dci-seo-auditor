@@ -17,7 +17,7 @@ Skill di sini ditulis untuk blog umum dan alat lain. Di repo ini, aturan berikut
 3. **antislop: tanpa wizard dan tanpa pertanyaan mode.** Lewati "First-Run Install Wizard", "Two Usage Modes", dan pengumuman `antislop active`. Anggap mode `during`. Jangan menulis ke `AGENTS.md`, `CLAUDE.md`, atau berkas pengaturan. Jangan mengunduh apa pun.
 4. **antislop hanya untuk tulisan.** Pakai `antislop-copywriting` dan, dari `antislop/SKILL.md`, hanya bagian "Copywriting & Content" serta aturan R-02, R-15, R-16, R-17, R-18, R-36, R-38. Bagian UI, warna, layout, dan dial desain dilewati. Jangan membaca `antislop/SKILL.md` penuh (±60 KB).
 5. **Tanpa alat berbayar atau berkredensial.** Skrip `.py`, `templates/`, dan mode API DataForSEO memang tidak disertakan. Kanibalisasi di repo ini sudah diperiksa `alat/cek-artikel.py`.
-6. **Bagian yang tidak berlaku untuk artikel klien DCI:** pembuatan gambar dan chart, video embed, `dateModified`, schema FAQ, penulisan ulang meta dengan klaim baru. Kata "blog" di skill berarti artikel WordPress klien. Temuan visual cukup dilaporkan sebagai usulan ke operator.
+6. **Bagian yang tidak berlaku untuk artikel klien DCI:** pembuatan gambar dan chart, video embed, `dateModified`, schema FAQ, dan semua penulisan atau pemeriksaan judul SEO, deskripsi meta, serta slug (dibuat AIPuffer di WordPress; agent tidak membuat berkas `- Meta.txt`). Kata "blog" di skill berarti artikel WordPress klien. Temuan visual cukup dilaporkan sebagai usulan ke operator.
 7. **Parafrase harus dalam.** `blog-rewrite` menyuruh menjaga suara penulis; itu bukan izin mempertahankan kalimat draft. Gerbang menolak artikel bila lebih dari 25% rangkaian 8 kata draft masih utuh. Teknik menulis ulang ada di `aturan/kerja-tanpa-skill.md` bagian 1.
 8. **Fakta:** tidak ada sumber, tidak ditulis. Skill yang menyuruh "mencari statistik pengganti" dijalankan hanya bila sumbernya benar-benar dibaca pada sesi ini.
 9. **Setiap skill di pustaka sudah disunting untuk repo ini** (catatan adaptasi di kepala tiap berkas): tanpa `${CLAUDE_SKILL_DIR}` dan tanpa rujukan alat yang tidak ada. Bila menemukan rujukan yang mati, laporkan sebagai bug; jangan menebak isinya.
@@ -28,7 +28,7 @@ Tahap mengikuti `AGENT.md` Section 4. Baca hanya bagian yang dirujuk, tidak perl
 
 | Tahap | Skill (berkas di `skills/pustaka/<nama>/SKILL.md`) | Dipakai untuk | Bagian yang dibaca |
 |---|---|---|---|
-| 2 Audit draft | `blog-seo-check` | Kerangka validasi on-page: title, meta, heading, link, alt, URL | Step 2–6 dan 10 |
+| 2 Audit draft | `blog-seo-check` | Kerangka validasi on-page: heading, link, alt, sumber klaim | Langkah 1–5 |
 | 2 Audit draft | `blog-rewrite` | Audit read-only sebelum menulis ulang | Phase 1 |
 | 2 Audit draft | `blog-cannibalization` | Konsep bentrok keyword antar artikel (mode lokal saja) | Local Mode Workflow |
 | 3 Humanize | `antislop-copywriting` | Katalog pola tulisan mesin dan cara memperbaikinya | Seluruhnya (±25 KB) |

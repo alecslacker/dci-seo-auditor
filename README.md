@@ -42,7 +42,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 1. **Gerbang status.** `cek-status.py` membandingkan sidik jari isi draft dengan ledger di `LAPORAN.md`. Draft yang sudah diaudit tidak diaudit dua kali, dan draft yang masih ditulis penulis dilewati.
 2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI. Audit ini tidak pernah menghentikan pekerjaan (exit 0).
 3. **ZeroGPT draf, lalu humanize bila perlu.** Operator memindai DRAF dulu. Di bawah 10% AI, humanize dilewati dan agent hanya memperbaiki temuan audit (gerbang dijalankan dengan `--tanpa-humanize`). Di atas atau sama dengan 10%, agent menulis ulang. Ambang ini baru berdasar satu artikel uji, jadi skor draf dan final dicatat untuk dievaluasi. Agent menulis ulang berdasarkan daftar temuan dan `aturan/INTI.md` (ringkasan satu halaman; rincian di `aturan/kerja-tanpa-skill.md`). Statistik, testimoni, dan nama tidak boleh dikarang.
-4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel dan berkas `- Meta.txt` pendampingnya. Artikel lulus bila hasilnya `0 FAIL`.
+4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel. Artikel lulus bila hasilnya `0 FAIL`. Judul SEO, deskripsi meta, dan slug tidak dikerjakan agent karena dibuat otomatis oleh AIPuffer di WordPress.
 5. **ZeroGPT dan laporan.** Operator memindai payload (disiapkan agent lewat `alat/siap-zerogpt.py`) di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
 
 ### Status draft
@@ -107,7 +107,6 @@ Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog
         └── artikel/<YYYY Bulan>/
             ├── <slug>.txt              # draft mentah (arsip, tidak ditimpa)
             ├── <slug> - Humanized.txt  # hasil akhir, siap tempel ke WordPress
-            ├── <slug> - Meta.txt       # judul SEO, deskripsi meta, slug
             └── LAPORAN.md              # ledger dan laporan bulan itu
 ```
 
@@ -123,7 +122,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 4. **Jalankan** dengan root project sebagai workspace.
    - Dengan command: `/artikel Salimah Catering November`. Untuk TRAE, pastikan opsi *Include AGENTS.md in the context* aktif di Settings > Rules & Memories.
    - Agent mana pun, tanpa command: `Baca AGENT.md, lalu kerjakan Salimah Catering bulan November sesuai Section 10.`
-5. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko. Isi `- Meta.txt` dimasukkan ke kolom judul SEO, deskripsi meta, dan permalink di Rank Math.
+5. **Ambil hasil.** `<judul> - Humanized.txt` siap ditempel ke editor WordPress. `LAPORAN.md` memuat metrik, angka ZeroGPT, dan catatan risiko. Judul SEO, deskripsi meta, dan permalink diisi AIPuffer di WordPress.
 
 ## Alat bawaan
 
@@ -134,7 +133,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (185 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (178 uji). Jalankan setelah mengubah skrip |
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>" --tanpa-humanize` | Gerbang final untuk artikel dari draf yang lolos ZeroGPT di bawah 10% (melewati ukuran parafrase saja) |
 | `python3 -I -X utf8 alat/siap-zerogpt.py "<draf atau Humanized>" ["<lain>" ...]` | Siapkan `payload-zerogpt.txt` (satu atau banyak berkas) untuk operator pindai di ZeroGPT |
 | `WINSTON_API_KEY=<kunci> python3 -I -X utf8 alat/cek-ai-api.py "<artikel Humanized>" --ambang 50` | EKSPERIMENTAL. Tulis `kalimat-ai.txt` (skor manusia Winston per kalimat). Bukan pengganti ZeroGPT. Di PowerShell: `$env:WINSTON_API_KEY="<kunci>"` dulu |

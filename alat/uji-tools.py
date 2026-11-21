@@ -193,41 +193,14 @@ def uji_artikel_lulus(base):
         cek("lulus: mutasi '%s' ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
 
 
-META_BAIK = ("Judul SEO: Kata Kunci Uji | Klien Uji\n"
-             "Deskripsi meta: Kata Kunci Uji untuk kebutuhan rapat dan acara kantor di Blitar.\n"
-             "Slug: kata-kunci-uji\n")
-
-
-def uji_meta(base):
+def uji_tanpa_meta(base):
+    """Meta (judul SEO, deskripsi, slug) dibuat AIPuffer di WordPress: gerbang tidak menuntut berkas meta."""
     _, bulan = bikin_skenario(base)
-    skrip = ROOT / "alat" / "cek-artikel.py"
     art = bulan / "lulus - Humanized.txt"
     art.write_text(artikel_lulus(), encoding="utf8")
-    meta = bulan / "lulus - Meta.txt"                       # nama dasar = nama artikel tanpa " - Humanized"
-
-    kode, out = jalankan(skrip, art)
-    cek("meta: tanpa berkas meta hanya WARN, bukan FAIL", kode == 0 and "berkas meta" in out, "exit=%d" % kode)
-
-    meta.write_text(META_BAIK, encoding="utf8")
-    kode, out = jalankan(skrip, art)
-    cek("meta: berkas meta benar lolos 0 FAIL", kode == 0 and "0 FAIL" in out, out[-120:].replace("\n", " | "))
-
-    kasus = {
-        "judul SEO tanpa keyword": (META_BAIK.replace("Judul SEO: Kata Kunci Uji", "Judul SEO: Judul Lain"), "judul SEO tidak memuat keyword"),
-        "deskripsi tanpa keyword": (META_BAIK.replace("Deskripsi meta: Kata Kunci Uji untuk", "Deskripsi meta: Layanan untuk"), "deskripsi meta tidak memuat keyword"),
-        "slug tanpa keyword": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: nama-lain"), "tidak memuat keyword"),
-        "slug berbeda dari anchor": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: kata-kunci-uji-lengkap"), "berbeda dari slug di anchor"),
-        "slug berhuruf besar": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug: Kata-Kunci-Uji"), "bukan huruf kecil"),
-        "field kosong": (META_BAIK.replace("Slug: kata-kunci-uji", "Slug:"), "field 'slug' kosong"),
-    }
-    for nama, (teks, pesan) in kasus.items():
-        meta.write_text(teks, encoding="utf8")
-        kode, out = jalankan(skrip, art)
-        cek("meta: %s ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
-
-    meta.write_text(META_BAIK.replace("Kata Kunci Uji | Klien Uji", "Kata Kunci Uji | Termurah"), encoding="utf8")
-    kode, out = jalankan(skrip, art)
-    cek("meta: klaim 'termurah' hanya WARN", kode == 0 and "superlatif 'termurah'" in out, "exit=%d" % kode)
+    kode, out = jalankan(ROOT / "alat" / "cek-artikel.py", art)
+    cek("tanpa meta: artikel lulus 0 FAIL tanpa berkas meta", kode == 0 and "0 FAIL" in out, "exit=%d" % kode)
+    cek("tanpa meta: gerbang tidak menyebut berkas meta", "meta" not in out.lower(), out[-120:].replace("\n", " | "))
 
 
 def uji_parafrase(base):
@@ -237,7 +210,6 @@ def uji_parafrase(base):
     awal = artikel_lulus()
     art = bulan / "uji - Humanized.txt"
     art.write_text(awal, encoding="utf8")
-    (bulan / "uji - Meta.txt").write_text(META_BAIK, encoding="utf8")
     kode, out = jalankan(skrip, art)
     cek("parafrase: tanpa draft hanya WARN", kode == 0 and "kedalaman parafrase tidak bisa diukur" in out, "exit=%d" % kode)
     draft = bulan / "uji.txt"
@@ -761,7 +733,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix="uji-dci-masukan-") as d:
         uji_masukan_buruk(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-meta-") as d:
-        uji_meta(Path(d))
+        uji_tanpa_meta(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-zerogpt-") as d:
         uji_zerogpt(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-aiapi-") as d:

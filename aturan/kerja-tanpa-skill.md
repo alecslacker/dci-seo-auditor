@@ -54,21 +54,7 @@ Kata "lulus" hanya boleh dipakai bila gerbang kualitas terbaru, pada berkas terb
 
 ## 5. Judul SEO, deskripsi meta, dan slug
 
-Ketiganya tidak ada di badan artikel, jadi disimpan di berkas pendamping `<nama artikel> - Meta.txt`, di folder yang sama dengan artikel. Nama dasarnya sama dengan artikel tanpa ` - Humanized`. Isinya tiga baris:
-
-```text
-Judul SEO: <teks>
-Deskripsi meta: <teks>
-Slug: <teks>
-```
-
-Gerbang kualitas memeriksa:
-- Judul SEO memuat fokus keyword. Panjang di atas sekitar 60 karakter diberi peringatan.
-- Deskripsi meta memuat fokus keyword. Sebaiknya keyword muncul di 160 karakter pertama. Google memotong sesuai lebar perangkat, jadi panjang bukan batas keras.
-- Slug memakai huruf kecil, angka, dan tanda hubung, memuat keyword, dan sama dengan slug pada tautan permalink di paragraf pertama.
-- Klaim superlatif seperti "termurah" atau "terbaik" diberi peringatan. Pastikan terbukti, atau ganti.
-
-Berkas ` - Meta.txt` bukan draft. Gerbang status melewatinya, dan berkas ini tidak masuk ledger.
+Tidak dikerjakan agent. Ketiganya dibuat otomatis oleh AIPuffer di WordPress, jadi agent tidak menulis berkas ` - Meta.txt` dan gerbang kualitas tidak memeriksanya. Berkas ` - Meta.txt` lama yang masih ada di folder klien dibiarkan; gerbang status melewatinya dan tidak membacanya sebagai draft.
 
 ## 6. Kanibalisasi dan salinan antar artikel
 
@@ -83,9 +69,8 @@ Cara memperbaiki bukan mengganti sinonim, melainkan mengubah sudut pandang: siap
 
 1. Gerbang status, lalu audit `--draft`.
 2. ZeroGPT draf oleh operator (`AGENT.md` Tahap 2b). Draf di bawah 10% AI: perbaiki hanya temuan audit. Draf 10% atau lebih: tulis ulang sesuai bagian 1 dan 2. Periksa fakta sesuai bagian 3.
-3. Tulis berkas `- Meta.txt` sesuai bagian 5.
-4. Gerbang kualitas sampai `0 FAIL` (jalur draf di bawah 10% memakai `--tanpa-humanize`), lalu ZeroGPT final untuk artikel yang ditulis ulang.
-5. Catat ledger dan laporan. Sebelum menyatakan selesai, ikuti bagian 4.
+3. Gerbang kualitas sampai `0 FAIL` (jalur draf di bawah 10% memakai `--tanpa-humanize`), lalu ZeroGPT final untuk artikel yang ditulis ulang. Tanpa berkas meta (bagian 5).
+4. Catat ledger dan laporan. Sebelum menyatakan selesai, ikuti bagian 4.
 
 ## 8. Pustaka skill di repo (rujukan opsional)
 

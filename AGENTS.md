@@ -10,7 +10,7 @@ Project ini mengerjakan artikel SEO WordPress untuk klien Duta Corpora Indonesia
 Bila tugasnya mengerjakan, mengaudit, atau memeriksa artikel klien (`klien/<Nama Klien>/artikel/...`), baca `aturan/INTI.md` dulu (satu halaman: urutan kerja, cara menulis ulang, larangan, batas 2 putaran perbaikan). Berkas ini cukup untuk model kecil. Buka dua berkas di bawah hanya bagian yang dibutuhkan:
 
 1. `AGENT.md`: pipeline, checklist, aturan konten (Section 11), dan mode pintasan `/artikel` (Section 10).
-2. `aturan/kerja-tanpa-skill.md`: metode menulis ulang, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi.
+2. `aturan/kerja-tanpa-skill.md`: metode menulis ulang, aturan fakta, disiplin bukti, dan aturan kanibalisasi.
 
 Skill SEO dan audit sudah ada di repo sebagai rujukan opsional (bukan langkah pipeline): `skills/pustaka/INDEKS.md` memetakan tahap ke skill, dibaca lewat jalur berkas hanya bila aturan ringkas kurup. Aturan adaptasi di INDEKS mengalahkan isi skill.
 

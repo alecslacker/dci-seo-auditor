@@ -13,7 +13,7 @@ Ini ringkasan satu halaman. Bila ada yang bertentangan, `AGENT.md` Section 11 me
 4. Keputusan per draft dari skor operator: di bawah 10% = lewati humanize (langkah 4a). 10% atau lebih = humanize penuh (langkah 4b). Operator belum atau tidak bisa melapor: humanize penuh seperti biasa.
    - 4a. Salin draft jadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WP). Jangan menulis ulang kalimat lain.
    - 4b. Tulis `<nama> - Humanized.txt` SEKALI, penuh, sesuai bagian "Cara menulis ulang". Draft asli tidak ditimpa.
-5. Meta: tulis `<nama> - Meta.txt` (tiga baris: `Judul SEO:`, `Deskripsi meta:`, `Slug:`).
+5. Tidak membuat berkas meta. Judul SEO, deskripsi meta, dan slug dibuat AIPuffer di WordPress. Jangan menulis `- Meta.txt`.
 6. Gerbang: `python -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"` (jalur 4a tambah `--tanpa-humanize`). Perbaiki hanya baris FAIL. Maksimal 2 putaran. Masih FAIL setelah itu: berhenti, lapor sisa FAIL ke operator.
 7. ZeroGPT FINAL: hanya jalur 4b (`siap-zerogpt.py "<artikel Humanized>"`; kolom ZeroGPT diganti `MENUNGGU OPERATOR (final)` sampai operator melapor). Jalur 4a: catat skor draf di kolom ZeroGPT dengan tambahan `(draf)`, operator boleh memindai ulang bila ingin. Salin blok TUGAS OPERATOR bila ada yang menunggu.
 8. Catat ledger (hash disalin dari keluaran `cek-status.py`; jalur 4a: Humanize `dilewati (draf <10%)`) dan blok laporan di `LAPORAN.md`.

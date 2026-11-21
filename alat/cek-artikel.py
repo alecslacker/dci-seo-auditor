@@ -216,63 +216,6 @@ def cek_angka(raw):
     return temuan
 
 
-KLAIM_SUPERLATIF = ["termurah", "terbaik", "terlengkap", "nomor 1", "no. 1", "nomor satu", "paling murah"]
-
-
-def slug_dari(teks):
-    return re.sub(r"[^a-z0-9]+", "-", teks.lower()).strip("-")
-
-
-def cek_meta(p, raw, kw):
-    """Periksa berkas pendamping '<nama> - Meta.txt' (judul SEO, deskripsi meta, slug).
-
-    Aturan Rank Math di AGENT.md mewajibkan keyword di judul SEO, deskripsi meta, dan slug,
-    tetapi ketiganya tidak ada di badan artikel. Format berkas (satu field per baris):
-      Judul SEO: ...
-      Deskripsi meta: ...
-      Slug: ...
-    """
-    gagal, peringatan, info = [], [], []
-    dasar = p.stem[:-len(" - Humanized")] if p.stem.endswith(" - Humanized") else p.stem
-    f = p.parent / (dasar + " - Meta.txt")
-    if not f.exists():
-        peringatan.append("berkas meta '%s' tidak ada: keyword di judul SEO, deskripsi meta, dan slug "
-                          "belum bisa diverifikasi" % f.name)
-        return gagal, peringatan, info
-    isi = f.read_text(encoding="utf8").replace("\r", "")
-    medan = {}
-    for m in re.finditer(r"^\s*(judul seo|deskripsi meta|slug)\s*:\s*(.*?)\s*$", isi, re.I | re.M):
-        medan[m.group(1).lower()] = m.group(2)
-    for nama in ("judul seo", "deskripsi meta", "slug"):
-        if not medan.get(nama):
-            gagal.append("berkas meta: field '%s' kosong atau tidak ada" % nama)
-    judul, desk, slug = (medan.get(k, "") for k in ("judul seo", "deskripsi meta", "slug"))
-    k = kw.lower()
-    if judul and k not in judul.lower():
-        gagal.append("judul SEO tidak memuat keyword '%s'" % kw)
-    if judul and len(judul) > 60:
-        peringatan.append("judul SEO %d karakter, di atas ±60 yang tampil di desktop (Rank Math)" % len(judul))
-    if desk and k not in desk.lower():
-        gagal.append("deskripsi meta tidak memuat keyword '%s'" % kw)
-    elif desk and desk.lower().find(k) + len(k) > 160:
-        peringatan.append("keyword di deskripsi meta berada setelah karakter ke-160 (Rank Math minta di 120-160 awal)")
-    if desk and len(desk) > 160:
-        info.append("deskripsi meta %d karakter: Google memotong sesuai lebar perangkat, bukan batas tetap" % len(desk))
-    for teks_meta, nama in ((judul, "judul SEO"), (desk, "deskripsi meta")):
-        for klaim in KLAIM_SUPERLATIF:
-            if klaim in teks_meta.lower():
-                peringatan.append("%s memuat klaim superlatif '%s': pastikan terbukti, atau ganti" % (nama, klaim))
-    if slug:
-        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
-            gagal.append("slug '%s' bukan huruf kecil/angka dengan tanda hubung" % slug)
-        if slug_dari(kw) not in slug:
-            gagal.append("slug '%s' tidak memuat keyword (%s)" % (slug, slug_dari(kw)))
-        m = re.search(r'<a href="[^"]*?/([^"/]+)/?"><b><i>', raw)
-        if m and m.group(1) != slug:
-            gagal.append("slug meta '%s' berbeda dari slug di anchor permalink '%s'" % (slug, m.group(1)))
-    return gagal, peringatan, info
-
-
 RE_ANCHOR_KW = re.compile(r'<a href="[^"]*"><b><i>([^<]+)</i></b></a>')
 
 
@@ -497,12 +440,8 @@ def main():
     elif "rel=\"noopener noreferrer\"" not in raw.split("wikipedia.org")[1][:200]:
         gagal.append("tautan Wikipedia tanpa rel noopener noreferrer")
 
-    # --- Judul SEO, deskripsi meta, slug (hanya gerbang final) ---
+    # --- Hanya gerbang final (judul SEO, deskripsi meta, slug dibuat AIPuffer di WordPress) ---
     if not a.draft:
-        g_meta, w_meta, i_meta = cek_meta(p, raw, kw)
-        gagal += g_meta
-        peringatan += w_meta
-        info += i_meta
         g_lintas, w_lintas = cek_lintas(p, raw, kw)
         gagal += g_lintas
         peringatan += w_lintas

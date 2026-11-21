@@ -57,7 +57,7 @@ Sumber perintah ada di `perintah/artikel.md` (satu berkas netral, bukan milik ag
 | Langkah 1 dan 2 | Membaca `AGENT.md` dan `aturan/kerja-tanpa-skill.md`, lalu mengikuti Mode Pintasan (Section 10) |
 | Langkah 3 | Gerbang status: menentukan draft mana yang boleh dikerjakan. Hanya `BARU` dan `LANJUTKAN` |
 | Langkah 4 | Audit draft mentah: daftar temuan bernomor sebagai bahan menulis ulang. Tidak pernah menghentikan pekerjaan |
-| Langkah 5 | Menulis berkas `- Meta.txt`, lalu gerbang kualitas. Hanya bagian yang FAIL diperbaiki, tidak merombak seluruh artikel |
+| Langkah 5 | Gerbang kualitas (tanpa berkas meta; judul SEO, deskripsi, dan slug dibuat AIPuffer di WordPress). Hanya bagian yang FAIL diperbaiki, tidak merombak seluruh artikel |
 | Langkah 6 | Draft asli tidak ditimpa. Ledger dan laporan ditulis ke `LAPORAN.md`. Hash disalin dari keluaran skrip, tidak dihitung manual |
 | Langkah 7 | Aturan bukti: kata "lulus" hanya boleh dipakai bila gerbang terbaru menunjukkan `0 FAIL` |
 | Langkah 8 | Laporan akhir ke operator: status tiap draft, tabel artikel yang diproses, dan temuan yang butuh keputusan |
@@ -111,8 +111,8 @@ Isi `perintah/artikel.md` bisa berubah di versi baru. Jalankan ulang pemasang un
 
 1. Agent mencari folder perusahaan di `klien/` dan membaca `CLIENT.md`-nya.
 2. Mencari folder bulan di `artikel/`, lalu menjalankan Gerbang Status pada semua draft.
-3. Hanya draft `BARU` dan `LANJUTKAN` yang dikerjakan: audit, lalu payload ZeroGPT draf untuk operator (agent berhenti menunggu skor). Setelah skor masuk: draf di bawah 10% hanya diperbaiki temuan auditnya, draf 10% atau lebih di-humanize; lalu berkas meta, gerbang kualitas, dan ZeroGPT final untuk yang di-humanize.
-4. Hasil: `<judul> - Humanized.txt` dan `<judul> - Meta.txt` per artikel, serta ledger dan laporan di `LAPORAN.md` folder bulan itu.
+3. Hanya draft `BARU` dan `LANJUTKAN` yang dikerjakan: audit, lalu payload ZeroGPT draf untuk operator (agent berhenti menunggu skor). Setelah skor masuk: draf di bawah 10% hanya diperbaiki temuan auditnya, draf 10% atau lebih di-humanize; lalu gerbang kualitas, dan ZeroGPT final untuk yang di-humanize.
+4. Hasil: `<judul> - Humanized.txt` per artikel, serta ledger dan laporan di `LAPORAN.md` folder bulan itu.
 5. Laporan ringkas di chat, termasuk draft yang dilewati beserta alasannya.
 
 ## Kalau penulis mengerjakan bertahap

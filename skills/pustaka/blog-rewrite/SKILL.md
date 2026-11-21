@@ -108,8 +108,8 @@ Apply changes in this order:
   visible content
 - Verify tags/categories are appropriate
 - In DCI SEO Auditor, the platform is WordPress: judul SEO, deskripsi meta,
-  dan slug tidak ada di badan artikel. Simpan ketiganya di berkas pendamping
-  `<artikel> - Meta.txt` (format: `aturan/kerja-tanpa-skill.md` bagian 5).
+  dan slug dibuat otomatis oleh AIPuffer di WordPress. Jangan menulisnya dan
+  jangan membuat berkas `- Meta.txt` (`aturan/kerja-tanpa-skill.md` bagian 5).
 
 #### 3c. Apply Purpose-First Formatting
 State the point of important sections early, then add the verified evidence and

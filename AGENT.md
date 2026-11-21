@@ -99,7 +99,7 @@ Jalankan: `python3 -I alat/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"` (
 | `TANPA-CATATAN` | Versi Humanized sudah ada tetapi draft tidak tercatat di ledger | Jangan disentuh. Lapor ke operator, dan catat di ledger hanya atas persetujuan operator |
 | `RUSAK` | Berkas draft bukan UTF-8 sehingga tidak bisa dibaca | Jangan diproses. Minta operator menyimpan ulang berkas sebagai UTF-8. Draft lain di folder yang sama tetap dinilai seperti biasa |
 
-Berkas pendamping `<nama> - Humanized.txt` dan `<nama> - Meta.txt` bukan draft dan tidak dinilai. Bila `CLIENT.md` masih berisi isian bawaan template, skrip berhenti dengan pesan jelas: isi dulu semua field.
+Berkas pendamping `<nama> - Humanized.txt` dan `<nama> - Meta.txt` lama (sebelum AIPuffer) bukan draft dan tidak dinilai. Bila `CLIENT.md` masih berisi isian bawaan template, skrip berhenti dengan pesan jelas: isi dulu semua field.
 
 Aturan gerbang:
 1. Hash di ledger hanya boleh disalin dari output skrip. Dilarang menghitung manual (`sha256sum` shell menghasilkan nilai berbeda karena cara normalisasinya lain, dan itu akan membuat semua draft tampak `BERUBAH`).
@@ -115,7 +115,7 @@ Daftar itu = bahan kerja Tahap 3. Mode audit selalu exit 0 (laporan, bukan pengh
 
 ### Tahap 2b — Gerbang ZeroGPT draf (semua klien, keputusan pemilik 2026-11-22)
 Setelah audit, jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<draf 1>" "<draf 2>" ...` (satu atau banyak draf; payload ditandai nama artikel). Catat ledger: Audit terisi, Humanize `-`, ZeroGPT `MENUNGGU OPERATOR (draf)`. Berhenti dan serahkan blok TUGAS OPERATOR. Setelah operator melapor, per draf:
-- **Di bawah 10% AI:** humanize dilewati. Salin draf menjadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WordPress), tulis Meta, lalu gerbang Tahap 4 dengan flag `--tanpa-humanize` (hanya melewati ukuran kedalaman parafrase; semua gerbang lain tetap berlaku). Ledger: Humanize `dilewati (draf <10%)`, ZeroGPT `<angka>% AI (draf)`.
+- **Di bawah 10% AI:** humanize dilewati. Salin draf menjadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WordPress), lalu gerbang Tahap 4 dengan flag `--tanpa-humanize` (hanya melewati ukuran kedalaman parafrase; semua gerbang lain tetap berlaku). Ledger: Humanize `dilewati (draf <10%)`, ZeroGPT `<angka>% AI (draf)`.
 - **10% atau lebih:** lanjut Tahap 3 penuh, lalu ZeroGPT final (Tahap 5). Kolom ZeroGPT diganti `MENUNGGU OPERATOR (final)` sampai operator melapor skor final; skor draf dipindah ke blok laporan.
 - **Operator belum atau tidak bisa melapor:** lanjut Tahap 3 penuh seperti biasa.
 Dasar ambang: satu artikel uji (draf 3,72%, final 3,7%). Catat skor draf dan final di `LAPORAN.md` supaya aturan ini bisa dievaluasi.
@@ -140,10 +140,10 @@ Tulis ulang sebagai "penulis manusia", bukan edit kosmetik:
 Selesai humanize: isi kolom Humanize di ledger dengan tanggal.
 
 ### Tahap 4 — Verifikasi SEO (Rank Math 80–100)
-Tulis dulu berkas pendamping `<artikel> - Meta.txt` (judul SEO, deskripsi meta, slug; format di `aturan/kerja-tanpa-skill.md` bagian 5).
+Tidak ada berkas meta: judul SEO, deskripsi meta, dan slug dibuat otomatis oleh AIPuffer di WordPress.
 Jalankan gerbang kualitas: `python3 -I -X utf8 alat/cek-artikel.py "<artikel Humanized>"`.
 Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, heading, format WordPress
-(more-tag, nbsp, list, alt, shortcode, kontak), judul SEO/deskripsi meta/slug, kanibalisasi dan kalimat
+(more-tag, nbsp, list, alt, shortcode, kontak), kanibalisasi dan kalimat
 yang disalin dari artikel lain di `klien/`, kedalaman parafrase terhadap draft aslinya (FAIL bila lebih dari
 25% rangkaian 8 kata draft masih utuh), Anti-Typo Gate (ejaan tidak baku, kata asing, em dash,
 "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
@@ -158,7 +158,7 @@ Jalur humanize penuh: uji hasil ke ZeroGPT (protokol di Section 6). Jalur draf d
 ## 5. Checklist Audit
 
 ### 5a. Rank Math (target skor 80–100 / hijau)
-- [ ] Focus keyword di: SEO title, meta description, slug, 10% awal konten, dan ≥2 heading `<h2>`.
+- [ ] Focus keyword di 10% awal konten dan ≥2 heading `<h2>`. (SEO title, meta description, dan slug diurus AIPuffer di WordPress, bukan agent.)
 - [ ] Paragraf pertama ≥200 kata (override batas 150 kata).
 - [ ] Keyword total 31–34× (termasuk di heading), density 1,0–2,5%.
 - [ ] Semua occurrence di body text = **Bold + Title Case**; di `<h2>/<h3>` Title Case tanpa `<b>`.
@@ -242,7 +242,7 @@ Aturan ledger: kolom Hash wajib 16 karakter hex agar baris terbaca. Jangan mengu
 ## 9. Aturan Mandiri dan Pustaka Skill
 
 Pipeline ini TIDAK membutuhkan skill terpasang di komputer. Semua yang dipakai ada di repo:
-- Aturan inti: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, kanibalisasi). Baca berkas itu sebelum Tahap 3. Ini jalur utama dan biasanya cukup.
+- Aturan inti: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, kanibalisasi). Baca berkas itu sebelum Tahap 3. Ini jalur utama dan biasanya cukup.
 - Pustaka skill SEO dan audit: `skills/pustaka/` (13 skill MIT, rincian dan lisensi di `skills/pustaka/INDEKS.md`). Statusnya **rujukan opsional, bukan langkah pipeline** (uji A/B 2026-11-21: hasil dengan dan tanpa pustaka sama). Buka hanya bila aturan ringkas kurup: permintaan revisi tak terduga, jenis artikel baru, atau operator memintanya. Caranya membaca berkas lewat jalur, sama untuk semua agent.
 
 Aturan pemakaian (saat pustaka dipakai):
@@ -314,7 +314,7 @@ All internal links and references must point to {client_name} services only. Nev
 ===== RANK MATH SEO RULES =====
 
 - Don't write title in content area, just skip into first paragraph
-- "{keywords}" MUST appear in: SEO title, meta description, slug, first 10% of content (~200 words), and at least TWO <h2> subheadings. The FIRST paragraph must be at least 200 words (this specific rule overrides the general 150-word paragraph cap below).
+- "{keywords}" MUST appear in: first 10% of content (~200 words) and at least TWO <h2> subheadings. Do NOT write SEO title, meta description, or slug (AIPuffer generates them in WordPress). The FIRST paragraph must be at least 200 words (this specific rule overrides the general 150-word paragraph cap below).
 - Keyword density: repeat "{keywords}" 31-34 times naturally, density 1.0%-2.5% (occurrences / total words, as Rank Math counts it). Every occurrence in body text MUST be Bold and Title Case (e.g., <b>Jasa Catering Blitar</b>). Occurrences inside <h2>/<h3> stay Title Case but NOT wrapped in <b> (headings are never bold) and still count toward the total.
 - Internal link: in first paragraph, put link to "{client_url}" with anchor text {client_name} (bold).
 
