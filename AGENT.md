@@ -116,7 +116,7 @@ Daftar itu = bahan kerja Tahap 3. Mode audit selalu exit 0 (laporan, bukan pengh
 ### Tahap 2b — Gerbang ZeroGPT draf (semua klien, keputusan pemilik 2026-11-22)
 Setelah audit, jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<draf 1>" "<draf 2>" ...` (satu atau banyak draf; payload ditandai nama artikel). Catat ledger: Audit terisi, Humanize `-`, ZeroGPT `MENUNGGU OPERATOR (draf)`. Berhenti dan serahkan blok TUGAS OPERATOR. Setelah operator melapor, per draf:
 - **Di bawah 10% AI:** humanize dilewati. Salin draf menjadi `<nama> - Humanized.txt`, perbaiki HANYA temuan audit (em dash, "Anda" kapital, kata asing, ejaan, struktur WordPress), tulis Meta, lalu gerbang Tahap 4 dengan flag `--tanpa-humanize` (hanya melewati ukuran kedalaman parafrase; semua gerbang lain tetap berlaku). Ledger: Humanize `dilewati (draf <10%)`, ZeroGPT `<angka>% AI (draf)`.
-- **10% atau lebih:** lanjut Tahap 3 penuh, lalu ZeroGPT final (Tahap 5).
+- **10% atau lebih:** lanjut Tahap 3 penuh, lalu ZeroGPT final (Tahap 5). Kolom ZeroGPT diganti `MENUNGGU OPERATOR (final)` sampai operator melapor skor final; skor draf dipindah ke blok laporan.
 - **Operator belum atau tidak bisa melapor:** lanjut Tahap 3 penuh seperti biasa.
 Dasar ambang: satu artikel uji (draf 3,72%, final 3,7%). Catat skor draf dan final di `LAPORAN.md` supaya aturan ini bisa dievaluasi.
 

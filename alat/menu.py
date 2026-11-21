@@ -195,7 +195,17 @@ def aksi_periksa():
     nama = pilih(berkas, "Nomor artikel")
     if not nama:
         return
-    kode, out = jalankan("cek-artikel.py", "klien/%s/artikel/%s/%s" % (klien, bulan, nama))
+    argumen = ["klien/%s/artikel/%s/%s" % (klien, bulan, nama)]
+    # Draf yang lolos ZeroGPT di bawah 10% tidak di-humanize: ledger mencatat Humanize "dilewati".
+    draft = nama[:-len(" - Humanized.txt")] + ".txt"
+    laporan = folder / "LAPORAN.md"
+    if laporan.is_file():
+        for b in laporan.read_text(encoding="utf-8").splitlines():
+            sel = [s.strip() for s in b.strip().strip("|").split("|")]
+            if len(sel) >= 5 and sel[0] == draft and sel[3].lower().startswith("dilewati"):
+                argumen.append("--tanpa-humanize")
+                break
+    kode, out = jalankan("cek-artikel.py", *argumen)
     print()
     if kode == 0:
         print("  LULUS. Tidak ada masalah yang harus diperbaiki.")
@@ -251,7 +261,9 @@ def aksi_bantuan():
   1. Menu 5  : tambah klien baru (hanya sekali per klien).
   2. Simpan draft dari AI Puffer ke folder klien (menu 5 menunjukkan lokasinya).
   3. Menu 2  : salin perintah kerja, lalu tempel ke program AI Anda.
-  4. Program AI mengerjakan artikelnya sampai selesai.
+  4. Program AI mengaudit draft, lalu memberi TUGAS OPERATOR: pindai draft di
+     zerogpt.com dan laporkan angkanya. Di bawah 10% AI, draft cukup dirapikan;
+     10% atau lebih, draft ditulis ulang dan dipindai sekali lagi.
   5. Menu 4  : periksa hasilnya. Targetnya LULUS.
   6. Hasil akhir: berkas '... - Humanized.txt' di folder bulan klien.
 

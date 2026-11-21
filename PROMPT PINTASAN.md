@@ -111,7 +111,7 @@ Isi `perintah/artikel.md` bisa berubah di versi baru. Jalankan ulang pemasang un
 
 1. Agent mencari folder perusahaan di `klien/` dan membaca `CLIENT.md`-nya.
 2. Mencari folder bulan di `artikel/`, lalu menjalankan Gerbang Status pada semua draft.
-3. Hanya draft `BARU` dan `LANJUTKAN` yang dikerjakan: audit, humanize, berkas meta, gerbang kualitas, lalu ZeroGPT.
+3. Hanya draft `BARU` dan `LANJUTKAN` yang dikerjakan: audit, lalu payload ZeroGPT draf untuk operator (agent berhenti menunggu skor). Setelah skor masuk: draf di bawah 10% hanya diperbaiki temuan auditnya, draf 10% atau lebih di-humanize; lalu berkas meta, gerbang kualitas, dan ZeroGPT final untuk yang di-humanize.
 4. Hasil: `<judul> - Humanized.txt` dan `<judul> - Meta.txt` per artikel, serta ledger dan laporan di `LAPORAN.md` folder bulan itu.
 5. Laporan ringkas di chat, termasuk draft yang dilewati beserta alasannya.
 

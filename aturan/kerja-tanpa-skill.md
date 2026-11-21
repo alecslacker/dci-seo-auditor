@@ -82,9 +82,9 @@ Cara memperbaiki bukan mengganti sinonim, melainkan mengubah sudut pandang: siap
 ## 7. Urutan kerja ringkas
 
 1. Gerbang status, lalu audit `--draft`.
-2. Tulis ulang sesuai bagian 1 dan 2, periksa fakta sesuai bagian 3.
+2. ZeroGPT draf oleh operator (`AGENT.md` Tahap 2b). Draf di bawah 10% AI: perbaiki hanya temuan audit. Draf 10% atau lebih: tulis ulang sesuai bagian 1 dan 2. Periksa fakta sesuai bagian 3.
 3. Tulis berkas `- Meta.txt` sesuai bagian 5.
-4. Gerbang kualitas sampai `0 FAIL`, lalu ZeroGPT.
+4. Gerbang kualitas sampai `0 FAIL` (jalur draf di bawah 10% memakai `--tanpa-humanize`), lalu ZeroGPT final untuk artikel yang ditulis ulang.
 5. Catat ledger dan laporan. Sebelum menyatakan selesai, ikuti bagian 4.
 
 ## 8. Pustaka skill di repo (rujukan opsional)

@@ -64,9 +64,14 @@ def uji_status(base):
         "| Draft | Hash | Audit | Humanize | ZeroGPT |\n|---|---|---|---|---|\n"
         "| selesai.txt | %s | 2026-03-01 | 2026-03-01 | 3%% AI |\n"
         "| lanjut.txt | %s | 2026-03-01 | - | - |\n"
-        % (h.get("selesai.txt", "0" * 16), h.get("lanjut.txt", "0" * 16)), encoding="utf8")
+        "| menunggu.txt | %s | 2026-03-01 | dilewati (draf <10%%) | 4,1%% AI (draf) |\n"
+        % (h.get("selesai.txt", "0" * 16), h.get("lanjut.txt", "0" * 16), h.get("menunggu.txt", "0" * 16)), encoding="utf8")
     kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("status: SELESAI terdeteksi", "SELESAI" in out and "selesai.txt" in out)
+    cek("status: Humanize 'dilewati' dihitung selesai", re.search(r"SELESAI\t\S+\ttahap_kosong=-\tmenunggu.txt", out) is not None, out.replace("\n", " | ")[:200])
+    (bulan / "LAPORAN.md").write_text(
+        (bulan / "LAPORAN.md").read_text(encoding="utf8").replace("| menunggu.txt", "| abaikan.txt"), encoding="utf8")
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("status: LANJUTKAN menunjukkan tahap kosong", re.search(r"LANJUTKAN\s+\S+\ttahap_kosong=humanize,zerogpt\tlanjut.txt", out) is not None)
     cek("status: MENUNGGU untuk draft tanpa shortcode", re.search(r"MENUNGGU\t\S+\ttahap_kosong=-\tmenunggu.txt", out) is not None)
     (klien / "CLIENT.md").unlink()
@@ -611,6 +616,19 @@ def uji_menu(base):
     cek("menu 3: status memakai bahasa biasa, bukan kode mentah", "[SELESAI]" in out and "Tidak perlu dikerjakan lagi" in out and "tahap_kosong" not in out)
     kode, out = jalan_menu(akar, "4", "1", "1", "1", "", "0")
     cek("menu 4: artikel Salimah dinyatakan LULUS", "LULUS" in out and "Traceback" not in out, out[-120:].replace("\n", " | "))
+    # Jalur draf <10%: Humanized = draf, ledger mencatat Humanize "dilewati" -> menu 4 memakai --tanpa-humanize.
+    bulan = akar / "klien" / "Salimah Catering" / "artikel" / "2026 November"
+    art = bulan / "Jasa Catering Instansi Blitar - Humanized.txt"
+    draf = bulan / "Jasa Catering Instansi Blitar.txt"
+    asli_draf, asli_lap = draf.read_text(encoding="utf8"), (bulan / "LAPORAN.md").read_text(encoding="utf8")
+    draf.write_text(art.read_text(encoding="utf8"), encoding="utf8")
+    kode, out = jalan_menu(akar, "4", "1", "1", "1", "", "0")
+    cek("menu 4: salinan draf tanpa catatan 'dilewati' -> BELUM LULUS (parafrase)", "BELUM LULUS" in out and "parafrase dangkal" in out)
+    (bulan / "LAPORAN.md").write_text(asli_lap.replace("| 2026-11-20 | 2026-11-20 |", "| 2026-11-20 | dilewati (draf <10%) |"), encoding="utf8")
+    kode, out = jalan_menu(akar, "4", "1", "1", "1", "", "0")
+    cek("menu 4: ledger Humanize 'dilewati' -> --tanpa-humanize, LULUS", "BELUM LULUS" not in out and "LULUS" in out, out[-120:].replace("\n", " | "))
+    draf.write_text(asli_draf, encoding="utf8")
+    (bulan / "LAPORAN.md").write_text(asli_lap, encoding="utf8")
     kode, out = jalan_menu(akar, "2", "1", "1", "", "0")
     cek("menu 2: perintah kerja memuat nama klien, bulan, dan tahun",
         "kerjakan Salimah Catering bulan November 2026" in out, out[-160:].replace("\n", " | "))

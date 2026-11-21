@@ -18,7 +18,11 @@ Diubah (berlaku untuk semua klien, keputusan pemilik)
 - cek-artikel.py: flag --tanpa-humanize melewati ukuran kedalaman parafrase saja; semua gerbang lain tetap.
 - siap-zerogpt.py menerima banyak berkas sekaligus (bagian ditandai nama artikel).
 - Ledger: Humanize boleh bernilai "dilewati (draf <10%)"; ZeroGPT draf diberi tambahan "(draf)".
-- Uji 177 -> 181.
+- Ledger: saat draf 10% atau lebih masuk jalur final, kolom ZeroGPT diganti "MENUNGGU OPERATOR (final)".
+- Menu 4 (MULAI.bat) membaca LAPORAN.md: bila Humanize draf "dilewati", gerbang dijalankan dengan
+  --tanpa-humanize (sebelumnya artikel jalur ini akan FAIL parafrase). Bantuan menu diperbarui.
+- aturan/kerja-tanpa-skill.md bagian 7 dan PROMPT PINTASAN.md disinkronkan dengan alur baru.
+- Uji 177 -> 184 (termasuk: "dilewati" dihitung SELESAI oleh cek-status; menu 4 jalur dilewati).
 Belum teruji
 - Ambang 10% berdasar SATU artikel (Salimah: draf 3,72%, final 3,7%). Catat skor draf dan final per
   artikel agar aturan bisa dievaluasi; bila banyak draf lolos ZeroGPT tetapi terasa kaku, naikkan kembali.
