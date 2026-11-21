@@ -8,6 +8,15 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.14.1] - 2026-11-21
+---------------------
+
+Diubah
+- Variasi "Hanya file" kini menerima beberapa draft sekaligus dipisah koma (mis. "Hanya file A, B, C."),
+  dengan/tanpa .txt. Draft lain dilaporkan "dilewati: dipilih operator"; nama tak cocok = tanya operator.
+  Aturan variasi opsional (Hanya audit / Hanya file / Lewati ZeroGPT) kini eksplisit di AGENT.md
+  Section 10 dan PROMPT PINTASAN.md (sebelumnya hanya di PROMPT PINTASAN).
+
 [0.14.0] - 2026-11-21
 ---------------------
 

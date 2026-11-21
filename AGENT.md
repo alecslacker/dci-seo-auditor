@@ -258,6 +258,11 @@ Langkah:
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, status plagiarisme (belum dicek manual kecuali operator melaporkan), dan diakhiri blok **TUGAS OPERATOR** (Section 6 butir 5) bila masih ada payload yang belum dipindai.
 
+Variasi opsional (operator menambahkan di akhir perintah; daftar sama di `PROMPT PINTASAN.md`):
+- `Hanya audit, jangan humanize.` — audit saja, keluarkan temuan, jangan tulis ulang.
+- `Hanya file <nama>.` — kerjakan hanya draft yang disebut; boleh beberapa sekaligus dipisah koma (`Hanya file A, B, C.`; dengan atau tanpa `.txt`). Draft lain dilewati dan dilaporkan sebagai "dilewati: dipilih operator". Nama tidak cocok dengan draft mana pun → tanya operator, jangan menebak.
+- `Lewati ZeroGPT.` — jangan siapkan payload ZeroGPT (humanize + gerbang saja); kolom ZeroGPT dibiarkan `-`.
+
 Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]`, atau prompt biasa untuk agent apa pun. Sumber command ada di `perintah/artikel.md` dan dipasang per komputer dengan `alat/pasang-perintah.py` (TRAE, ZCode, Claude Code). Panduan lengkap, penjelasan isi perintah, dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
 
 ## 11. Template Prompt AI Puffer (aturan konten, GLOBAL)

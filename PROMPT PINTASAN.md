@@ -140,5 +140,5 @@ Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], a
 ## Variasi opsional (tambahkan di akhir perintah)
 
 - `Hanya audit, jangan humanize.` untuk melihat temuan saja.
-- `Hanya file [nama draft].` untuk satu artikel.
+- `Hanya file [nama draft].` untuk satu artikel, atau `Hanya file A, B, C.` untuk beberapa sekaligus (nama dipisah koma; sisanya dilewati dan dilaporkan). Nama boleh dengan atau tanpa `.txt`.
 - `Lewati ZeroGPT.` bila hanya butuh rewrite.
