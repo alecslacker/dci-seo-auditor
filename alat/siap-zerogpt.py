@@ -74,10 +74,27 @@ def main():
         label = ("BAGIAN %d/%d\n\n" % (i, len(bagian))) if len(bagian) > 1 else ""
         isi.append(label + b)
     out.write_text(("\n\n=====\n\n").join(isi) + "\n", encoding="utf8")
-    print("OK: %s (%d bagian, %s karakter terpanjang %d)" %
-          (out, len(bagian), "total", max(len(b) for b in bagian)))
-    print("Serahkan berkas ini ke operator untuk dipindai di https://www.zerogpt.com/")
-    print("Catat balik verdict dan angka AI % ke ledger kolom ZeroGPT.")
+    print("OK: %s (%d bagian, karakter terpanjang %d)" % (out, len(bagian), max(len(b) for b in bagian)))
+    print()
+    print("=" * 60)
+    print("TUGAS OPERATOR (manusia) — ikuti langkah berikut:")
+    print("=" * 60)
+    print("1. Buka https://www.zerogpt.com/ di browser.")
+    print("2. Buka berkas: %s" % out)
+    if len(bagian) > 1:
+        print("3. Tempel isi BAGIAN 1/%d (sebelum baris =====) ke kolom teks," % len(bagian))
+        print("   klik \"Detect Text\", tunggu 15-30 detik, catat hasilnya.")
+        print("4. Ulangi untuk tiap bagian berikutnya (BAGIAN 2/%d, dst)." % len(bagian))
+        print("5. Laporkan ke agent: verdict + AI % tiap bagian, contoh:")
+        print("   \"Bagian 1: Human written, AI 3,8%. Bagian 2: Human written, AI 4,1%.\"")
+    else:
+        print("3. Tempel seluruh isi berkas itu ke kolom teks, klik \"Detect Text\",")
+        print("   tunggu 15-30 detik, catat hasilnya.")
+        print("4. Laporkan ke agent: verdict + AI %, contoh:")
+        print("   \"Human written, AI 3,8%.\"")
+    print()
+    print("Sebelum operator melapor, kolom ZeroGPT diisi MENUNGGU OPERATOR")
+    print("dan artikel belum boleh dinyatakan final.")
 
 
 if __name__ == "__main__":

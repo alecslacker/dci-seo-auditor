@@ -196,7 +196,8 @@ Prosedur:
 2. **Operator:** tempel isi payload ke kolom teks, klik **"Detect Text"**, tunggu hasil (bisa lebih dari 15 detik), lalu sampaikan verdict dan angkanya ke agent.
 3. Jika verdict AI: revisi bagian yang ditandai detector → operator memindai ulang (maks 2 iterasi). Laporkan angka apa adanya, jangan manis-maniskan.
 4. Bila ZeroGPT terhalang captcha atau operator tidak sempat: kolom ZeroGPT diisi `MENUNGGU OPERATOR`. Artikel tidak boleh dinyatakan final sebelum angka masuk.
-5. Catatan plagiarisme: artikel hasil pipeline ini adalah parafrase utuh (bukan salin-tempel), jadi risiko duplikasi rendah by construction; klaim "lolos plagiarism checker" hanya boleh ditulis bila operator menjalankan cek manual dan melaporkan hasilnya.
+5. **Serah terima ke operator:** setiap kali agent selesai (Tahap 4 lulus dan payload siap, atau semua draft selesai), laporan akhir WAJIB diakhiri blok `TUGAS OPERATOR` berisi langkah bernomor yang bisa langsung dijalankan manusia: (a) buka zerogpt.com, (b) tempel isi `payload-zerogpt.txt` per bagian (tunjukkan jalur berkasnya), (c) klik "Detect Text", (d) laporkan verdict + AI % per bagian ke agent. Skrip `siap-zerogpt.py` mencetak blok ini otomatis — salin atau ikuti formatnya. Operator tidak perlu membaca AGENT.md untuk tahu harus apa.
+6. Catatan plagiarisme: artikel hasil pipeline ini adalah parafrase utuh (bukan salin-tempel), jadi risiko duplikasi rendah by construction; klaim "lolos plagiarism checker" hanya boleh ditulis bila operator menjalankan cek manual dan melaporkan hasilnya.
 
 ## 7. Laporan Per Klien (BUKAN di file ini)
 
@@ -255,7 +256,7 @@ Langkah:
 5. **Baca `aturan/kerja-tanpa-skill.md`** (pustaka di Section 9 hanya bila aturan itu kurup atau diminta), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
-8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).
+8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, status plagiarisme (belum dicek manual kecuali operator melaporkan), dan diakhiri blok **TUGAS OPERATOR** (Section 6 butir 5) bila masih ada payload yang belum dipindai.
 
 Cara memanggil: command `/artikel <nama perusahaan> <bulan> [tahun]`, atau prompt biasa untuk agent apa pun. Sumber command ada di `perintah/artikel.md` dan dipasang per komputer dengan `alat/pasang-perintah.py` (TRAE, ZCode, Claude Code). Panduan lengkap, penjelasan isi perintah, dan prompt cadangan ada di `PROMPT PINTASAN.md` (ROOT).
 

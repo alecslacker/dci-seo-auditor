@@ -268,6 +268,12 @@ def uji_zerogpt(base):
     # Payload pendamping tidak boleh terbaca sebagai draft oleh cek-status.
     kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
     cek("zerogpt: cek-status mengabaikan payload-zerogpt", kode == 0 and "payload-zerogpt" not in out, out[:80].replace("\n", " | "))
+    # Serah terima: output skrip harus memuat langkah bernomor untuk operator.
+    kode, out = jalankan(skrip, art)
+    cek("zerogpt: blok TUGAS OPERATOR dengan langkah dan laporan",
+        kode == 0 and "TUGAS OPERATOR" in out and "zerogpt.com" in out
+        and "Detect Text" in out and "MENUNGGU OPERATOR" in out and "1." in out and "4." in out,
+        out[-120:].replace("\n", " | "))
 
 
 def uji_lintas(base):
