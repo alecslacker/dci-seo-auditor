@@ -381,6 +381,28 @@ def uji_pustaka():
     # Tiap `blog/references/...` yang disebut INDEKS harus ada di disk.
     putus = [m for m in re.findall(r"`(blog/references/[A-Za-z0-9_.-]+)`", indeks) if not (pus / m).is_file()]
     cek("pustaka: berkas rujukan di INDEKS ada", not putus, ", ".join(putus))
+    # Pustaka harus berdiri sendiri: tanpa variabel/subagent/skrip/berbayar yang hanya ada di Claude Code.
+    mati = re.compile(r"CLAUDE_SKILL_DIR|CLAUDE_BLOG|CLAUDE_PLUGIN|scripts/|run\.py|blog_preflight|blog_render|"
+                      r"analyze_blog|quality_gate|generate_hero|DataForSEO|blog-google|/blog [a-z]|subagent|"
+                      r"plan mode|orchestration-details|load_untrusted|BRAND\.md|VOICE\.md|DISCOURSE\.md|"
+                      r"\.agents/|\.claude/|product-marketing|tools/REGISTRY|"
+                      r"blog-(reviewer|researcher|writer|analyze|audit|chart|image|brand|flow|write|outline|brief|"
+                      r"cluster|strategy|calendar|persona|notebooklm|audio|translate|localize|discourse|taxonomy|"
+                      r"google|delivery)\b|claude-seo|programmatic-seo|site-architecture|content-strategy|\bcro\b|ab-testing")
+    salah = []
+    for f in ada:
+        if f.suffix == ".md" and f.name != "INDEKS.md":        # INDEKS boleh menyebut nama itu dalam aturan adaptasi
+            dalam_komentar = False
+            for i, baris in enumerate(f.read_text(encoding="utf8").splitlines(), 1):
+                if baris.lstrip().startswith("<!--"):
+                    dalam_komentar = True
+                if dalam_komentar:                              # catatan adaptasi boleh menyebutnya
+                    if "-->" in baris:
+                        dalam_komentar = False
+                    continue
+                if mati.search(baris):
+                    salah.append("%s:%d: %s" % (f.relative_to(pus), i, baris.strip()[:70]))
+    cek("pustaka: tanpa rujukan Claude Code / skrip / alat berbayar", not salah, " | ".join(salah[:5]))
     agent = (ROOT / "AGENT.md").read_text(encoding="utf8")
     cek("pustaka: AGENT.md menunjuk INDEKS", "skills/pustaka/INDEKS.md" in agent)
     cek("pustaka: skill penunjuk menyebut INDEKS", "skills/pustaka/INDEKS.md" in (ROOT / "skills" / "dci-seo-auditor" / "SKILL.md").read_text(encoding="utf8"))

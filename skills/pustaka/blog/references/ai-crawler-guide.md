@@ -258,12 +258,12 @@ for non-Google tools, not a ranking, indexing, or citation requirement.
 
 - [Complete Guide to Technical SEO in 2026](https://example.com/blog/technical-seo-guide): Comprehensive technical SEO guide covering Core Web Vitals, crawlability, and schema markup.
 - [How AI Overviews Changed Search](https://example.com/blog/ai-overviews-impact): Data-driven analysis of AI Overview impact on organic traffic with case studies.
-- [Content Strategy for B2B SaaS](https://example.com/blog/b2b-saas-content-strategy): Framework for building a content program that drives pipeline.
+- [Content Strategy for B2B SaaS](https://www.example.com/page/about-b2b-content): Framework for building a content program that drives pipeline.
 
 ## Topic Clusters
 
 - [SEO](https://example.com/topics/seo): All articles about search engine optimization
-- [Content Strategy](https://example.com/topics/content-strategy): Content planning and execution
+- [Content Strategy](https://www.example.com/page/planning): Content planning and execution
 - [Web Development](https://example.com/topics/web-development): Frontend and backend development guides
 
 ## Authors

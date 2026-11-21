@@ -10,13 +10,13 @@ https://github.com/mvanhorn/last30days-skill):
 3. **Cross-source clustering** rules to avoid synthesis echo from one upstream source
 4. A **freshness floor** for time-sensitive content (30 or 90 days)
 
-Apply when running `blog-researcher`, `blog-brief`, `blog-strategy`, or the new `blog-discourse` sub-skill.
+Apply when running the research step, brief writing, strategy planning, or the new discourse research sub-skill.
 
 ---
 
 ## 1. The 5-dimension research quality rubric
 
-Score every research output against these five dimensions before passing to `blog-writer`. Weighted total of 100.
+Score every research output against these five dimensions before passing to the writing step. Weighted total of 100.
 
 | Dimension | Weight | What it asks |
 |---|---|---|
@@ -35,7 +35,7 @@ For each dimension, score 0 to its weight:
 - 25%: weak; most checks fail
 - 0: absent or actively wrong
 
-A research output scoring below 70 should not be passed to `blog-writer` without remediation. Below 50 is a do-over.
+A research output scoring below 70 should not be passed to the writing step without remediation. Below 50 is a do-over.
 
 ### Reporting format
 
@@ -176,7 +176,7 @@ For time-sensitive topics, require at least 2 sources published within the last 
 
 ### Enforcement
 
-`blog-researcher` should report freshness in the research output:
+the research step should report freshness in the research output:
 
 ```
 ## Source Freshness Summary
@@ -197,4 +197,4 @@ If the floor is not satisfied, the research output is incomplete. The agent shou
 
 ## Attribution
 
-The 5-dimension quality rubric, the four keyword-trap classes (demographic shopping, numeric trap, overly-literal phrase, generic single-noun), the named-entity decomposition pattern (Step 0.55), the cross-source clustering procedure, and the freshness floor concept are adapted from `last30days-skill` v3.2.1 (Matt Van Horn, MIT, https://github.com/mvanhorn/last30days-skill). The original applies them to multi-platform discourse retrieval (Reddit / X / YouTube / TikTok / HN / Polymarket). This reference adapts the same mental models to general blog research, API-free, applied as prompt discipline by `blog-researcher` and `blog-discourse`.
+The 5-dimension quality rubric, the four keyword-trap classes (demographic shopping, numeric trap, overly-literalral phrase, generic single-noun), the named-entity decomposition pattern (Step 0.55), the cross-source clustering procedure, and the freshness floor concept are adapted from `last30days-skill` v3.2.1 (Matt Van Horn, MIT, https://github.com/mvanhorn/last30days-skill). The original applies them to multi-platform discourse retrieval (Reddit / X / YouTube / TikTok / HN / Polymarket). This reference adapts the same mental models to general blog research, API-free, applied as prompt discipline by the research step and discourse research.

@@ -1,6 +1,6 @@
 # Synthesis Contract: 6 LAWs for Research-Synthesis Output
 
-When `blog-researcher`, `blog-discourse`, `blog-brief`, or any other research-producing sub-skill emits synthesis prose (a brief, a "what people are saying" summary, a competitive landscape), these six rules apply. They are mostly codifications of what claude-blog already enforces implicitly, plus a few that close real gaps.
+When the research step, discourse research, brief writing, or any other research-producing sub-skill emits synthesis prose (a brief, a "what people are saying" summary, a competitive landscape), these six rules apply. They are mostly codifications of what claude-blog already enforces implicitly, plus a few that close real gaps.
 
 Adapted from `last30days-skill` v3.2.1 (Matt Van Horn, MIT). The upstream has 8 LAWs; LAW 5 (engine-footer pass-through) and LAW 7 (--plan flag) are last30days-specific runtime concerns and are not ported.
 
@@ -102,11 +102,11 @@ The difference: the good version names a number, names a source, says what the s
 
 ## How this contract is applied
 
-`blog-researcher`, `blog-discourse`, `blog-brief`, `blog-strategy`: load this reference at the start of synthesis. Run the six self-checks before returning output.
+the research step, discourse research, brief writing, strategy planning: load this reference at the start of synthesis. Run the six self-checks before returning output.
 
-`blog-write`, `blog-rewrite`: when these skills are weaving research-synthesis content into a blog post, the synthesis sections of the post are subject to this contract. Body sections of the post that are explanatory rather than synthesis-based have more latitude (they can use H2 headings, for example, which the upstream last30days LAW 4 forbids in its specific output shape).
+writing and rewriting: when these skills are weaving research-synthesis content into a blog post, the synthesis sections of the post are subject to this contract. Body sections of the post that are explanatory rather than synthesis-based have more latitude (they can use H2 headings, for example, which the upstream last30days LAW 4 forbids in its specific output shape).
 
-`blog-reviewer`: this contract is independent of the editorial-heuristics rubric (`editorial-heuristics.md`) and the AI-slop detection (`ai-slop-detection.md`). Run all three on synthesis-heavy content.
+the review step: this contract is independent of the editorial-heuristics rubric (`editorial-heuristics.md`) and the AI-slop detection (`ai-slop-detection.md`). Run all three on synthesis-heavy content.
 
 ---
 

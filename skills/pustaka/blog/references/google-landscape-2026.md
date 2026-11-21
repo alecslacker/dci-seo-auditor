@@ -201,7 +201,7 @@ Sources:
 - https://support.google.com/webmasters/answer/17148418?hl=en-GB
 
 Verify account availability. Do not claim that the current Search Console API
-or `/blog google gsc` retrieves the dedicated platform reports.
+
 
 ## Preferred Sources
 
@@ -275,18 +275,3 @@ Sources:
 
 - https://cloud.google.com/natural-language/pricing
 - https://developers.google.com/google-ads/api/docs/access-levels
-
-## Refresh Procedure
-
-Maintainer steps, run against a trusted checkout of this repository (`<repo-root>` is
-its absolute path):
-
-1. Run `python3 "<repo-root>/scripts/check_google_currentness.py" --root "<repo-root>" --json`.
-2. Review all manual sources in `data/google-updates.json`.
-3. Add only claims directly supported by the cited source.
-4. Keep source conflicts and pending impact explicit.
-5. Run `python3 "<repo-root>/scripts/sync_google_updates.py" --root "<repo-root>"`.
-6. Run the Google ledger tests and repository release gates.
-
-The automated checker reports new source dates and stale reviews. It never
-creates guidance, changes scoring, or decides what an update targeted.

@@ -86,8 +86,8 @@ Format: 3-5 bullet points (not a prose paragraph):
 > - [Third actionable takeaway]
 ```
 
-For backward compatibility, blog-analyze accepts "TL;DR", "Key Takeaways",
-"Summary", and "Quick Answer".
+For backward compatibility, "TL;DR", "Key Takeaways", "Summary", and
+"Quick Answer" are accepted as summary-box labels.
 
 ## Heading Hierarchy
 

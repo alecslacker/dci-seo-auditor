@@ -8,6 +8,33 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.12.0] - 2026-11-21
+---------------------
+
+Skill di skills/pustaka/ disunting agar berdiri sendiri di repo ini (bukan sekadar salinan mentah).
+
+Diubah
+- Semua SKILL.md pustaka: rujukan ${CLAUDE_SKILL_DIR} diganti jalur relatif; blok plan mode, subagent,
+  wizard antislop, skrip .py, templates/, blog-google, dan mode API DataForSEO dihapus; temuan visual
+  (chart/gambar/video) menjadi usulan ke operator, bukan dikerjakan sendiri.
+- blog-rewrite ditulis ulang (Phase 3 chart generation dan Phase 5.5 delivery contract dibuang; meta WordPress
+  dipindah ke berkas - Meta.txt). blog/SKILL.md ditulis ulang menjadi pengantar references (6 Pillars,
+  Quality Gates, Anti-Patterns, daftar references). flow-alignment.md diringkas jadi disiplin asal klaim.
+- Skill marketingskills (seo-audit, ai-seo, schema, copywriting, copy-editing): paragraf product-marketing
+  dan rujukan skill yang tidak ikut (cro, ab-testing, programmatic-seo, dsb.) dihapus.
+- antislop-copywriting: rujukan antislop.md dipertegas jalurnya; gate diganti alat/cek-artikel.py.
+
+Dihapus
+- 7 berkas references yang tidak dirujuk lagi: blog-delivery-contract, orchestration-details,
+  content-templates, visual-media, cta-placement, distribution-playbook, platform-guides.
+
+Ditambahkan
+- LISENSI/impeccable.Apache-2.0.txt: ai-slop-detection.md mengadaptasi metodologi impeccable (Apache-2.0).
+- Uji baru: pustaka bebas rujukan Claude Code/skrip/alat berbayar (komentar adaptasi dikecualikan).
+  Total 145 uji.
+
+Belum teruji
+- Efektivitas pustaka pada draft nyata belum dibandingkan dengan/sans pustaka (uji A/B belum pernah dijalankan).
 [0.11.0] - 2026-11-21
 ---------------------
 

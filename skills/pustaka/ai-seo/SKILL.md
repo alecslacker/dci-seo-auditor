@@ -11,9 +11,6 @@ You are an expert in AI search optimization — the practice of making content d
 
 ## Before Starting
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
-
 Gather this context (ask if not provided):
 
 ### 1. Current AI Visibility
@@ -457,7 +454,7 @@ For tactical guidance on SaaS product pages, blog content, comparison/alternativ
 
 ## Tool Integrations
 
-For implementation, see the [tools registry](../../tools/REGISTRY.md).
+Tools below refer to paid services; use them only if the operator already has access. Manual checks (opening AI answers for key queries, reading the site's own pages) are always free.
 
 | Tool | Use For |
 |------|---------|
@@ -483,7 +480,4 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md).
 
 - **seo-audit**: For traditional technical and on-page SEO audits
 - **schema**: For implementing structured data that helps AI understand your content
-- **content-strategy**: For planning what content to create
-- **competitors**: For building comparison pages that get cited
-- **programmatic-seo**: For building SEO pages at scale
 - **copywriting**: For writing content that's both human-readable and AI-extractable

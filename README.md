@@ -129,7 +129,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (144 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (145 uji). Jalankan setelah mengubah skrip |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 

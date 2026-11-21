@@ -42,10 +42,9 @@ The point: **a draft can score zero on a phrase list and still be repetitive or 
 
 ## First-order reflex (phrase + lexical)
 
-This is what the advisory style diagnostics in `blog-analyze` and
-`blog-rewrite` cover. Documented here for completeness.
+These checks are the advisory style diagnostics used during rewrite work. Documented here for completeness.
 
-**Trigger phrases** (full list in `agents/blog-reviewer.md` and `scripts/analyze_blog.py`):
+**Trigger phrases** (start from this list; extend with the project's own style list):
 
 - "In today's digital landscape" / "In the ever-evolving"
 - "It's important to note" / "It is worth mentioning"
@@ -149,19 +148,10 @@ guidance is an editing step whose effect on the tics is unproven.
 
 ## How to run the two-tier check
 
-For `blog-rewrite` and `blog-reviewer`:
-
 1. Run the first-order descriptive pass.
 2. Review second-order patterns with line numbers and examples.
 3. Apply judgment: keep patterns that suit the audience and edit only those
    that reduce clarity, distinctiveness, or usefulness.
-
-For `blog-write` (initial drafting):
-
-- First-order preferences may be applied from the persona's style list.
-- Second-order observations may be reviewed on the full draft when useful.
-
----
 
 ## Output format
 

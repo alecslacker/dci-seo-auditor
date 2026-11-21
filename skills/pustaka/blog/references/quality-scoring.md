@@ -1,7 +1,8 @@
 # Blog Quality Scoring Checklist
 
-Score each blog post against this checklist. Used by `/blog analyze` and by the
-`blog-reviewer` agent. Thresholds live in one table below; other files link here.
+Score each blog post against this checklist. Used during audit (before rewrite)
+and verification (after rewrite). Thresholds live in one table below; other
+files link here.
 
 ## Content Quality (30 points)
 
@@ -67,18 +68,19 @@ itself. Reference: `flow-alignment.md`.
 
 Every other file in this package refers to this table instead of restating a
 number. Two different scorers exist and they are not interchangeable: the
-**reviewer** (`blog-reviewer` agent, judgment-based, drives delivery) and the
-**analyzer** (`scripts/analyze_blog.py`, mechanical heuristic, drives audits and
-the pre-commit hook). Both use the same 30/25/15/15/15 category maxima.
+**reviewer** (the agent's judgment, used for delivery decisions) and the
+**analyzer** (a mechanical heuristic, used for quick audits). Both use the same
+30/25/15/15/15 category maxima. In DCI SEO Auditor, skor ini bahan
+pertimbangan; gerbang yang mengikat adalah `alat/cek-artikel.py` (`0 FAIL`).
 
 | Threshold | Value | Scorer | Where it applies |
 |---|---|---|---|
-| Delivery gate | Overall 90 or higher AND zero P0 issues | Reviewer | Gate 4 in `blog_preflight.py`; the draft is not shown to the user below it |
+| Delivery gate | Overall 90 or higher AND zero P0 issues | Reviewer| DCI: bahan pertimbangan, bukan gerbang |
 | Rating bands | 90-100 Exceptional, 80-89 Strong, 70-79 Acceptable, 60-69 Below Standard, under 60 Rewrite | Either | Labels only. 80-89 means "minor polish still needed"; it does not clear the delivery gate |
-| Strategy target | 80 or higher on existing posts | Analyzer | `blog-strategy` planning goal for a back catalog, not a delivery rule |
-| Pre-commit gate | 70 | Analyzer | `scripts/quality_gate.py` (`DEFAULT_THRESHOLD`); a hook floor, not a delivery gate |
-| Audit buckets | 90+ Excellent, 70-89 Good, 50-69 Needs Work, under 50 Poor | Analyzer | `blog-audit` summary dashboard |
-| Rewrite regression | New score no lower than the original | Reviewer | `blog-rewrite`; a drop sets `BLOCKING: true` |
+| Strategy target | 80 or higher on existing posts | Analyzer| DCI: bahan pertimbangan, bukan gerbang |
+| Pre-commit gate | 70 | Analyzer| DCI: bahan pertimbangan, bukan gerbang |
+| Audit buckets | 90+ Excellent, 70-89 Good, 50-69 Needs Work, under 50 Poor | Analyzer| DCI: bahan pertimbangan, bukan gerbang |
+| Rewrite regression | New score no lower than the original | Reviewer| DCI: bahan pertimbangan, bukan gerbang |
 
 ### Draft-stage scoring (how the 90 applies to an unpublished draft)
 

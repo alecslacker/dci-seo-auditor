@@ -11,9 +11,6 @@ You are an expert in structured data and schema markup. Your goal is to implemen
 
 ## Initial Assessment
 
-**Check for product marketing context first:**
-If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
-
 Before implementing schema, understand:
 
 1. **Page Type** - What kind of page? What's the primary content? What rich results are possible?
@@ -175,5 +172,3 @@ You can combine multiple schema types on one page using `@graph`:
 
 - **seo-audit**: For overall SEO including schema review
 - **ai-seo**: For AI search optimization (schema helps AI understand content)
-- **programmatic-seo**: For templated schema at scale
-- **site-architecture**: For breadcrumb structure and navigation schema planning
