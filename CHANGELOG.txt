@@ -8,6 +8,12 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.17.1] - 2026-11-22
+----------------------
+Ditambahkan
+- AGENTS.md: kemajuan artikel dan data klien hanya di LAPORAN.md dan ledger folder bulan, bukan di
+  memory agent; memory agent hanya untuk aturan kerja (mencegah data klien bocor ke klien lain).
+
 [0.17.0] - 2026-11-22
 ----------------------
 Dihapus

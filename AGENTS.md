@@ -23,6 +23,7 @@ Untuk tugas lain di repo ini (misalnya mengubah skrip di `alat/`), berkas di ata
 - Jangan mengarang statistik, testimoni, nama, harga, atau fakta kota. Tidak ada sumber, tidak ditulis.
 - Draft asli tidak ditimpa. Hasil akhir disimpan sebagai `<nama> - Humanized.txt`.
 - Data satu klien tidak boleh muncul di artikel klien lain.
+- Kemajuan artikel dan data klien dicatat di `LAPORAN.md` dan ledger folder bulan, bukan di memory agent. Memory agent hanya untuk aturan kerja, dan tidak boleh berisi data klien.
 
 ## Menyapa operator
 
