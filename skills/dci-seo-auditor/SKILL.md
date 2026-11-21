@@ -14,7 +14,7 @@ Skill ini hanya penunjuk. Semua aturan ada di repo DCI SEO Auditor, jadi tidak a
 
 1. Pastikan direktori kerja adalah root repo (ada `AGENT.md`, `alat/`, `klien/`). Bila bukan, minta operator membuka repo itu.
 2. Baca `AGENT.md` (pipeline, checklist, Section 10 mode `/artikel`, Section 11 aturan konten) dan `aturan/kerja-tanpa-skill.md` (metode menulis ulang, aturan fakta, berkas meta, kanibalisasi).
-3. Untuk Tahap 2–4, buka `skills/pustaka/INDEKS.md`, cari tahapnya di tabel, lalu baca skill yang disebut lewat jalur berkasnya (bukan lewat fitur skill agent). Ikuti aturan adaptasi di INDEKS.
+3. Kerjakan cukup dengan `AGENT.md` Section 11 dan `aturan/kerja-tanpa-skill.md`. Pustaka `skills/pustaka/INDEKS.md` hanya rujukan opsional — buka hanya bila aturan ringkas kurup atau operator memintanya.
 4. Kerjakan sesuai `AGENT.md` Section 10. Draft asli tidak ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 5. Jangan menyatakan artikel lulus sebelum `python -I -X utf8 alat/cek-artikel.py "<artikel>"` dijalankan pada berkas terbaru dan menunjukkan `0 FAIL` (di macOS/Linux pakai `python3`).
 

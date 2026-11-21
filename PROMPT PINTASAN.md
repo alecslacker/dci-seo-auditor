@@ -135,7 +135,7 @@ Untuk memaksa audit ulang, tulis di akhir perintah: `Audit ulang [nama draft], a
 
 - Folder klien ada di `klien/` (salin dari `klien/_TEMPLATE/`) dan `CLIENT.md`-nya terisi lengkap (lihat `AGENT.md` Section 3). Isian bawaan template yang belum diganti ditolak skrip dengan pesan jelas.
 - Draft mentah `.txt` ada di `klien/<Klien>/artikel/<tahun bulan>/`.
-- Agent punya akses browser (untuk ZeroGPT). Bila gagal, agent menandai `MANUAL CHECK NEEDED`.
+- ZeroGPT dikerjakan operator (manusia), bukan agent. Agent menyiapkan `payload-zerogpt.txt` lewat `alat/siap-zerogpt.py`; bila belum dipindai, kolom ZeroGPT diisi `MENUNGGU OPERATOR` (lihat AGENT.md Section 6).
 
 ## Variasi opsional (tambahkan di akhir perintah)
 

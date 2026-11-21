@@ -12,7 +12,7 @@ Bila tugasnya mengerjakan, mengaudit, atau memeriksa artikel klien (`klien/<Nama
 1. `AGENT.md`: pipeline, checklist, aturan konten (Section 11), dan mode pintasan `/artikel` (Section 10).
 2. `aturan/kerja-tanpa-skill.md`: metode menulis ulang, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi.
 
-Skill SEO dan audit sudah ada di repo: `skills/pustaka/INDEKS.md` memetakan tahap pipeline ke skill, dibaca lewat jalur berkas tanpa memasang apa pun. Aturan adaptasi di INDEKS mengalahkan isi skill.
+Skill SEO dan audit sudah ada di repo sebagai rujukan opsional (bukan langkah pipeline): `skills/pustaka/INDEKS.md` memetakan tahap ke skill, dibaca lewat jalur berkas hanya bila aturan ringkas kurup. Aturan adaptasi di INDEKS mengalahkan isi skill.
 
 Untuk tugas lain di repo ini (misalnya mengubah skrip di `alat/`), berkas di atas tidak perlu dibaca. Setelah mengubah skrip, jalankan `python -I -X utf8 alat/uji-tools.py`.
 

@@ -41,7 +41,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI. Audit ini tidak pernah menghentikan pekerjaan (exit 0).
 3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan dan `aturan/kerja-tanpa-skill.md`. Statistik, testimoni, dan nama tidak boleh dikarang.
 4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel dan berkas `- Meta.txt` pendampingnya. Artikel lulus bila hasilnya `0 FAIL`.
-5. **ZeroGPT dan laporan.** Hasil dipindai di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
+5. **ZeroGPT dan laporan.** Operator memindai payload (disiapkan agent lewat `alat/siap-zerogpt.py`) di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
 
 ### Status draft
 
@@ -129,13 +129,13 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (149 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (155 uji). Jalankan setelah mengubah skrip |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 
 ## ZeroGPT
 
-Versi final dipindai di <https://www.zerogpt.com/>. Targetnya verdict *Human written* dengan AI di bawah 10%. Batas gratis 15.000 karakter, jadi blok editor dibuang dulu sebelum teks ditempel. Bila lebih panjang, teks dipecah di batas paragraf dan kedua angkanya dilaporkan. Plagiarisme belum punya alat cek otomatis. Gerbang kualitas hanya menangkap kalimat yang disalin antar artikel di repo ini.
+Pemindaian dikerjakan oleh operator (manusia), bukan agent (keputusan 2026-11-21). Agent hanya menyiapkan payload: `python3 -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"` menghasilkan `payload-zerogpt.txt` di folder artikel — HTML dan shortcode sudah dibuang, teks dipecah di batas 15.000 karakter (batas gratis ZeroGPT). Operator menempel tiap bagian ke <https://www.zerogpt.com/> dan melaporkan hasilnya; agent mencatat angka apa adanya ke `LAPORAN.md` (target verdict *Human written*, AI di bawah 10%). Bila belum dipindai, kolom ZeroGPT diisi `MENUNGGU OPERATOR`. Plagiarisme belum punya alat cek otomatis. Gerbang kualitas hanya menangkap kalimat yang disalin antar artikel di repo ini.
 
 ## Contoh
 
@@ -147,7 +147,7 @@ Artikel *Jasa Catering Instansi Blitar* milik Salimah Catering: 2.073 kata, keyw
 - Opsi *Include AGENTS.md in the context* di TRAE adalah pengaturan per komputer, tidak bisa dibagikan lewat repo.
 - Ambang kalimat yang disalin (3 rangkaian 8 kata) belum dikalibrasi pada artikel nyata lebih dari satu klien.
 - Ambang kedalaman parafrase (FAIL di atas 25% rangkaian 8 kata draft yang masih utuh) baru dikalibrasi pada satu artikel lulus (2,8%) dan dua tulisan ulang dangkal (79-82%).
-- Belum ada bukti terukur bahwa pustaka skill menaikkan mutu tulisan. Uji A/B pada 2026-11-21 tidak sah karena kedua versi masih menyalin draft, sehingga tidak ada kesimpulan.
+- Uji A/B sah pada 2026-11-21 (dengan parafrase penuh): hasil dengan dan tanpa pustaka sama di semua metrik (gerbang, ritme, ZeroGPT). Pustaka kini rujukan opsional, bukan langkah pipeline.
 - Kamus offline berasal dari KBBI edisi 3 (lewat hunspell-id), jadi kosakata terbaru dan nama diri bisa muncul sebagai WARN yang sebenarnya sah.
 
 ---

@@ -4,9 +4,9 @@
 > Copyright © 2026 Duta Corpora Indonesia — All rights reserved
 > Isi folder ini berasal dari proyek MIT pihak ketiga (rincian di bagian Sumber). Teks lisensinya ada di `LISENSI/`.
 
-Folder ini membawa skill SEO dan audit ke dalam repo, supaya karyawan yang tidak memasang skill apa pun tetap bisa memakainya. **Tidak ada yang perlu dipasang.** Skill dipanggil dengan cara membaca berkasnya: `skills/pustaka/<nama>/SKILL.md`. Cara ini sama untuk TRAE, ZCode, Claude Code, Codex, dan agent lain.
+Folder ini berisi skill SEO dan audit pihak ketiga sebagai **rujukan opsional**. **Tidak ada yang perlu dipasang.** Skill dipanggil dengan cara membaca berkasnya: `skills/pustaka/<nama>/SKILL.md`. Cara ini sama untuk TRAE, ZCode, Claude Code, Codex, dan agent lain.
 
-Bila agent punya fitur skill sendiri, abaikan fitur itu untuk folder ini. Baca berkas lewat jalurnya.
+Status: **opsional, bukan langkah pipeline.** Artikel dikerjakan cukup dengan `AGENT.md` Section 11 dan `aturan/kerja-tanpa-skill.md` (uji A/B 2026-11-21: hasil dengan dan tanpa pustaka sama di gerbang, metrik ritme, dan ZeroGPT). Buka pustaka hanya bila aturan ringkas kurup, misalnya permintaan revisi yang tidak terduga, jenis artikel baru, atau operator memintanya. Bila agent punya fitur skill sendiri, abaikan fitur itu untuk folder ini. Baca berkas lewat jalurnya.
 
 ## Aturan adaptasi (WAJIB, mengalahkan isi skill)
 
@@ -22,7 +22,7 @@ Skill di sini ditulis untuk blog umum dan alat lain. Di repo ini, aturan berikut
 8. **Fakta:** tidak ada sumber, tidak ditulis. Skill yang menyuruh "mencari statistik pengganti" dijalankan hanya bila sumbernya benar-benar dibaca pada sesi ini.
 9. **Setiap skill di pustaka sudah disunting untuk repo ini** (catatan adaptasi di kepala tiap berkas): tanpa `${CLAUDE_SKILL_DIR}` dan tanpa rujukan alat yang tidak ada. Bila menemukan rujukan yang mati, laporkan sebagai bug; jangan menebak isinya.
 
-## Peta: tahap pipeline → skill
+## Peta: tahap pipeline → skill (rujukan, bukan langkah wajib)
 
 Tahap mengikuti `AGENT.md` Section 4. Baca hanya bagian yang dirujuk, tidak perlu seluruh berkas.
 

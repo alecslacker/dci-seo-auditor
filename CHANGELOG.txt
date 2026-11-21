@@ -8,6 +8,26 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.14.0] - 2026-11-21
+---------------------
+
+Uji A/B sah (parafrase penuh) menunjukkan hasil dengan dan tanpa pustaka skill sama, jadi pustaka resmi
+menjadi rujukan opsional. Pemindaian ZeroGPT dialihkan dari agent ke operator (manusia): agent hanya
+menyiapkan payload dan mencatat hasil.
+
+Ditambahkan
+- alat/siap-zerogpt.py: bersihkan artikel Humanized (buang HTML, shortcode, blok editor) dan pecah di
+  batas 15.000 karakter menjadi payload-zerogpt.txt untuk ditempel operator ke ZeroGPT. Exit 0/2.
+- 6 uji zerogpt (payload dibuat, bersih, batas bagian, pecah BAGIAN 1/2, berkas hilang, cek-status
+  mengabaikan payload). Total 155 uji.
+
+Diubah
+- AGENT.md Section 6 ditulis ulang: ZeroGPT dikerjakan operator; kolom diisi MENUNGGU OPERATOR bila belum
+  dipindai. Section 9 pustaka = rujukan opsional. Mode Pintasan dan struktur ikut disesuaikan.
+- AGENTS.md, aturan/kerja-tanpa-skill.md, skills/pustaka/INDEKS.md, skills/dci-seo-auditor/SKILL.md,
+  PROMPT PINTASAN.md, README.md: pustaka opsional, ZeroGPT operator, angka uji diperbarui.
+- cek-status.py: payload-zerogpt.txt diabaikan seperti berkas Meta (bukan draft).
+
 [0.13.0] - 2026-11-21
 ---------------------
 

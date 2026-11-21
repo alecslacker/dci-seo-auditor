@@ -87,8 +87,8 @@ Cara memperbaiki bukan mengganti sinonim, melainkan mengubah sudut pandang: siap
 4. Gerbang kualitas sampai `0 FAIL`, lalu ZeroGPT.
 5. Catat ledger dan laporan. Sebelum menyatakan selesai, ikuti bagian 4.
 
-## 8. Pustaka skill di repo
+## 8. Pustaka skill di repo (rujukan opsional)
 
-Skill SEO dan audit pihak ketiga (semuanya MIT) sudah disalin ke `skills/pustaka/`, lengkap dengan teks lisensi dan peta tahap → skill di `skills/pustaka/INDEKS.md`. Skill dibaca lewat jalur berkas, tanpa memasang apa pun. Aturan adaptasi di INDEKS (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar) mengalahkan isi skill. Skill milik DCI (`dci-seo-auditor`, `research-guide`) ada di `skills/` dan dipasang ke agent oleh `alat/pasang-perintah.py`.
+Berkas ini adalah jalur utama dan biasanya cukup. Bila aturannya kurup (permintaan revisi tak terduga, jenis artikel baru, atau operator memintanya), ada 13 skill pihak ketiga (semuanya MIT) di `skills/pustaka/`, lengkap dengan teks lisensi dan peta tahap → skill di `skills/pustaka/INDEKS.md`. Skill dibaca lewat jalur berkas, tanpa memasang apa pun. Aturan adaptasi di INDEKS (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar) mengalahkan isi skill, dan isi berkas ini menang atas isi skill. Skill milik DCI (`dci-seo-auditor`, `research-guide`) ada di `skills/` dan dipasang ke agent oleh `alat/pasang-perintah.py`.
 
 Yang sengaja tidak disalin: `verification-before-completion` (asal belum terverifikasi; disiplin yang sama sudah ada di bagian 4 berkas ini), `blog-google` dan skrip `.py` milik skill blog (butuh kredensial Google atau layanan berbayar), serta skill lain yang tidak berhubungan dengan artikel SEO.

@@ -28,11 +28,12 @@ Template prompt di Section 11 sengaja **klien-global** (100% placeholder `{clien
 ├── alat/menu.py                  ← menu interaktif: pasang perintah, salin prompt, status, periksa, klien baru
 ├── alat/pasang-perintah.py       ← memasang /artikel ke TRAE, ZCode, atau Claude Code di komputer ini
 ├── alat/cek-status.py            ← gerbang status: klasifikasi draft sebelum audit (Section 4)
+├── alat/siap-zerogpt.py          ← siapkan payload ZeroGPT untuk operator (Section 6)
 ├── alat/cek-artikel.py           ← gerbang kualitas: Rank Math + format WP + Anti-Typo (Section 4)
 ├── alat/kamus-id.txt             ← kata dasar bahasa Indonesia (hunspell-id, LGPL-3.0; lisensi di kamus-id.LICENSE.txt)
 ├── alat/kamus-kata.txt           ← tambahan manual: nama, istilah, kata hasil tinjauan
 ├── skills/                       ← dci-seo-auditor dan research-guide (dipasang alat/pasang-perintah.py)
-├── skills/pustaka/               ← 13 skill SEO/audit MIT + INDEKS.md (peta tahap → skill), dibaca lewat jalur
+├── skills/pustaka/               ← 13 skill SEO/audit MIT sebagai RUJUKAN OPSIONAL (bukan langkah pipeline); INDEKS.md = peta
 ├── alat/uji-tools.py             ← uji otomatis semua skrip (jalankan setelah mengubah skrip)
 └── klien/                        ← SEMUA data klien hidup di sini, tidak ada di ROOT
     ├── _TEMPLATE/                ← cetakan klien baru (salin utuh, jangan dikerjakan langsung)
@@ -177,19 +178,24 @@ Uji ke ZeroGPT (protokol di Section 6), isi kolom ZeroGPT di ledger (mis. `3,72%
   dalam blok kontak menjadi `<br />` (dilakukan WordPress), tanpa komentar blok Gutenberg `<!-- wp:… -->`
   agar wpautop tidak dimatikan (lihat FAKTA-SEO.md bagian WordPress).
 
-## 6. Protokol Crosscheck — ZeroGPT (Tahap 5)
+## 6. Protokol Crosscheck — ZeroGPT (Tahap 5, DILAKUKAN OPERATOR/ MANUSIA)
 
-ZeroGPT adalah **satu-satunya** gate detector eksternal. JustDone (AI Detector & Plagiarism) dihapus dari protokol pada 2026-11-20 atas keputusan pemilik project — hasilnya dikunci di balik akun berlangganan sehingga tidak bisa diaudit otomatis.
+ZeroGPT adalah **satu-satunya** gate detector eksternal. Keputusan pemilik project 2026-11-21: **pemindaian ZeroGPT dikerjakan oleh operator (manusia), bukan oleh agent.** Tugas agent hanya menyiapkan bahan dan mencatat hasil.
+
+Pembagian tugas:
+- **Agent menyiapkan:** berkas `payload-zerogpt.txt` di folder bulan klien (lihat prosedur butir 1), lalu menyerahkannya dalam laporan.
+- **Operator (manusia) memindai:** membuka https://www.zerogpt.com/, menempel isi payload, klik "Detect Text", membaca hasilnya.
+- **Operator melaporkan kembali:** verdict dan angka AI % (dan bagian bila dipecah). Agent mencatatnya ke ledger dan `LAPORAN.md` apa adanya. Angka yang tidak pernah dilaporkan operator tidak boleh dikarang atau ditebak.
 
 | Tool | URL | Yang dicek | Target |
 |---|---|---|---|
 | ZeroGPT | https://www.zerogpt.com/ | % AI (paste teks) | Verdict **"Your Text is Human written"**; AI % serendah mungkin (target praktis di bawah 10%) |
 
 Prosedur:
-1. Strip HTML → buang blok editor (saran gambar, shortcode, alt text, baris kontak boilerplate bila perlu) → pastikan payload ≤15.000 karakter (batas gratis ZeroGPT). Artikel ≥2000 kata sering melewati batas ini: bila lebih, pecah di batas paragraf menjadi 2 bagian, uji keduanya, dan laporkan kedua angkanya.
-2. Paste ke kolom teks (`#textArea`), klik **"Detect Text"**, tunggu hasil (bisa lebih dari 15 detik; baca ulang sebelum menyimpulkan gagal), lalu rekam angka ke `LAPORAN.md` klien (Section 7).
-3. Jika verdict AI: revisi bagian yang ditandai detector → scan ulang (maks 2 iterasi). Laporkan angka apa adanya, jangan manis-maniskan.
-4. Bila ZeroGPT mengubah UI atau terhalang captcha: tandai `MANUAL CHECK NEEDED` dan serahkan ke operator — dilarang mengarang angka.
+1. **Agent:** jalankan `python3 -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"`. Skrip men-strip HTML, membuang blok editor/boilerplate, membatasi 15.000 karakter per bagian (batas gratis ZeroGPT), dan menyimpan `payload-zerogpt.txt` di folder artikel (dipecah BAGIAN 1/2 bila artikel panjang).
+2. **Operator:** tempel isi payload ke kolom teks, klik **"Detect Text"**, tunggu hasil (bisa lebih dari 15 detik), lalu sampaikan verdict dan angkanya ke agent.
+3. Jika verdict AI: revisi bagian yang ditandai detector → operator memindai ulang (maks 2 iterasi). Laporkan angka apa adanya, jangan manis-maniskan.
+4. Bila ZeroGPT terhalang captcha atau operator tidak sempat: kolom ZeroGPT diisi `MENUNGGU OPERATOR`. Artikel tidak boleh dinyatakan final sebelum angka masuk.
 5. Catatan plagiarisme: artikel hasil pipeline ini adalah parafrase utuh (bukan salin-tempel), jadi risiko duplikasi rendah by construction; klaim "lolos plagiarism checker" hanya boleh ditulis bila operator menjalankan cek manual dan melaporkan hasilnya.
 
 ## 7. Laporan Per Klien (BUKAN di file ini)
@@ -228,16 +234,15 @@ Aturan ledger: kolom Hash wajib 16 karakter hex agar baris terbaca. Jangan mengu
 ## 9. Aturan Mandiri dan Pustaka Skill
 
 Pipeline ini TIDAK membutuhkan skill terpasang di komputer. Semua yang dipakai ada di repo:
-- Aturan inti: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, kanibalisasi). Baca berkas itu sebelum Tahap 3.
-- Pustaka skill SEO dan audit: `skills/pustaka/` (13 skill MIT, rincian dan lisensi di `skills/pustaka/INDEKS.md`). Skill dipanggil dengan **membaca berkasnya lewat jalur**, bukan lewat fitur skill agent, jadi sama untuk TRAE, ZCode, Claude Code, Codex, dan agent lain.
+- Aturan inti: Section 5 dan 11 file ini, serta `aturan/kerja-tanpa-skill.md` (metode menulis ulang, daftar tanda tulisan mesin, aturan fakta, disiplin bukti, berkas meta, kanibalisasi). Baca berkas itu sebelum Tahap 3. Ini jalur utama dan biasanya cukup.
+- Pustaka skill SEO dan audit: `skills/pustaka/` (13 skill MIT, rincian dan lisensi di `skills/pustaka/INDEKS.md`). Statusnya **rujukan opsional, bukan langkah pipeline** (uji A/B 2026-11-21: hasil dengan dan tanpa pustaka sama). Buka hanya bila aturan ringkas kurup: permintaan revisi tak terduga, jenis artikel baru, atau operator memintanya. Caranya membaca berkas lewat jalur, sama untuk semua agent.
 
-Cara memanggil: buka `skills/pustaka/INDEKS.md`, cari tahap yang sedang dikerjakan di tabel "Peta: tahap pipeline → skill", lalu baca berkas skill yang disebut (hanya bagian yang tertulis). Contoh: Tahap 3 membaca `skills/pustaka/antislop-copywriting/SKILL.md`; Tahap 4 membaca `skills/pustaka/blog-factcheck/SKILL.md` Step 2–5.
-
-Aturan pemakaian:
+Aturan pemakaian (saat pustaka dipakai):
 1. Skill adalah **filter**, bukan pengganti. Urutan menang: Section 11 → `aturan/kerja-tanpa-skill.md` → skill. Contoh: marker percakapan "jujur saja," diwajibkan Section 11, antislop hanya membatasi frekuensinya maks 1–2×.
 2. Aturan adaptasi di `INDEKS.md` (tanpa plan mode, tanpa wizard antislop, tanpa alat berbayar, rujukan yang tidak ada dilewati) mengalahkan isi skill.
 3. Hasil kerja harus lolos gerbang `0 FAIL` dengan atau tanpa skill. Skor atau checklist di skill bukan gerbang.
 4. Jangan mengunduh skill. Bila agent juga punya skill terpasang dengan nama sama, pakai versi di repo agar hasil seragam antar karyawan.
+
 ## 10. Mode Pintasan (input: nama perusahaan + nama bulan)
 
 Operator hanya menyebut **nama perusahaan** dan **nama bulan**. Pemakaian mode ini = izin eksekusi penuh (setara `SKIP PLAN`): kerjakan semua tahap tanpa checkpoint per file, lapor sekali di akhir.
@@ -247,7 +252,7 @@ Langkah:
 2. **Baca `CLIENT.md`** folder itu untuk mengisi semua `{client_*}`. Tidak ada atau ada field kosong → berhenti dan minta operator melengkapi (jangan mengarang data klien).
 3. **Cari folder bulan**: di `klien/<Klien>/artikel/`, ambil folder yang namanya berakhiran nama bulan (mis. "2026 November"). Bila ada beberapa tahun, pakai tahun terbaru dan sebutkan di laporan.
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
-5. **Baca `aturan/kerja-tanpa-skill.md`** dan `skills/pustaka/INDEKS.md` (Section 9), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
+5. **Baca `aturan/kerja-tanpa-skill.md`** (pustaka di Section 9 hanya bila aturan itu kurup atau diminta), lalu per draft jalankan Pipeline Section 4 (audit → humanize → verifikasi script → ZeroGPT Section 6). Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
 7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, dan status plagiarisme (belum dicek manual kecuali operator melaporkan).

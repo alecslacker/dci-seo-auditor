@@ -244,6 +244,32 @@ def uji_parafrase(base):
     cek("parafrase: mode --draft tidak membandingkan draft dengan dirinya", "parafrase" not in out, out[-80:])
 
 
+def uji_zerogpt(base):
+    """siap-zerogpt.py: payload bersih untuk operator, pecah bila panjang, masukan buruk jelas."""
+    _, bulan = bikin_skenario(base)
+    skrip = ROOT / "alat" / "siap-zerogpt.py"
+    art = bulan / "lulus - Humanized.txt"
+    art.write_text(artikel_lulus(), encoding="utf8")
+    kode, out = jalankan(skrip, art)
+    payload = bulan / "payload-zerogpt.txt"
+    isi = payload.read_text(encoding="utf8") if payload.is_file() else ""
+    bagian = [b for b in isi.split("=====")]
+    cek("zerogpt: payload dibuat", kode == 0 and isi != "", out[-60:].replace("\n", " | "))
+    cek("zerogpt: payload tanpa tag HTML dan shortcode", "<" not in isi and "whatsapp" not in isi and "Alt text" not in isi)
+    cek("zerogpt: tiap bagian maksimal 15000 karakter", all(len(b.strip()) <= 15000 for b in bagian),
+        "max=%d" % max((len(b.strip()) for b in bagian), default=0))
+    panjang = bulan / "panjang - Humanized.txt"
+    panjang.write_text("<p>" + ("Kalimat uji panjang untuk memecah payload menjadi dua bagian. " * 300) + "</p>\n[whatsapp_button id=\"9\"]", encoding="utf8")
+    kode, out = jalankan(skrip, panjang)
+    isi2 = (bulan / "payload-zerogpt.txt").read_text(encoding="utf8")
+    cek("zerogpt: artikel panjang dipecah BAGIAN 1/2", kode == 0 and "BAGIAN 1/2" in isi2 and "=====" in isi2, out[-60:].replace("\n", " | "))
+    kode, out = jalankan(skrip, bulan / "tidak-ada.txt")
+    cek("zerogpt: berkas tidak ada -> pesan jelas exit 2", kode == 2 and "tidak ada" in out and "Traceback" not in out, "exit=%d" % kode)
+    # Payload pendamping tidak boleh terbaca sebagai draft oleh cek-status.
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
+    cek("zerogpt: cek-status mengabaikan payload-zerogpt", kode == 0 and "payload-zerogpt" not in out, out[:80].replace("\n", " | "))
+
+
 def uji_lintas(base):
     skrip = ROOT / "alat" / "cek-artikel.py"
     awal = artikel_lulus()
@@ -574,6 +600,8 @@ def main():
         uji_masukan_buruk(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-meta-") as d:
         uji_meta(Path(d))
+    with tempfile.TemporaryDirectory(prefix="uji-dci-zerogpt-") as d:
+        uji_zerogpt(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
         uji_lintas(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-parafrase-") as d:
