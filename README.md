@@ -39,7 +39,7 @@ Gerbang tidak menjamin peringkat. Skor Rank Math adalah skor plugin, bukan sinya
 
 1. **Gerbang status.** `cek-status.py` membandingkan sidik jari isi draft dengan ledger di `LAPORAN.md`. Draft yang sudah diaudit tidak diaudit dua kali, dan draft yang masih ditulis penulis dilewati.
 2. **Audit.** `cek-artikel.py --draft` mengeluarkan daftar temuan bernomor: komponen wajib, ejaan tidak baku, kata asing, angka tanpa label, dan pola khas tulisan AI. Audit ini tidak pernah menghentikan pekerjaan (exit 0).
-3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan dan `aturan/kerja-tanpa-skill.md`. Statistik, testimoni, dan nama tidak boleh dikarang.
+3. **Humanize.** Agent menulis ulang berdasarkan daftar temuan dan `aturan/INTI.md` (ringkasan satu halaman; rincian di `aturan/kerja-tanpa-skill.md`). Statistik, testimoni, dan nama tidak boleh dikarang.
 4. **Gerbang kualitas.** `cek-artikel.py` memeriksa artikel dan berkas `- Meta.txt` pendampingnya. Artikel lulus bila hasilnya `0 FAIL`.
 5. **ZeroGPT dan laporan.** Operator memindai payload (disiapkan agent lewat `alat/siap-zerogpt.py`) di ZeroGPT, lalu angkanya dicatat apa adanya di `LAPORAN.md` klien.
 
@@ -75,6 +75,7 @@ Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog
 ├── AGENT.md                 # aturan kerja: pipeline, checklist, protokol, template prompt
 ├── FAKTA-SEO.md             # fakta Google dan Rank Math, lengkap sumber dan tanggal
 ├── aturan/
+│   ├── INTI.md              # ringkasan satu halaman untuk model kecil (jalur cepat)
 │   └── kerja-tanpa-skill.md # aturan kerja mandiri, tidak butuh skill terpasang
 ├── PROMPT PINTASAN.md       # panduan /artikel, isi perintah, cara memasang, prompt cadangan
 ├── CHANGELOG.txt            # riwayat perubahan sistem
@@ -91,6 +92,7 @@ Karyawan tidak perlu memasang skill. Tiga belas skill SEO dan audit (claude-blog
 │   ├── cek-status.py        # gerbang status draft
 │   ├── cek-artikel.py       # audit draft dan gerbang kualitas final
 │   ├── siap-zerogpt.py      # siapkan payload ZeroGPT untuk operator (Section 6 AGENT.md)
+│   ├── cek-ai-api.py        # EKSPERIMENTAL: skor AI per kalimat lewat Winston (kunci dari env, belum dikalibrasi)
 │   ├── pasang-perintah.py   # memasang /artikel ke TRAE, ZCode, atau Claude Code
 │   ├── kamus-id.txt         # kata dasar bahasa Indonesia (hunspell-id, LGPL-3.0) untuk cek salah ketik
 │   ├── kamus-id.LICENSE.txt # teks lisensi LGPL-3.0 kamus di atas
@@ -130,8 +132,9 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 | `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` | Gerbang kualitas final, exit 1 bila ada FAIL |
 | `python3 -I -X utf8 alat/pasang-perintah.py trae` | Pasang `/artikel` ke TRAE. Lainnya: `zcode`, `claude`, `semua`, `--daftar`, `--cek` |
 | `python3 -X utf8 alat/menu.py` | Membuka menu tanpa MULAI.bat (macOS, Linux, atau terminal) |
-| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (156 uji). Jalankan setelah mengubah skrip |
+| `python3 -I -X utf8 alat/uji-tools.py` | Uji otomatis semua skrip (177 uji). Jalankan setelah mengubah skrip |
 | `python3 -I -X utf8 alat/siap-zerogpt.py "<artikel Humanized>"` | Siapkan `payload-zerogpt.txt` untuk operator pindai di ZeroGPT |
+| `WINSTON_API_KEY=<kunci> python3 -I -X utf8 alat/cek-ai-api.py "<artikel Humanized>" --ambang 50` | EKSPERIMENTAL. Tulis `kalimat-ai.txt` (skor manusia Winston per kalimat). Bukan pengganti ZeroGPT. Di PowerShell: `$env:WINSTON_API_KEY="<kunci>"` dulu |
 
 Cek ejaan berjalan offline, tanpa kuota dan tanpa internet. Kata di luar kamus (`kamus-id.txt` ditambah `kamus-kata.txt`, dengan pengupasan imbuhan sederhana) hanya keluar sebagai WARN untuk ditinjau manual. Ejaan tidak baku dan kata asing yang sudah terdaftar tetap FAIL. Kamus tidak memuat kosakata terbaru, jadi nama, istilah, atau kata baru yang sah ditambahkan ke `kamus-kata.txt` (satu kata per baris, huruf kecil). Skrip tidak lagi memakai KBBI Daring karena kuota hariannya dan ketentuan hak ciptanya tidak cocok untuk pemakaian massal.
 

@@ -7,7 +7,7 @@ Project ini mengerjakan artikel SEO WordPress untuk klien Duta Corpora Indonesia
 
 ## Kapan membaca aturan lengkap
 
-Bila tugasnya mengerjakan, mengaudit, atau memeriksa artikel klien (`klien/<Nama Klien>/artikel/...`), baca dua berkas ini sebelum mulai:
+Bila tugasnya mengerjakan, mengaudit, atau memeriksa artikel klien (`klien/<Nama Klien>/artikel/...`), baca `aturan/INTI.md` dulu (satu halaman: urutan kerja, cara menulis ulang, larangan, batas 2 putaran perbaikan). Berkas ini cukup untuk model kecil. Buka dua berkas di bawah hanya bagian yang dibutuhkan:
 
 1. `AGENT.md`: pipeline, checklist, aturan konten (Section 11), dan mode pintasan `/artikel` (Section 10).
 2. `aturan/kerja-tanpa-skill.md`: metode menulis ulang, aturan fakta, disiplin bukti, berkas meta, dan aturan kanibalisasi.

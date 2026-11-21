@@ -4,6 +4,8 @@ Thumbs.db
 Desktop.ini
 
 # Artefak alat
+.env
+.env.*
 graphify-out/
 __pycache__/
 *.pyc

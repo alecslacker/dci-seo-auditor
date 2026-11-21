@@ -278,6 +278,85 @@ def uji_zerogpt(base):
         out[-120:].replace("\n", " | "))
 
 
+def uji_ai_api(base):
+    """cek-ai-api.py: tiruan server lokal (tanpa jaringan nyata dan tanpa kunci asli)."""
+    import http.server
+    import json
+    import threading
+
+    _, bulan = bikin_skenario(base)
+    skrip = ROOT / "alat" / "cek-ai-api.py"
+    art = bulan / "ai - Humanized.txt"
+    art.write_text(artikel_lulus(), encoding="utf8")
+    mode = {"kode": 200}
+
+    class Tiruan(http.server.BaseHTTPRequestHandler):
+        def do_POST(self):
+            self.rfile.read(int(self.headers.get("Content-Length", 0)))
+            if mode["kode"] != 200:
+                self.send_response(mode["kode"])
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"error":"x"}')
+                return
+            badan = {"score": 62.5, "credits_remaining": 123,
+                     "attack_detected": {"zero_width_space": False, "homoglyph_attack": False}, "sentences": [
+                {"text": "Kalimat terdengar AI sekali di sini.", "score": 12.0},
+                {"text": "Kalimat aman dan manusiawi.", "score": 95.0}]}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(badan).encode("utf8"))
+
+        def log_message(self, *a):
+            pass
+
+    srv = http.server.HTTPServer(("127.0.0.1", 0), Tiruan)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    env = dict(os.environ, DCI_AI_API_URL="http://127.0.0.1:%d/" % srv.server_port, WINSTON_API_KEY="kunci-uji")
+
+    def run(*argv, env_pakai=env):
+        r = subprocess.run(PY + [str(skrip)] + [str(a) for a in argv], capture_output=True, text=True,
+                           timeout=60, env=env_pakai)
+        return r.returncode, r.stdout + r.stderr
+
+    kode, out = run(art)
+    laporan = bulan / "kalimat-ai.txt"
+    isi = laporan.read_text(encoding="utf8") if laporan.is_file() else ""
+    cek("ai-api: laporan kalimat ditandai dibuat", kode == 0 and "terdengar AI sekali" in isi
+        and "aman dan manusiawi" not in isi and "62.5" in out and "123" in out, out[-80:].replace("\n", " | "))
+    cek("ai-api: tanpa peringatan palsu bila semua flag serangan False", "PERINGATAN" not in out, out[:80])
+    cek("ai-api: label bukan ZeroGPT dan skor manusia", "BUKAN ZeroGPT" in isi and "MANUSIA" in isi)
+    cek("ai-api: kunci tidak tercetak ke keluaran atau laporan", "kunci-uji" not in out and "kunci-uji" not in isi)
+    kode, out = run(art, "--ambang", "5")
+    cek("ai-api: ambang 5 tidak menandai kalimat", kode == 0 and "Tidak ada kalimat di bawah ambang" in
+        laporan.read_text(encoding="utf8"))
+    kode, out = run(art, "--ambang", "abc")
+    cek("ai-api: ambang tidak sah -> exit 2", kode == 2 and "Traceback" not in out, "exit=%d" % kode)
+    env_kosong = {k: v for k, v in env.items() if k != "WINSTON_API_KEY"}
+    kode, out = run(art, env_pakai=env_kosong)
+    cek("ai-api: tanpa kunci -> pesan jelas exit 2", kode == 2 and "WINSTON_API_KEY" in out and "Traceback" not in out)
+    kode, out = run(bulan / "tidak-ada.txt")
+    cek("ai-api: berkas tidak ada -> exit 2", kode == 2 and "tidak ada" in out and "Traceback" not in out)
+    pendek = bulan / "pendek - Humanized.txt"
+    pendek.write_text("Terlalu pendek.", encoding="utf8")
+    kode, out = run(pendek)
+    cek("ai-api: teks terlalu pendek -> exit 2", kode == 2 and "minimal" in out and "Traceback" not in out)
+    mode["kode"] = 401
+    kode, out = run(art)
+    cek("ai-api: 401 -> pesan kunci salah exit 2", kode == 2 and "Kunci API salah" in out and "Traceback" not in out, out[-60:])
+    mode["kode"] = 402
+    kode, out = run(art)
+    cek("ai-api: 402 -> pesan kredit habis exit 2", kode == 2 and "Kredit Winston habis" in out and "Traceback" not in out)
+    env_luar = dict(env, DCI_AI_API_URL="https://contoh-jahat.example/v2/ai-content-detection")
+    kode, out = run(art, env_pakai=env_luar)
+    cek("ai-api: URL di luar gowinston.ai ditolak sebelum kunci dikirim",
+        kode == 2 and "ditolak" in out and "kunci-uji" not in out and "Traceback" not in out, out[-90:])
+    srv.shutdown()
+    kode, out = jalankan(ROOT / "alat" / "cek-status.py", bulan)
+    cek("ai-api: cek-status mengabaikan kalimat-ai.txt", "kalimat-ai" not in out, out[:80].replace("\n", " | "))
+
+
 def uji_lintas(base):
     skrip = ROOT / "alat" / "cek-artikel.py"
     awal = artikel_lulus()
@@ -463,6 +542,31 @@ def uji_pustaka():
     cek("pustaka: skill penunjuk menyebut INDEKS", "skills/pustaka/INDEKS.md" in (ROOT / "skills" / "dci-seo-auditor" / "SKILL.md").read_text(encoding="utf8"))
 
 
+def uji_inti():
+    """aturan/INTI.md: ada, ringkas, dan selaras dengan aturan utama (cliché, ambang, batas putaran)."""
+    f = ROOT / "aturan" / "INTI.md"
+    cek("inti: berkas ada", f.is_file())
+    if not f.is_file():
+        return
+    teks = f.read_text(encoding="utf8")
+    cek("inti: ringkas (maks 80 baris)", len(teks.splitlines()) <= 80, "baris=%d" % len(teks.splitlines()))
+    agent = (ROOT / "AGENT.md").read_text(encoding="utf8")
+    # Setiap cliché terlarang di Section 11 harus tercantum di INTI.
+    blok = re.search(r"FORBIDDEN cliché phrases:(.+)", agent)
+    clich = re.findall(r'"([^"]+)"', blok.group(1)) if blok else []
+    hilang = [c for c in clich if c not in teks]
+    cek("inti: memuat semua cliché terlarang Section 11", bool(clich) and not hilang, "hilang=%s" % hilang)
+    cek("inti: ambang keyword dan paragraf pertama sama dengan Section 11",
+        "31-34" in teks and "200 kata" in teks and "31-34" in agent and "200 words" in agent)
+    cek("inti: batas 2 putaran perbaikan", "Maksimal 2 putaran" in teks)
+    cek("inti: ZeroGPT oleh operator", "MENUNGGU OPERATOR" in teks and "TUGAS OPERATOR" in teks)
+    cek("inti: ditunjuk AGENTS.md, perintah, dan AGENT.md",
+        all("aturan/INTI.md" in (ROOT / p).read_text(encoding="utf8") for p in ("AGENTS.md", "perintah/artikel.md", "AGENT.md")))
+    # Semua perintah alat yang disebut INTI harus ada skripnya.
+    putus = [m for m in re.findall(r"alat/([a-z-]+\.py)", teks) if not (ROOT / "alat" / m).is_file()]
+    cek("inti: skrip yang disebut ada", not putus, ", ".join(putus))
+
+
 def jalan_menu(root, *masukan):
     """Jalankan menu.py dari salinan root dengan masukan terskrip (tanpa clipboard dan tanpa buka editor)."""
     env = dict(os.environ, DCI_TANPA_SALIN="1", DCI_TANPA_BUKA="1")
@@ -610,12 +714,15 @@ def main():
         uji_meta(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-zerogpt-") as d:
         uji_zerogpt(Path(d))
+    with tempfile.TemporaryDirectory(prefix="uji-dci-aiapi-") as d:
+        uji_ai_api(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-lintas-") as d:
         uji_lintas(Path(d))
     with tempfile.TemporaryDirectory(prefix="uji-dci-parafrase-") as d:
         uji_parafrase(Path(d))
     uji_kamus()
     uji_pustaka()
+    uji_inti()
     print("-" * 60)
     if GAGAL_UJI:
         print("UJI GAGAL: %s" % ", ".join(GAGAL_UJI))

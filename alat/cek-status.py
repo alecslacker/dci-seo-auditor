@@ -14,7 +14,7 @@ from pathlib import Path
 
 SUFFIX = " - Humanized"
 # Berkas pendamping, bukan draft: hasil akhir, berkas meta, dan payload ZeroGPT (AGENT.md Section 6).
-ABAIKAN = (SUFFIX, " - Meta", "payload-zerogpt")
+ABAIKAN = (SUFFIX, " - Meta", "payload-zerogpt", "kalimat-ai")
 
 
 def sidik(path):

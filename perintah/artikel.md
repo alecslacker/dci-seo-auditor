@@ -13,7 +13,7 @@ Lokasi project: folder yang memuat `AGENT.md` dan `alat/` (root repo). Jalankan 
 Skill tidak wajib. Semua aturan ada di repo. Bila agent memiliki skill pelengkap (antislop-copywriting, blog-rewrite, blog-seo-check, verification-before-completion), boleh dipakai, tetapi jangan mengunduh skill dan jangan berhenti bila tidak ada.
 
 Langkah kerja:
-1. Baca `AGENT.md` dan `aturan/kerja-tanpa-skill.md`.
+1. Baca `aturan/INTI.md` (ringkasan satu halaman, jalur utama). Buka `AGENT.md` dan `aturan/kerja-tanpa-skill.md` hanya bagian yang dibutuhkan, bukan seluruhnya.
 2. Ikuti `AGENT.md` Section 10 (Mode Pintasan) sampai selesai. Pipeline ada di Section 4, checklist di Section 5, ZeroGPT di Section 6, format laporan di Section 7, aturan konten lengkap di Section 11.
 3. Sebelum audit apa pun, jalankan Gerbang Status: `{{PYTHON}} -I alat/cek-status.py "klien/<Klien>/artikel/<YYYY Bulan>"`. Proses hanya draft `BARU` dan `LANJUTKAN`. Draft `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak boleh disentuh.
 4. Audit draft mentah dengan `{{PYTHON}} -I -X utf8 alat/cek-artikel.py "<draft>" --draft`. Daftar TEMUAN-nya menjadi bahan humanize.

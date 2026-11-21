@@ -8,6 +8,37 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.15.0] - 2026-11-21
+---------------------
+Ditambahkan
+- alat/cek-ai-api.py (EKSPERIMENTAL): kirim artikel ke Winston AI (language id) dan tulis kalimat-ai.txt
+  berisi skor manusia keseluruhan + kalimat di bawah ambang (bawaan 50). Kunci hanya dari env
+  WINSTON_API_KEY, tidak pernah ditulis ke berkas. Alamat API dikunci ke api.gowinston.ai atau
+  127.0.0.1 (uji). Coba ulang hanya untuk 429/500/503, maksimal 2 kali.
+- 13 uji baru (164 -> 177) dengan server tiruan (tanpa kredit); .env masuk .gitignore.
+Diubah
+- cek-status.py mengabaikan kalimat-ai.txt (sebelumnya terbaca sebagai draf baru).
+Belum teruji
+- Akurasi Winston untuk bahasa Indonesia belum dikalibrasi terhadap ZeroGPT. Uji awal 4 teks:
+  artikel Humanized 96,5; Wikipedia Pancasila 98,1; draf mentah 82,6; Wikipedia Nasi liwet
+  (teks manusia, prosedural) 41,8 = alarm palsu. Skor per kalimat diakui vendor bisa menandai
+  teks manusia. ZeroGPT oleh operator tetap gerbang akhir; INTI.md dan AGENT.md Section 6 tidak diubah.
+
+
+[0.14.2] - 2026-11-21
+---------------------
+Ditambahkan
+- aturan/INTI.md: ringkasan satu halaman (urutan kerja, cara menulis ulang, larangan, angka gerbang,
+  batas 2 putaran perbaikan) sebagai jalur cepat untuk model kecil/cepat. Sebelumnya agent membaca
+  sekitar 40 KB aturan per sesi.
+Diubah
+- AGENTS.md, perintah/artikel.md, AGENT.md Section 10: agent membaca INTI.md dulu; AGENT.md penuh dan
+  kerja-tanpa-skill.md hanya bagian yang dibutuhkan.
+Belum teruji
+- Dampak ke kecepatan dan skor ZeroGPT pada GLM 5.3 flash belum diukur; perlu dicoba operator
+  pada satu artikel dan hasilnya dibandingkan.
+
+
 [0.14.1] - 2026-11-21
 ---------------------
 
