@@ -188,17 +188,31 @@ def uji_artikel_lulus(base):
         "kata cakapan": (isi.replace("<p>Terima kasih", "<p>Menu nggak berubah. Terima kasih"), "kata cakapan: 'nggak'"),
         "kata kembar dua huruf": (isi.replace("<p>Terima kasih", "<p>Kami tiba di di lokasi. Terima kasih"), "kata kembar"),
     }
-    # Salah ketik Indonesia: di gerbang final kata di luar kamus = FAIL (dulu hanya WARN atau lolos).
-    for typo in ("menyedikan", "sesua", "hraga", "instasi", "acra", "yag"):
-        mutasi["salah ketik '%s'" % typo] = (isi.replace("<p>Terima kasih", "<p>Kami %s menu. Terima kasih" % typo), typo)
     for nama, (teks, pesan) in mutasi.items():
         f = bulan / "mutasi.txt"
         f.write_text(teks, encoding="utf8")
         kode, out = jalankan(skrip, f)
         cek("lulus: mutasi '%s' ditolak" % nama, kode == 1 and pesan in out, "exit=%d" % kode)
 
-    # Mode draft: salah ketik hanya temuan, exit tetap 0.
+    # Salah ketik di luar daftar FAIL: kata di luar kamus hanya WARN satu baris, gerbang tidak gagal
+    # (kata serapan dan istilah bidang membuat FAIL memicu putaran perbaikan yang lambat).
+    typo_salah = ("menyedikan", "sesua", "hraga", "instasi", "acra", "yag")
+    for typo in typo_salah:
+        f = bulan / "mutasi.txt"
+        f.write_text(isi.replace("<p>Terima kasih", "<p>Kami %s menu. Terima kasih" % typo), encoding="utf8")
+        kode, out = jalankan(skrip, f)
+        cek("lulus: salah ketik '%s' dilaporkan sebagai WARN, bukan FAIL" % typo,
+            kode == 0 and "0 FAIL" in out and re.search(r"WARN: \d+ kata di luar kamus.*\b%s\b" % typo, out) is not None,
+            "exit=%d" % kode)
+
+    # Banyak kata di luar kamus tetap satu baris WARN (bukan satu per satu) dan tidak menggagalkan.
     f = bulan / "mutasi.txt"
+    f.write_text(isi.replace("<p>Terima kasih", "<p>Subway transportation emboss rotogravure. Terima kasih"), encoding="utf8")
+    kode, out = jalankan(skrip, f)
+    cek("lulus: kata serapan di luar kamus tidak menggagalkan gerbang", kode == 0 and "0 FAIL" in out, "exit=%d" % kode)
+    cek("lulus: kata di luar kamus dilaporkan dalam satu baris WARN", out.count("kata di luar kamus") == 1, out[-200:].replace("\n", " | "))
+
+    # Mode draft: salah ketik tetap muncul sebagai temuan, exit 0.
     f.write_text(isi.replace("<p>Terima kasih", "<p>Kami menyedikan menu. Terima kasih"), encoding="utf8")
     kode, out = jalankan(skrip, f, "--draft")
     cek("lulus: salah ketik di mode draft tetap exit 0", kode == 0 and "menyedikan" in out, "exit=%d" % kode)

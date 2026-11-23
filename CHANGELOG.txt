@@ -8,6 +8,26 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.18.2] - 2026-11-23
+----------------------
+Diubah
+- Alur kerja agent tanpa berputar: ejaan dicek SEKALI di gerbang akhir (bukan saat menulis atau di audit
+  draf); semua FAIL diperbaiki sekaligus dalam satu edit; batas 2 putaran disamakan di INTI.md,
+  AGENT.md Section 10, dan perintah/artikel.md (sebelumnya dua berkas menulis "sampai 0 FAIL" tanpa batas).
+  Pesan audit draf untuk kata di luar kamus kini "dicek sekali di gerbang akhir; abaikan sekarang".
+- Kata di luar kamus kembali menjadi satu baris WARN di gerbang final (sejak 0.18.0 berupa FAIL).
+  Alasan: kamus tidak memuat kata serapan dan istilah bidang. Uji pada 14 artikel Wikipedia bahasa
+  Indonesia (7.746 kata unik, nama diri dibuang) menemukan rata-rata 31 kata per teks di luar kamus
+  (5,6%), sehingga FAIL berpotensi memicu putaran perbaikan berulang (diduga penyebab agent lebih
+  lambat di TRAE, belum terbukti dari log). Uji 0.18.0 hanya memakai artikel Salimah, yang kamus
+  tambahannya disusun dari artikel itu, jadi bias.
+- FAIL tetap untuk ejaan tidak baku, kata asing terdaftar, kata cakapan, kata kembar, em dash, "Anda".
+- uji-tools.py: 194 menjadi 196 uji (salah ketik menjadi WARN exit 0, kata serapan tidak menggagalkan).
+Diketahui, belum diperbaiki
+- Sekitar 62 dari 432 entri kamus-kata.txt berupa potongan kata dengan huruf pertama hilang
+  ("ntuk", "idak", "emua"), akibat penyusunan lama (commit 1c092e8). Salah ketik huruf awal yang sama lolos.
+- Aturan akar minimal 4 huruf menolak dua kata sah ("keadaan", "menua"); dampaknya kecil.
+
 [0.18.1] - 2026-11-23
 ----------------------
 Diubah

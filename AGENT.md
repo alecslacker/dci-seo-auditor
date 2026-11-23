@@ -146,8 +146,8 @@ Skrip memeriksa jumlah kata, paragraf pertama, jumlah/density/bold keyword, head
 (more-tag, nbsp, list, alt, shortcode, kontak), kanibalisasi dan kalimat
 yang disalin dari artikel lain di `klien/`, kedalaman parafrase terhadap draft aslinya (FAIL bila lebih dari
 25% rangkaian 8 kata draft masih utuh), Anti-Typo Gate (ejaan tidak baku, kata asing, kata cakapan,
-kata kembar, salah ketik, em dash, "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
-Cek kata berjalan offline: di gerbang final, kata di luar kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`, dengan pengupasan imbuhan) adalah FAIL. Salah ketik diperbaiki di artikel. Kata yang memang sah (nama, istilah) ditambahkan ke `alat/kamus-kata.txt`, jangan ditambahkan hanya agar lulus. Di mode `--draft` kata itu hanya temuan.
+kata kembar, em dash, "Anda" kapital), dan keluar exit 1 bila ada FAIL. Perbaiki hanya bagian yang gagal, jangan rombak.
+Cek kata berjalan offline: kata di luar kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`, dengan pengupasan imbuhan) hanya WARN satu baris dan tidak menggagalkan gerbang, karena kamus tidak memuat kata serapan dan istilah bidang. Ejaan dicek sekali, di gerbang akhir ini, bukan saat menulis atau di audit draf: perbaiki yang salah ketik dalam edit yang sama dengan perbaikan FAIL, biarkan kata serapan atau istilah yang sah. WARN tidak membuat putaran baru dan jangan memeriksa kata lain. Kata sah yang sering muncul boleh ditambahkan ke `alat/kamus-kata.txt` (ejaan lengkap, bukan potongan kata).
 
 Kode keluar `cek-artikel.py`: `0` tidak ada FAIL, `1` ada FAIL, `2` masukan tidak bisa diperiksa (berkas tidak ada, bukan UTF-8, keyword tidak terdeteksi, atau `CLIENT.md` belum diisi). Kode `2` bukan FAIL artikel: perbaiki masukannya, lalu jalankan ulang.
 Fakta Google/Rank Math yang menjadi dasar ambang ada di `FAKTA-SEO.md` — rujuk situ, jangan ingatan.
@@ -182,7 +182,7 @@ Checklist ini rujukan aturan, bukan daftar yang dicentang agent satu per satu. S
 ### 5c. WordPress + PUEBI + Bahasa Baku
 - [ ] Format H2/H3, nbsp, more-tag, shortcode sesuai Section 11.
 - [ ] EYD: "silakan", kapital hari/bulan, "di" pisah sebagai kata depan.
-- [ ] Semua kata prosa lolos kamus (`alat/kamus-id.txt` + `alat/kamus-kata.txt`); tanpa kata cakapan (nggak, udah, aja); kata asing ditulis ulang sesuai Tahap 3.
+- [ ] Daftar WARN "kata di luar kamus" dilihat sekali di gerbang akhir (salah ketik diperbaiki, kata serapan sah dibiarkan); tanpa kata cakapan (nggak, udah, aja); kata asing ditulis ulang sesuai Tahap 3.
 - [ ] Format kode aman WordPress: paragraf dipisah baris kosong (wpautop membungkus `<p>`), baris tunggal
   dalam blok kontak menjadi `<br />` (dilakukan WordPress), tanpa komentar blok Gutenberg `<!-- wp:… -->`
   agar wpautop tidak dimatikan (lihat FAKTA-SEO.md bagian WordPress).
@@ -264,7 +264,7 @@ Langkah:
 4. **Jalankan Gerbang Status** (Section 4) pada folder bulan itu. Proses hanya draft berstatus `BARU` (audit penuh) dan `LANJUTKAN` (hanya tahap yang masih `-`). `SELESAI`, `MENUNGGU`, `BERUBAH`, `TANPA-CATATAN`, dan `RUSAK` tidak disentuh dan dilaporkan apa adanya. Tidak ada draft yang diproses → lapor, selesai.
 5. **Baca `aturan/INTI.md`** (ringkasan satu halaman; `aturan/kerja-tanpa-skill.md` bagian yang dibutuhkan saja, pustaka di Section 9 hanya bila aturan itu kurup atau diminta), lalu jalankan Pipeline Section 4: audit semua draf → ZeroGPT draf (Tahap 2b, operator memindai, agent berhenti dan lapor) → setelah skor masuk: draf di bawah 10% lewati humanize (perbaiki temuan audit, gerbang dengan `--tanpa-humanize`), draf 10% atau lebih humanize penuh lalu ZeroGPT final. Draft asli dilarang ditimpa; hasil disimpan sebagai `<nama> - Humanized.txt`.
 6. **Tulis laporan** ke `LAPORAN.md` folder bulan itu (format Section 7), bukan ke AGENT.md.
-7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki hanya bagian FAIL, ulang sampai 0 FAIL.
+7. **Gerbang kualitas** per artikel sebelum klaim final: `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"`. Perbaiki semua bagian FAIL sekaligus dalam satu edit, jalankan ulang. Maksimal 2 putaran; masih FAIL: berhenti dan lapor sisa FAIL ke operator. Ejaan dicek sekali di gerbang ini (lihat WARN), bukan saat menulis.
 8. **Laporan akhir ke operator**: tabel status setiap draft (termasuk yang dilewati dan alasannya), tabel ringkas artikel yang diproses (kata, keyword, ZeroGPT), temuan yang butuh keputusan, status plagiarisme (belum dicek manual kecuali operator melaporkan), dan diakhiri blok **TUGAS OPERATOR** (Section 6 butir 5) bila masih ada payload yang belum dipindai.
 
 Variasi opsional (operator menambahkan di akhir perintah; daftar sama di `PROMPT PINTASAN.md`):
