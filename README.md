@@ -118,7 +118,7 @@ Butuh agent apa pun yang bisa membaca berkas biasa (TRAE, ZCode, Claude Code, Co
 
 1. **Daftarkan klien.** Salin `klien/_TEMPLATE/` menjadi `klien/<Nama Klien>/`, ganti nama folder `YYYY Bulan` menjadi bulan kerja, lalu isi semua field di `CLIENT.md`. Isian bawaan template yang belum diganti ditolak skrip.
 2. **Taruh draft.** Simpan draft mentah dari AI Puffer di `klien/<Nama Klien>/artikel/<YYYY Bulan>/<judul>.txt`.
-3. **Pasang perintah** (sekali per komputer, hanya bila ingin memakai `/artikel`): `python -I -X utf8 alat/pasang-perintah.py trae` (atau `zcode`, `claude`, `semua`). Berkas command tidak ikut repo karena tiap agent punya format sendiri. Rinciannya di `PROMPT PINTASAN.md`.
+3. **Pasang perintah** (sekali per komputer, hanya bila ingin memakai `/artikel`): `python -I -X utf8 alat/pasang-perintah.py trae` (atau `zcode`, `claude`, `semua`). Berkas command tidak ikut repo karena tiap agent punya format sendiri. Rinciannya di `PROMPT PINTASAN.md`. **Setelah setiap `git pull`, jalankan perintah ini lagi** (atau menu "Pasang perintah" di `MULAI.bat`): salinan command di komputer tidak ikut diperbarui otomatis, sehingga agent bisa tetap memakai aturan lama. `python -I -X utf8 alat/pasang-perintah.py trae --cek` menunjukkan apakah salinan sudah terbaru.
 4. **Jalankan** dengan root project sebagai workspace.
    - Dengan command: `/artikel Salimah Catering November`. Untuk TRAE, pastikan opsi *Include AGENTS.md in the context* aktif di Settings > Rules & Memories.
    - Agent mana pun, tanpa command: `Baca AGENT.md, lalu kerjakan Salimah Catering bulan November sesuai Section 10.`

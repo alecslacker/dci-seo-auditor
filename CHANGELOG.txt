@@ -10,6 +10,10 @@ Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dih
 
 [0.18.2] - 2026-11-23
 ----------------------
+Ditambahkan
+- README: pengingat memasang ulang command (`pasang-perintah.py`) setelah setiap git pull. Salinan
+  command per komputer (.trae/commands) tidak ikut git, jadi bisa tertinggal di aturan lama
+  (ditemukan pada komputer pengembang: masih memuat Meta.txt, --kbbi, dan "sampai 0 FAIL").
 Diubah
 - Alur kerja agent tanpa berputar: ejaan dicek SEKALI di gerbang akhir (bukan saat menulis atau di audit
   draf); semua FAIL diperbaiki sekaligus dalam satu edit; batas 2 putaran disamakan di INTI.md,
