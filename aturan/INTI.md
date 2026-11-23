@@ -45,6 +45,7 @@ Paragraf pertama minimal 200 kata. Keyword 31-34 kali (density 1,0-2,5%), di bod
 ## Batas kerja
 
 - Tulis berkas hasil sekali. Setelah FAIL, edit bagian yang gagal, jangan tulis ulang seluruh artikel.
+- Ejaan, kata asing, kata cakapan, keyword, dan format sudah diperiksa skrip untuk semua kata. Jangan membaca ulang kata demi kata. Perbaiki hanya kata atau baris yang disebut skrip. Protokol anti-typo untuk kode tidak berlaku pada isi artikel.
 - Jangan menyatakan lulus tanpa `0 FAIL` dari gerbang terbaru pada berkas terbaru.
 - Angka ZeroGPT hanya dari laporan operator. Belum ada: tulis `MENUNGGU OPERATOR`.
 - Ambang 10% adalah target praktis dari satu artikel uji (draf 3,72%, final 3,7%). Catat skor draf dan final di `LAPORAN.md` agar aturan ini bisa dievaluasi.

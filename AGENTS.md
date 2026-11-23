@@ -22,6 +22,7 @@ Untuk tugas lain di repo ini (misalnya mengubah skrip di `alat/`), berkas di ata
 - Jangan menyatakan artikel lulus sebelum `python -I -X utf8 alat/cek-artikel.py "<artikel>"` (atau `python3 -I -X utf8 alat/cek-artikel.py "<artikel>"` di macOS/Linux) dijalankan pada berkas terbaru dan menunjukkan `0 FAIL`. Di macOS atau Linux pakai `python3`.
 - Jangan mengarang statistik, testimoni, nama, harga, atau fakta kota. Tidak ada sumber, tidak ditulis.
 - Draft asli tidak ditimpa. Hasil akhir disimpan sebagai `<nama> - Humanized.txt`.
+- Ejaan dan format artikel diperiksa skrip `cek-artikel.py` untuk semua kata. Agent tidak membaca ulang kata demi kata; perbaiki hanya yang disebut skrip. Protokol anti-typo untuk kode tidak berlaku pada isi artikel.
 - Data satu klien tidak boleh muncul di artikel klien lain.
 - Kemajuan artikel dan data klien dicatat di `LAPORAN.md` dan ledger folder bulan, bukan di memory agent. Memory agent hanya untuk aturan kerja, dan tidak boleh berisi data klien.
 

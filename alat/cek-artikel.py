@@ -487,7 +487,7 @@ def main():
         lainnya = [w for w in peringatan if not re.fullmatch(r"[a-zà-ÿ-]+", w)]
         semua_temuan = gagal + lainnya + temuan_ritme
         if kata_tinjau:
-            semua_temuan.append("%d kata di luar kamus, perlu tinjauan ejaan manual: %s"
+            semua_temuan.append("%d kata di luar kamus (perbaiki ejaan atau ganti padanan baku; kata lain sudah lolos): %s"
                                  % (len(kata_tinjau), " ".join(kata_tinjau[:40])
                                     + (" ..." if len(kata_tinjau) > 40 else "")))
         print("=" * 60)

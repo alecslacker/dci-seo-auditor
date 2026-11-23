@@ -8,6 +8,17 @@ Bukan laporan artikel klien. Laporan artikel ada di klien/<Klien>/artikel/<YYYY 
 Format: versi terbaru di atas. Tiap entri dikelompokkan Ditambahkan, Diubah, Dihapus, Belum teruji.
 
 
+[0.18.1] - 2026-11-23
+----------------------
+Diubah
+- Agent tidak lagi memeriksa artikel kata demi kata (lambat di TRAE). AGENTS.md dan aturan/INTI.md:
+  ejaan dan format diperiksa skrip untuk semua kata, perbaiki hanya yang disebut skrip; protokol
+  anti-typo untuk kode tidak berlaku pada isi artikel.
+- AGENT.md Section 5: checklist adalah rujukan, bukan daftar centang manual; butir yang sudah dicek
+  skrip dan yang belum disebut jelas. "Baca pelan" diganti agar tidak memicu baca ulang seluruh artikel.
+- cek-artikel.py --draft: pesan "perlu tinjauan ejaan manual" diganti "perbaiki ejaan atau ganti
+  padanan baku; kata lain sudah lolos".
+
 [0.18.0] - 2026-11-22
 ----------------------
 Diubah

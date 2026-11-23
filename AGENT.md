@@ -157,6 +157,8 @@ Jalur humanize penuh: uji hasil ke ZeroGPT (protokol di Section 6). Jalur draf d
 
 ## 5. Checklist Audit
 
+Checklist ini rujukan aturan, bukan daftar yang dicentang agent satu per satu. Sebagian besar butir 5a dan 5c (ejaan seluruh kata, keyword, heading, more-tag, nbsp, list, gambar, tautan, kontak, shortcode) diperiksa `cek-artikel.py`: jangan dicek manual, perbaiki hanya yang dilaporkan skrip. Butir yang belum diperiksa skrip (letak inbound link, paragraf ≤150 kata, panjang kalimat, kapital hari/bulan, "di" sebagai kata depan, komentar Gutenberg) dan seluruh 5b dijaga saat menulis ulang, bukan dengan membaca ulang artikel kata demi kata.
+
 ### 5a. Rank Math (target skor 80–100 / hijau)
 - [ ] Focus keyword di 10% awal konten dan ≥2 heading `<h2>`. (SEO title, meta description, dan slug diurus AIPuffer di WordPress, bukan agent.)
 - [ ] Paragraf pertama ≥200 kata (override batas 150 kata).
@@ -175,7 +177,7 @@ Jalur humanize penuh: uji hasil ke ZeroGPT (protokol di Section 6). Jalur draf d
 ### 5b. Human-Like (target human score 90%+)
 - [ ] Lulus sanity anti-slop: tanpa cliché terlarang, tanpa em dash, tanpa pola kalimat seragam.
 - [ ] Sentuhan lokal wajar (nama masakan/kebiasaan daerah) tanpa klaim faktual berlebih.
-- [ ] Baca pelan: terdengar seperti orang, bukan model yang mempadding.
+- [ ] Terdengar seperti orang, bukan model yang mempadding (dijaga saat menulis ulang; tidak perlu membaca ulang seluruh artikel).
 
 ### 5c. WordPress + PUEBI + Bahasa Baku
 - [ ] Format H2/H3, nbsp, more-tag, shortcode sesuai Section 11.
